@@ -80,7 +80,8 @@ const routes = {
   document: require('./routes/document'),
   blog: require('./routes/blog'),
   dashboard: require('./routes/dashboard'),
-  userpage: require('./routes/userpage')
+  userpage: require('./routes/userpage'),
+  schedule: require('./routes/schedule')
 };
 
 // Định nghĩa Routes
@@ -94,7 +95,7 @@ app.use('/document', routes.document);
 app.use('/blog', routes.blog);
 app.use('/dashboard', routes.dashboard);
 app.use('/userpage', routes.userpage);
-
+app.use('/schedule', routes.schedule)
 const onlineUsers = {};
 
 // Socket.io connection
@@ -167,7 +168,7 @@ app.use((req, res, next) => next(createError(404)));
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 3001);
+  res.status(err.status || 400);
   res.render('error');
 });
 
