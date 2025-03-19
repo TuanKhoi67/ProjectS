@@ -17,12 +17,13 @@ const bodyParser = require('body-parser');
 
 require('./config/database'); // cam' xoa'
 require('./config/passport')(passport); //cam' xoa'
+require('./config/database'); 
+require('./config/passport')(passport); 
 
 // Register eq helper
 hbs.registerHelper('eq', function(a, b) {
     return a === b;
 });
-
 
 // Import các route
 var indexRouter = require('./routes/index');
@@ -34,7 +35,7 @@ var appointmentRoutes = require('./routes/appointment');
 var documentRoutes = require('./routes/document');
 var blogRoutes = require('./routes/blog');
 var dashboardRoutes = require('./routes/dashboard');
-var userpageRoutes = require('./routes/userpage'); // Thêm dòng này
+var userpageRoutes = require('./routes/userpage');
 
 
 
@@ -70,7 +71,6 @@ hbs.registerHelper("isSender", function (sender, userId) {
 });
 
 
-
 // Cấu hình session & Passport
 app.use(session({
   secret: 'yourSecret',
@@ -99,7 +99,8 @@ const routes = {
   document: require('./routes/document'),
   blog: require('./routes/blog'),
   dashboard: require('./routes/dashboard'),
-  userpage: require('./routes/userpage')
+  userpage: require('./routes/userpage'),
+  schedule: require('./routes/schedule')
 };
 
 // Định nghĩa Routes
@@ -202,7 +203,7 @@ app.use((req, res, next) => next(createError(404)));
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
+  res.status(err.status || 400);
   res.render('error');
 });
 
