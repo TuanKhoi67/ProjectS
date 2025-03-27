@@ -1,79 +1,80 @@
 var express = require('express');
 var router = express.Router();
-const sendEmailNotification = require("../services/mailer");
+const { sendEmail } = require("../services/mailer");
+const moment = require('moment'); 
 var ScheduleModel = require('../models/Schedule');
+var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
 
-router.get('/', async (req, res) => {
-    try {
-        const schedules = await ScheduleModel.find({})
-            .populate('student')
-            .populate('tutor');  // Populate cả student và tutor trong một lần gọi
 
-        console.log("Classes:", schedules); // Debug dữ liệu
+router.get('/schedule-view/:weekOffset?', async (req, res) => {
+    let weekOffset = parseInt(req.params.weekOffset) || 1;
 
-        res.render('schedule/schedule_index', { schedules }); 
-    } catch (error) {
-        console.error("Error fetching class data:", error);
-        res.status(500).send("Internal Server Error");
-    }
-}),
+    // Tính toán ngày bắt đầu (thứ 2) và ngày kết thúc (chủ nhật) của tuần
+    let startOfWeek = moment().startOf('isoWeek').add(weekOffset - 1, 'weeks'); // Thứ 2
+    let endOfWeek = moment().endOf('isoWeek').add(weekOffset - 1, 'weeks'); // Chủ nhật
+    let weekRange = `${startOfWeek.format('DD/MM')} - ${endOfWeek.format('DD/MM')}`;
+    
+    const schedules = await ScheduleModel.find()
+        .populate('class', 'classname') // Populate lấy tên lớp từ collection 'classes'
+        .lean(); // Chuyển dữ liệu sang object để Handlebars đọc được
 
-router.get('/add', async (req, res) => {
-    try {
-        const schedules = await ScheduleModel.find()
-            .populate('student')  // Populate toàn bộ thông tin sinh viên
-            .populate('tutor');    // Populate thông tin tutor
+    res.render('schedule/schedule_index', { 
+        title: 'Lịch Học', 
+        schedules, 
+        week: weekOffset, 
+        weekRange, // Thêm khoảng thời gian của tuần
+        prevWeek: Math.max(1, weekOffset - 1), 
+        nextWeek: weekOffset + 1 
+    });
+});
 
-         const students = await StudentModel.find();
-         const tutors = await TutorModel.find();
+// Hiển thị form tạo lịch học
+router.get('/add', (req, res) => {
+    res.render('schedule/add_schedule', { title: 'Thêm Lịch Học' });
+});
 
-        console.log(schedules); // Kiểm tra dữ liệu trong console
-
-        res.render('schedule/add_schedule', { schedules, students, tutors });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).send("Internal Server Error");
-    }
-}),
 
 router.post('/add', async (req, res) => {
     try {
-        const { time, subject, student, tutor } = req.body; // Nhận dữ liệu từ request
+        const { day, time, classname } = req.body;
 
-        // Kiểm tra nếu student không phải là một mảng
-        if (!Array.isArray(student)) {
-            return res.status(400).json({ message: "Students should be an array of ObjectIds" });
+        // Tìm lớp học theo tên
+        const classObj = await ClassModel.findOne({ name: classname });
+
+        if (!classObj) {
+            return res.status(400).send("Lớp học không tồn tại.");
         }
 
-        // Tạo và lưu lịch học vào database
-        const newClass = new ScheduleModel({
+        // Lấy danh sách sinh viên và giáo viên từ lớp học
+        const students = await StudentModel.find({ _id: { $in: classObj.student } });
+        const tutor = await TutorModel.findById(classObj.tutor);
+
+        // Tạo danh sách email
+        const emailList = students.map(student => student.email);
+        if (tutor) {
+            emailList.push(tutor.email);
+        }
+
+        // Lưu ObjectId của lớp học
+        const newSchedule = new ScheduleModel({
+            day,
             time,
-            subject,
-            student, // Danh sách sinh viên
-            tutor,
+            class: classObj._id,
         });
 
-        await newClass.save();
+        await newSchedule.save();
 
-        // Lấy thông tin email của tất cả sinh viên và tutor
-        const studentsData = await StudentModel.find({ _id: { $in: student } }).select("email name");
-        const tutorData = await TutorModel.findById(tutor).select("email name");
-
-        if (studentsData.length > 0 && tutorData) {
-            // Gửi email thông báo cho tất cả sinh viên
-            for (const studentData of studentsData) {
-                await sendEmailNotification(studentData.email, studentData.name, tutorData.name, time, subject);
-            }
-            // Gửi email thông báo cho tutor
-            await sendEmailNotification(tutorData.email, tutorData.name, "Các sinh viên trong lớp", time, subject);
-        }
-
-        res.status(201).json({ message: "Class created successfully", class: newClass });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error creating class", error });
+        // Gửi email thông báo
+        const subject = "Thông báo lịch học mới";
+        const message = `Lịch học mới đã được tạo:\nNgày: ${day}\nCa học: ${time}\n Các bạn chú ý kiểm tra lịch học mới`;
+        await sendEmail(emailList, subject, message);
+        
+        res.redirect('/schedule/schedule-view/0');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi khi thêm lịch học.");
     }
 });
 

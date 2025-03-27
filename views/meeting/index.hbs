@@ -1,0 +1,25 @@
+<h2>Brand Management</h2>
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Form</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each meetings }}
+            <tr>
+                <td><a>{{ title }}</a></td>
+                <td>{{form}}</td>
+                <td>{{location}}</td>
+                <td>{{status}}</td>
+                <td>{{note}}</td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>

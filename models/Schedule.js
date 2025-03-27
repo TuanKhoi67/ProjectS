@@ -1,16 +1,12 @@
 var mongoose = require('mongoose');
 var ScheduleSchema = mongoose.Schema({
-    time: String,
-    subject: String,
-    student: [{
+   day: String,
+   time: String,
+   class: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'students'
-    }],
-    tutor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'tutors'
-    },
+        ref: 'classes'  
+   },
 });
 
-var ScheduleModel = mongoose.model('schedules', ScheduleSchema);
+var ScheduleModel = mongoose.model('schedules', ScheduleSchema); 
 module.exports = ScheduleModel;

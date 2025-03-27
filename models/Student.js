@@ -1,18 +1,19 @@
-// models/Student.js
-const mongoose = require('mongoose');
-const StudentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  enrollment: { type: Date, required: true },
-  dob: { type: Date, required: true },
-  phone: { type: String, required: true },
-  tutor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'tutors'
-  },
-  user: {  // Thêm mối quan hệ 1-1 với bảng Users
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-  }
+var mongoose = require('mongoose');
+var StudentSchema = mongoose.Schema({
+   name: String,
+   telephone: String,
+   email: String,
+   subject: String,
+   enrollmentYear: Number,
+   tutor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'tutors'  
+   },
+   user: {  // Thêm mối quan hệ 1-1 với bảng Users
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+   }
 });
-module.exports = mongoose.model('Student', StudentSchema);
+
+var StudentModel = mongoose.model('students', StudentSchema); 
+module.exports = StudentModel;
