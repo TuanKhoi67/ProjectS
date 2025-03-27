@@ -56,17 +56,17 @@ router.get('/logout', (req, res, next) => {
 
 // Route trang cá nhân cho Admin
 router.get('/admin', ensureAuthenticated, checkRole(['admin']), (req, res) => {
-    res.render('userpage/admin', { user: req.user });
+    res.render('userpage/admin', { layout: 'authedLayout', user: req.user });
 });
 
 // Route trang cá nhân cho Tutor
 router.get('/tutor', ensureAuthenticated, checkRole(['tutor']), (req, res) => {
-    res.render('userpage/tutor', { user: req.user });
+    res.render('userpage/tutor', { layout: 'authedLayout', user: req.user });
 });
 
 // Route trang cá nhân cho Student
 router.get('/student', ensureAuthenticated, checkRole(['student']), (req, res) => {
-    res.render('userpage/student', { user: req.user });
+    res.render('userpage/student', { layout: 'authedLayout', user: req.user });
 });
 
 //Hàm hỗ trợ điều hướng theo role
@@ -79,8 +79,8 @@ function getRedirectPath(role) {
 
     switch (role) {
         case 'admin': return '/auth/admin';
-        case 'tutor': return '/auth/tutor';
-        case 'student': return '/auth/student';
+        case 'tutor': return '/blog/tutor';
+        case 'student': return '/blog/student';
         default: return '/';
     }
 }
