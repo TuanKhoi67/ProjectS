@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 router.get('/student', async (req, res) => {
   try {
       const blogs = await Blog.find({ role: 'student' }).populate('author');
-      res.render('userpage/student', { blogs });
+      res.render('userpage/student', { layout: 'authedLayout', blogs });
   } catch (error) {
       console.error('Error fetching student blogs:', error);
       res.status(500).send('Internal Server Error');
@@ -47,7 +47,7 @@ router.get('/student', async (req, res) => {
 router.get('/tutor', async (req, res) => {
     try {
         const blogs = await Blog.find({ role: 'tutor' }).populate('author');
-        res.render('userpage/tutor', { blogs });
+        res.render('userpage/tutor', { layout: 'authedLayout', blogs });
     } catch (error) {
         console.error('Error fetching tutor blogs:', error);
         res.status(500).send('Internal Server Error');
@@ -64,7 +64,7 @@ router.get('/edit/:id', async (req, res) => {
             return res.status(404).send('Blog not found');
         }
 
-        res.render('blog/edit', { blog });
+        res.render('blog/edit', { layout: 'authedLayout', blog });
     } catch (error) {
         console.error('Error fetching blog:', error);
         res.status(500).send('Internal Server Error');
