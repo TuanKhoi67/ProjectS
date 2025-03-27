@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   try {
     const documents = await Document.find(); // Lấy tất cả tài liệu từ database
     console.log('documents:', documents); // Debug log để kiểm tra dữ liệu
-    res.render('document/index', { title: 'Quản lý tài liệu', documents });
+    res.render('document/index', { layout: 'authedLayout', documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách tài liệu');
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
 // Hiển thị trang thêm tài liệu
 router.get('/add', (req, res) => {
-    res.render('document/add');
+    res.render('document/add', { layout: 'authedLayout' });
 });
 
 // Xử lý thêm tài liệu
@@ -33,7 +33,7 @@ router.post('/add', async (req, res) => {
 router.get('/search', async (req, res) => {
     const query = req.query.query;
     const documents = await Document.find({ title: new RegExp(query, 'i') });
-    res.render('document/index', { documents });
+    res.render('document/index', { layout: 'authedLayout', documents });
 });
 
 // Edit document route
@@ -46,7 +46,7 @@ router.get('/edit/:id', async (req, res) => {
           return res.status(404).send('Document not found');
       }
 
-      res.render('document/edit', { document });
+      res.render('document/edit', { layout : 'authedLayout', document });
   } catch (error) {
       console.error('Error fetching document:', error);
       res.status(500).send('Internal Server Error');
