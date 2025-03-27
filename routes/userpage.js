@@ -7,7 +7,7 @@ router.get('/admin', async (req, res) => {
   try {
     const tutors = await User.find({ role: 'tutor' });
     const students = await User.find({ role: 'student' });
-    res.render('userpage/admin', { user: req.user, tutors, students });
+    res.render('userpage/admin', { layout: 'authedLayout', user: req.user, tutors, students });
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách người dùng');
@@ -17,7 +17,7 @@ router.get('/admin', async (req, res) => {
 
 router.get('/edit/:id', async (req, res) => {
   const user = await User.findById(req.params.id);
-  res.render('userpage/edit', { user });
+  res.render('userpage/edit', { layout: 'authedLayout', user });
 });
 
 router.post('/edit/:id', async (req, res) => {
