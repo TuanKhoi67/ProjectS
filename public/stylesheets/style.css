@@ -60,6 +60,15 @@ a {
     display: none;
 }
 
+.logout-icon {
+    width: 28px;
+    margin-left: 20px;
+}
+
+.logout-icon:hover {
+    color: #e00000 !important;
+}
+
 /* media query for menu */
 @media only screen and (max-width: 800px) {
     nav ul {
@@ -93,6 +102,11 @@ a {
     }
 
     .menu-icon {
+        display: block;
+        cursor: pointer;
+    }
+
+    .logout-icon {
         display: block;
         cursor: pointer;
     }
@@ -173,9 +187,9 @@ a {
     /* Rounded left corners */
 }
 
+/* Style register hyperlink */
 .toggle {
     color: aliceblue;
-    /* Change to white for the register hyperlink */
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
@@ -184,7 +198,6 @@ a {
 
 .toggle:hover {
     color: #8371fd;
-    /* Desired hover color */
 }
 
 /* New styles for form labels */

@@ -6,7 +6,27 @@ const Message = require('../models/Message');
 // Danh sách người dùng để chọn chat
 router.get('/', async (req, res) => {
     const users = await User.find().sort({ fullname: 1 });
-    res.render('message/index', { users });
+    res.render('message/index', { layout: 'authedLayout', users });
+});
+
+// Xử lý tìm kiếm người dùng
+router.get('/search', async (req, res) => {
+    const query = req.query.query;
+
+    // Normalize query to remove diacritics
+    const normalizedQuery = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // Fetch all users and normalize their fullnames for comparison
+    const users = await User.find();
+    const filteredUsers = users.filter(user => 
+        user.fullname
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .includes(normalizedQuery.toLowerCase())
+    );
+
+    res.render('message/index', { layout: 'authedLayout', users: filteredUsers });
 });
 
 // Trang chat với người dùng được chọn
@@ -24,7 +44,7 @@ router.get('/chat/:receiverId', async (req, res) => {
             ]
         }).sort({ timestamp: 1 });
 
-        res.render('message/chat', { receiver, messages });
+        res.render('message/chat', { layout: 'authedLayout', receiver, messages });
     } catch (error) {
         console.error(error);
         res.status(500).send("Lỗi server!");
