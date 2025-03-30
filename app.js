@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs'); 
+const dotenv = require('dotenv');
 
 require('./config/database'); 
 require('./config/passport')(passport); 
@@ -30,9 +31,11 @@ var blogRoutes = require('./routes/blog');
 var dashboardRoutes = require('./routes/admin_dashboard');
 var userpageRoutes = require('./routes/userpage');
 
+dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+
 
 // Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
@@ -44,12 +47,20 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log("🔵 User connected:", socket.id);
+
+  socket.on('disconnect', () => {
+      console.log("🔴 User disconnected:", socket.id);
+  });
+});
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
-
 
 // Cấu hình session & Passport
 app.use(session({
@@ -99,68 +110,6 @@ app.use('/class', routes.class);
 app.use('/schedule', routes.schedule)
 const onlineUsers = {};
 
-// Socket.io connection
-io.on('connection', (socket) => {
-  console.log('🔗 Một người dùng đã kết nối');
-
-  socket.on('registerUser', (userId) => {
-      socket.userId = userId;
-      console.log(`✅ Người dùng ${userId} đã đăng ký socket.`);
-      socket.join(userId);
-  });
-
-  socket.on('chat message', async (msg) => {
-      console.log("📩 Nhận tin nhắn từ client:", msg);
-
-      if (!msg.sender || !msg.receiver || !msg.message) {
-          console.error("⚠️ Tin nhắn không hợp lệ!", msg);
-          return;
-      }
-
-      try {
-          // Lưu tin nhắn vào database
-          const newMessage = new Message({
-              sender: msg.sender,
-              receiver: msg.receiver,
-              message: msg.message
-          });
-
-          await newMessage.save();
-          console.log("✅ Tin nhắn đã lưu vào database:", newMessage);
-
-          // Lấy thông tin người gửi và người nhận từ DB
-          const senderInfo = await User.findById(msg.sender);
-          const receiverInfo = await User.findById(msg.receiver);
-
-          if (!senderInfo || !receiverInfo) return console.error("⚠️ Không tìm thấy người gửi hoặc người nhận!");
-
-          // Gửi tin nhắn đến đúng hai người
-          // Gửi tin nhắn ngay lập tức cho cả người gửi và người nhận
-        io.to(msg.sender).emit("chat message", {
-          sender: msg.sender,
-          receiver: msg.receiver,
-          senderName: "Bạn",
-          message: msg.message,
-          });
-
-          io.to(msg.receiver).emit("chat message", {
-              sender: msg.sender,
-              receiver: msg.receiver,
-              senderName: msg.senderName, // Lấy tên từ client để hiển thị chính xác
-              message: msg.message,
-          });
-
-          console.log("📩 Tin nhắn đã gửi đến:", msg.sender, msg.receiver);
-          
-      } catch (err) {
-          console.error("❌ Lỗi khi lưu tin nhắn vào database:", err);
-      }
-  });
-
-  socket.on('disconnect', () => {
-      console.log(`❌ Người dùng ${socket.userId} đã ngắt kết nối`);
-  });
-});
 
 // Xử lý lỗi 404
 app.use((req, res, next) => next(createError(404)));
