@@ -1,50 +1,89 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const { ensureAuthenticated } = require('../middleware/auth');
 const User = require('../models/Users');
+const Message = require('../models/Message');
 
-router.get('/', ensureAuthenticated, async (req, res) => {
-    try {
-        const users = await User.find({ _id: { $ne: req.user._id } }); // Lấy danh sách người dùng (trừ bản thân)
-        res.render('message/index', { users, currentUser: req.user });
-    } catch (err) {
-        console.error(err);
-        res.redirect('/dashboard');
-    }
-});
+module.exports = (io) => {
+    // Lấy danh sách người dùng và hiển thị trang chat
+    router.get('/', ensureAuthenticated, async (req, res) => {
+        try {
+            const users = await User.find({ _id: { $ne: req.user._id } }).lean();
+            res.render('message/index', { 
+                users,
+                currentUser: req.user // Sửa thành req.user để trùng với template
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/dashboard');
+        }
+    });
 
-router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
-    try {
-        const messages = await Message.find({
-            $or: [
-                { sender: req.user._id, receiver: req.params.userId },
-                { sender: req.params.userId, receiver: req.user._id }
-            ]
-        }).sort({ createdAt: 1 });
+    // API lấy lịch sử chat với 1 người
+    router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
+        try {
+            // Validate ObjectId
+            if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+                return res.status(400).json({ error: "ID người dùng không hợp lệ" });
+            }
 
-        res.json(messages);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Lỗi server');
-    }
-});
+            const messages = await Message.find({
+                $or: [
+                    { sender: req.user._id, receiver: req.params.userId },
+                    { sender: req.params.userId, receiver: req.user._id }
+                ]
+            }).sort({ createdAt: 1 }).lean();
 
-// API gửi tin nhắn
-router.post('/chat', ensureAuthenticated, async (req, res) => {
-    try {
-        const { receiver, message } = req.body;
-        if (!message) return res.status(400).send("Nội dung tin nhắn không được để trống!");
+            res.json(messages);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Lỗi server" });
+        }
+    });
 
-        const newMessage = new Message({ sender: req.user._id, receiver, message });
-        await newMessage.save();
+    // API gửi tin nhắn
+    router.post('/chat', ensureAuthenticated, async (req, res) => {
+        try {
+            const { receiver, content } = req.body;
+            const sender = req.user._id;
 
-        // Gửi tin nhắn qua Socket.io
-        req.app.get('io').emit("chat message", newMessage);
+            // Validate input
+            if (!mongoose.Types.ObjectId.isValid(receiver)) {
+                return res.status(400).json({ error: "ID người nhận không hợp lệ" });
+            }
 
-        res.status(201).json(newMessage);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Lỗi server');
-    }
-});
-module.exports = router;
+            if (!content || content.trim().length === 0) {
+                return res.status(400).json({ error: "Nội dung tin nhắn không được để trống" });
+            }
+
+            // Tạo và lưu tin nhắn
+            const message = new Message({ 
+                sender, 
+                receiver, 
+                content: content.trim(),
+                createdAt: new Date()
+            });
+            
+            await message.save();
+
+            // Gửi real-time qua socket.io
+            io.to(receiver).emit('receiveMessage', message);
+            io.to(sender).emit('messageSent', message); // Xác nhận gửi thành công
+
+            res.json({ 
+                success: true, 
+                message: {
+                    ...message._doc,
+                    timestamp: message.createdAt.toISOString()
+                }
+            });
+
+        } catch (error) {
+            console.error("Lỗi server:", error);
+            res.status(500).json({ error: "Lỗi server" });
+        }
+    });
+
+    return router;
+};

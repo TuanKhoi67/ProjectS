@@ -76,30 +76,31 @@
             font-weight: bold;
         }
 
-        .messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ccc;
-            background: #f9f9f9;
-        }
-
         .message {
-            margin: 5px 0;
-            padding: 8px;
-            border-radius: 5px;
+            margin: 10px;
+            padding: 12px;
+            border-radius: 15px;
+            clear: both;
+            position: relative;
             max-width: 70%;
         }
 
         .sent {
-            background: #dcf8c6;
-            align-self: flex-end;
-            text-align: right;
+            background: #DCF8C6;
+            float: right;
+            margin-right: 10px;
         }
 
         .received {
-            background: #f1f0f0;
-            align-self: flex-start;
+            background: #FFFFFF;
+            float: left;
+            margin-left: 10px;
+            border: 1px solid #EEE;
+        }
+
+        .messages {
+            padding: 20px;
+            background: #F0F2F5;
         }
 
         .input-box {
@@ -165,9 +166,12 @@
     var currentUser = "{{user._id}}";
     var currentReceiver = null;
 
-    function selectUser(userId, userName) {
+    // Kết nối socket và đăng ký user
+    socket.emit('registerUser', currentUser);
+
+    function selectUser(userId, fullname) {
         currentReceiver = userId;
-        document.getElementById("chat-header").innerText = "Đang nhắn tin với " + userName;
+        document.getElementById("chat-header").innerText = "Đang nhắn tin với " + fullname;
         document.getElementById("messages").innerHTML = "";
 
         // Gửi yêu cầu lấy tin nhắn cũ
@@ -175,7 +179,7 @@
             .then(response => response.json())
             .then(messages => {
                 messages.forEach(msg => {
-                    let className = (msg.sender === "{{currentUser._id}}") ? "sent" : "received";
+                    let className = (msg.sender === "{{user._id}}") ? "sent" : "received";
                     let msgElement = `<div class="message ${className}">${msg.content}</div>`;
                     document.getElementById("messages").innerHTML += msgElement;
                 });
@@ -183,24 +187,51 @@
             .catch(err => console.error("Lỗi khi tải tin nhắn:", err));
     }
 
-    function sendMessage() {
-    let message = document.getElementById("message-input").value;
+    async function sendMessage() {
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+        
+        if (!message || !currentReceiver) return;
 
-        if (message.trim() && currentReceiver) {
-            fetch('/message/chat', {
+        try {
+            const response = await fetch('/message/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ receiver: currentReceiver, content: message }) // ✅ Đúng tên `content`
-            })
-            .then(response => response.json())
-            .then(data => {
-                let msgElement = `<div class="message sent">${data.content}</div>`;
-                document.getElementById("messages").innerHTML += msgElement;
-                document.getElementById("message-input").value = ""; // Xóa ô nhập sau khi gửi
-            })
-            .catch(err => console.error("Lỗi gửi tin nhắn:", err));
+                body: JSON.stringify({ receiver: currentReceiver, content: message })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error);
+            }
+
+            messageInput.value = '';
+            scrollToBottom();
+        } catch (error) {
+            alert('Gửi tin nhắn thất bại: ' + error.message);
         }
     }
+    socket.on('receiveMessage', (message) => {
+        if (message.receiver === currentUser || message.sender === currentReceiver) {
+            // Thêm tin nhắn vào khung chat
+            const className = message.sender === currentUser ? "sent" : "received";
+            const time = new Date(message.timestamp).toLocaleTimeString();
+            const msgElement = `
+                <div class="message ${className}">
+                    <div class="content">${message.content}</div>
+                    <div class="time">${time}</div>
+                </div>
+            `;
+            document.getElementById("messages").innerHTML += msgElement;
+            scrollToBottom();
+        }
+    });
+    
+    function scrollToBottom() {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
 </script>
 
 

@@ -21,20 +21,34 @@ hbs.registerHelper('eq', function(a, b) {
 });
 
 // Import các route
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var authRoutes = require('./routes/auth');
-var tutorRoutes = require('./routes/Tutor');
-var messageRoutes = require('./routes/message');
-var documentRoutes = require('./routes/document');
-var blogRoutes = require('./routes/blog');
-var dashboardRoutes = require('./routes/admin_dashboard');
-var userpageRoutes = require('./routes/userpage');
+// var indexRouter = require('./routes/index');
+// var usersRouter = require('./routes/users');
+// var authRoutes = require('./routes/auth');
+// var tutorRoutes = require('./routes/Tutor');
+// const messageRoutes = require('./routes/message');
+// var documentRoutes = require('./routes/document');
+// var blogRoutes = require('./routes/blog');
+// var dashboardRoutes = require('./routes/admin_dashboard');
+// var userpageRoutes = require('./routes/userpage');
 
 dotenv.config();
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+  
+  // Join room theo userId
+  socket.on('registerUser', (userId) => {
+      socket.join(userId);
+      console.log(`User ${userId} joined room`);
+  });
+});
+
 
 
 // Middleware cơ bản
@@ -47,15 +61,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
-app.set('io', io);
 
-io.on('connection', (socket) => {
-  console.log("🔵 User connected:", socket.id);
-
-  socket.on('disconnect', () => {
-      console.log("🔴 User disconnected:", socket.id);
-  });
-});
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper("isSender", function (sender, userId) {
@@ -85,7 +91,7 @@ const routes = {
   users: require('./routes/users'),
   auth: require('./routes/auth'),
   tutor: require('./routes/Tutor'),
-  message: require('./routes/message'),
+  message: require('./routes/message')(io),
   meeting: require('./routes/meeting'),
   document: require('./routes/document'),
   blog: require('./routes/blog'),
