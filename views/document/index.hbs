@@ -68,7 +68,8 @@
                         <th>Tên tài liệu</th>
                         <th>Người đăng</th>
                         <th>Nội dung</th>
-                        <th>Ảnh</th>
+                        <th>Hình ảnh</th>
+                        <th>File</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -79,7 +80,12 @@
                         <td>{{this.author}}</td>
                         <td>{{this.content}}</td>
                         <td>
-                            <img src="{{this.imageUrl}}" alt="{{this.title}}">
+                            <img src="{{this.imageUrl}}" alt="{{this.title}}" style="max-width: 70px; border-radius: 5px;">
+                        </td>
+                        <td>
+                            {{#if this.documentFile}}
+                                <a href="{{this.documentFile}}" class="btn btn-info btn-sm" download>📥 Tải tài liệu</a>
+                            {{/if}}
                         </td>
                         <td>
                             <a href="/document/edit/{{this._id}}" class="btn btn-warning btn-sm">✏ Sửa</a>

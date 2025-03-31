@@ -1,13 +1,21 @@
-{{#> layouts/main }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm tài liệu mới</title>
+</head>
+<body>
+    <h2>Thêm tài liệu mới</h2>
 
-<h2>Thêm tài liệu mới</h2>
-
-<form action="/document/add" method="post" class="form-inline">
-    <input type="text" name="title" class="form-control" placeholder="Tên tài liệu" required>
-    <input type="text" name="author" class="form-control" placeholder="Người đăng" required>
-    <textarea name="content" class="form-control" placeholder="Nội dung" required></textarea>
-    <input type="text" name="imageUrl" class="form-control" placeholder="URL của ảnh" required>
-    <button type="submit" class="btn btn-success">Thêm tài liệu</button>
-</form>
-
-{{/layouts/main}}
+    <form action="/document/add" method="post" enctype="multipart/form-data" class="form-inline">
+        <input type="text" name="title" class="form-control" placeholder="Tên tài liệu" required>
+        <input type="text" name="author" class="form-control" placeholder="Người đăng" required>
+        <textarea name="content" class="form-control" placeholder="Nội dung" required></textarea>
+        <input type="text" name="imageUrl" class="form-control" placeholder="URL của ảnh" required>
+        <input type="file" name="documentFile" class="form-control" accept=".pdf, .doc, .docx" required>
+        <button type="submit" class="btn btn-success">Thêm tài liệu</button>
+    </form>
+    
+</body>
+</html>

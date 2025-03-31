@@ -1,14 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const Document = require('../models/Document');
+const multer = require('multer');
+const path = require('path');
+// Cấu hình Multer để lưu file
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, './public/uploads/'); // Chỉ định thư mục lưu trữ file tải lên
+  },
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Đặt tên file là thời gian hiện tại
+  }
+});
 
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+      const filetypes = /pdf|doc|docx/; // Hạn chế chỉ cho phép file PDF và Word
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = filetypes.test(file.mimetype);
 
+      if (mimetype && extname) {
+          return cb(null, true);
+      }
+      cb(new Error('Chỉ chấp nhận các file PDF, DOC, DOCX'));
+  }
+});
 
 // Hiển thị trang quản lý tài liệu
 router.get('/', async (req, res) => {
   try {
     const documents = await Document.find(); // Lấy tất cả tài liệu từ database
-    console.log('documents:', documents); // Debug log để kiểm tra dữ liệu
     res.render('document/index', { title: 'Quản lý tài liệu', documents });
   } catch (err) {
     console.error(err);
@@ -22,11 +44,20 @@ router.get('/add', (req, res) => {
 });
 
 // Xử lý thêm tài liệu
-router.post('/add', async (req, res) => {
-    const { title, author, content, imageUrl } = req.body;
-    const newDocument = new Document({ title, author, content, imageUrl });
-    await newDocument.save();
-    res.redirect('/document');
+router.post('/add', upload.single('documentFile'), async (req, res) => {
+  const { title, author, content } = req.body;
+  const documentFile = req.file ? '/uploads/documents/' + req.file.filename : '';
+
+  const newDocument = new Document({ 
+      title, 
+      author, 
+      content, 
+      imageUrl: req.body.imageUrl, // nếu có ảnh
+      documentFile // Thêm file tải lên
+  });
+
+  await newDocument.save();
+  res.redirect('/document');
 });
 
 // Xử lý tìm kiếm tài liệu
@@ -53,19 +84,26 @@ router.get('/edit/:id', async (req, res) => {
   }
 });
 // Update document route
-router.post('/update/:id', async (req, res) => {
+router.post('/update/:id', upload.single('documentFile'), async (req, res) => {
   try {
       const documentId = req.params.id;
       const { title, author, content, imageUrl } = req.body;
+
+      // Nếu có file tải lên, lưu URL của file vào document
+      let documentFileUrl = null;
+      if (req.file) {
+          documentFileUrl = `/uploads/${req.file.filename}`;
+      }
 
       await Document.findByIdAndUpdate(documentId, {
           title,
           author,
           content,
-          imageUrl
+          imageUrl,
+          documentFile: documentFileUrl // Cập nhật URL file
       });
 
-      res.redirect('/document'); // Redirect to the document list page after updating
+      res.redirect('/document'); // Redirect to document list page
   } catch (error) {
       console.error('Error updating document:', error);
       res.status(500).send('Internal Server Error');

@@ -17,6 +17,10 @@ const documentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  documentFile: {
+    type: String,
+    required: false
+  },
   comments: [
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 

@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-4">
         <h2 class="text-center mb-4">✏ Chỉnh sửa tài liệu</h2>
-        <form action="/document/update/{{document._id}}" method="post">
+        <form action="/document/update/{{document._id}}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Tên tài liệu</label>
                 <input type="text" class="form-control" id="title" name="title" value="{{document.title}}" required>
@@ -25,6 +25,10 @@
             <div class="mb-3">
                 <label for="imageUrl" class="form-label">Ảnh URL</label>
                 <input type="text" class="form-control" id="imageUrl" name="imageUrl" value="{{document.imageUrl}}" required>
+            </div>
+            <div class="mb-3">
+                <label for="documentFile" class="form-label">Tải lên tài liệu (Word/PDF)</label>
+                <input type="file" class="form-control" id="documentFile" name="documentFile" accept=".docx, .pdf">
             </div>
             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </form>
