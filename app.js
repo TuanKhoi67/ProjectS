@@ -15,6 +15,7 @@ const dotenv = require('dotenv');
 require('./config/database'); 
 require('./config/passport')(passport); 
 
+
 // Register eq helper
 hbs.registerHelper('eq', function(a, b) {
     return a === b;
@@ -61,11 +62,23 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
-
+app.use(express.static('public'));
+app.use('/images', express.static('public/images'));
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
+});
+hbs.registerHelper('formatDate', function(date) {
+  if (!date) return '';
+  const options = { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+  };
+  return new Date(date).toLocaleDateString('vi-VN', options);
 });
 
 // Cấu hình session & Passport
