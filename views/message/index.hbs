@@ -146,7 +146,7 @@
 
     <div class="container">
         <div class="user-list">
-            <h2>Người Dùng</h2>
+            <h2>Người Dùng: {{user.fullname}}</h2>
             {{#each users}}
             <div class="user-item" onclick="selectUser('{{this._id}}', '{{this.fullname}}')">
                 {{this.fullname}}
@@ -214,7 +214,7 @@
         }
 
         socket.on('receiveMessage', (message) => {
-            if (message.receiver === currentUser || message.sender === currentReceiver) {
+            if (message.sender !== currentUser) {
                 addMessageToChat(message.sender, message.content, message.createdAt);
                 scrollToBottom();
             }
