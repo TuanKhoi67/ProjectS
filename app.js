@@ -21,17 +21,6 @@ hbs.registerHelper('eq', function(a, b) {
     return a === b;
 });
 
-// Import các route
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
-// var authRoutes = require('./routes/auth');
-// var tutorRoutes = require('./routes/Tutor');
-// const messageRoutes = require('./routes/message');
-// var documentRoutes = require('./routes/document');
-// var blogRoutes = require('./routes/blog');
-// var dashboardRoutes = require('./routes/admin_dashboard');
-// var userpageRoutes = require('./routes/userpage');
-
 dotenv.config();
 const app = express();
 const { createServer } = require('http');

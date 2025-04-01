@@ -82,12 +82,15 @@ router.get('/edit/:id', async (req, res) => {
             return res.status(404).send('Blog not found');
         }
 
+        console.log("Blog data:", blog); // Kiểm tra dữ liệu blog có thuộc tính image không
+
         res.render('blog/edit', { blog });
     } catch (error) {
         console.error('Error fetching blog:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 // Route to handle the update of a blog post
 router.post('/edit/:id', upload.single('imageFile'), async (req, res) => {
     try {
