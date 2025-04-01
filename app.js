@@ -18,43 +18,45 @@ require('./config/passport')(passport);
 dotenv.config();
 const app = express();
 const httpServer = http.createServer(app);
-const io = socketIo(httpServer);
+const io = socketIo(httpServer, {
+  cors: { origin: "*" }
+});
 
 // 🟢 Danh sách người dùng online
 const onlineUsers = {};
 
-// 📌 Xử lý kết nối socket.io
+// 📡 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
+    console.log("⚡ Client kết nối:", socket.id);
 
-  // ✅ Đăng ký user vào phòng theo userId
-  socket.on('registerUser', (userId) => {
-    socket.join(userId);
-    onlineUsers[userId] = socket.id;
-    console.log(`User ${userId} joined room`);
-  });
+    // ✅ Đăng ký user vào phòng theo userId
+    socket.on('registerUser', (userId) => {
+        socket.join(userId);
+        onlineUsers[userId] = socket.id;
+        console.log(`✅ User ${userId} joined room`);
+    });
 
-  // ✅ Xử lý gửi tin nhắn
-  socket.on('sendMessage', ({ sender, receiver, content }) => {
-    const messageData = { sender, receiver, content, createdAt: new Date() };
+    // ✅ Xử lý gửi tin nhắn
+    socket.on('sendMessage', (data) => {
+        console.log("📩 Nhận tin nhắn từ client:", data);
 
-    // Gửi tin nhắn đến người nhận nếu họ đang online
-    io.to(receiver).emit('receiveMessage', messageData);
+        // 📡 Gửi tin nhắn đến người nhận
+        io.to(data.receiver).emit('receiveMessage', data);
 
-    // Gửi tin nhắn đến chính người gửi để cập nhật UI
-    io.to(sender).emit('messageSent', messageData);
-  });
+        // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
+        io.to(data.sender).emit('messageSent', data);
+    });
 
-  // ❌ Xóa user khi ngắt kết nối
-  socket.on('disconnect', () => {
-    for (const userId in onlineUsers) {
-      if (onlineUsers[userId] === socket.id) {
-        delete onlineUsers[userId];
-        console.log(`User ${userId} disconnected`);
-        break;
-      }
-    }
-  });
+    // ❌ Xóa user khi ngắt kết nối
+    socket.on('disconnect', () => {
+        for (const userId in onlineUsers) {
+            if (onlineUsers[userId] === socket.id) {
+                delete onlineUsers[userId];
+                console.log(`❌ User ${userId} disconnected`);
+                break;
+            }
+        }
+    });
 });
 
 // 🔧 Middleware cơ bản
@@ -74,14 +76,13 @@ hbs.registerHelper("isSender", function (sender, userId) {
 });
 hbs.registerHelper('formatDate', function(date) {
   if (!date) return '';
-  const options = { 
+  return new Date(date).toLocaleDateString('vi-VN', {
       hour: '2-digit', 
       minute: '2-digit', 
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
-  };
-  return new Date(date).toLocaleDateString('vi-VN', options);
+  });
 });
 
 // 🛡 Cấu hình session & Passport
@@ -100,6 +101,7 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+
 // 🔗 Import Routes
 const routes = {
   index: require('./routes/index'),
@@ -141,9 +143,9 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-// 🚀 **Sử dụng httpServer.listen thay vì app.listen**
+// 🚀 **Chạy server**
 httpServer.listen(3001, () => {
-  console.log('Server is running on port 3001');
+  console.log('🚀 Server is running on port 3001');
 });
 
 module.exports = app;

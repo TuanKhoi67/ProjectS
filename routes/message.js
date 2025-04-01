@@ -6,7 +6,7 @@ module.exports = (io) => {
     const User = require('../models/Users');
     const Message = require('../models/Message');
 
-    // Lấy danh sách người dùng và hiển thị trang chat
+    // 📨 Lấy danh sách người dùng và hiển thị trang chat
     router.get('/', ensureAuthenticated, async (req, res) => {
         try {
             const users = await User.find({ _id: { $ne: req.user._id } }).lean();
@@ -17,17 +17,19 @@ module.exports = (io) => {
         }
     });
 
-    // API lấy lịch sử chat với một người
+    // 📨 API lấy lịch sử chat giữa hai người
     router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
         try {
-            if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+            const { userId } = req.params;
+
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
                 return res.status(400).json({ error: "ID người dùng không hợp lệ" });
             }
 
             const messages = await Message.find({
                 $or: [
-                    { sender: req.user._id, receiver: req.params.userId },
-                    { sender: req.params.userId, receiver: req.user._id }
+                    { sender: req.user._id, receiver: userId },
+                    { sender: userId, receiver: req.user._id }
                 ]
             }).sort({ createdAt: 1 }).lean();
 
@@ -38,7 +40,7 @@ module.exports = (io) => {
         }
     });
 
-    // API gửi tin nhắn
+    // 📨 API gửi tin nhắn
     router.post('/chat', ensureAuthenticated, async (req, res) => {
         try {
             const { receiver, content } = req.body;
@@ -52,17 +54,10 @@ module.exports = (io) => {
                 return res.status(400).json({ error: "Nội dung tin nhắn không được để trống" });
             }
 
-            // Tạo tin nhắn mới
-            const message = new Message({ 
-                sender, 
-                receiver, 
-                content: content.trim(),
-                createdAt: new Date()
-            });
-            
+            // 📝 Lưu tin nhắn vào database
+            const message = new Message({ sender, receiver, content: content.trim(), createdAt: new Date() });
             await message.save();
 
-            // Tạo payload tin nhắn để gửi qua socket
             const messageData = {
                 _id: message._id,
                 sender,
@@ -71,10 +66,10 @@ module.exports = (io) => {
                 createdAt: message.createdAt
             };
 
-            // Gửi tin nhắn đến người nhận nếu họ đang online
+            // 📡 Gửi tin nhắn đến người nhận qua Socket.io
             io.to(receiver).emit('receiveMessage', messageData);
-            
-            // Xác nhận tin nhắn đã được gửi cho người gửi
+
+            // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
             io.to(sender).emit('messageSent', messageData);
 
             res.json({ success: true, message: messageData });
