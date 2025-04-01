@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
-const http = require('http');
+const http = require('http'); 
 const socketIo = require('socket.io');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -13,35 +13,51 @@ const hbs = require('hbs');
 const dotenv = require('dotenv');
 
 require('./config/database'); 
-require('./config/passport')(passport); 
-
-
-// Register eq helper
-hbs.registerHelper('eq', function(a, b) {
-    return a === b;
-});
+require('./config/passport')(passport);
 
 dotenv.config();
 const app = express();
-const { createServer } = require('http');
-const { Server } = require('socket.io');
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer);
 
-const httpServer = createServer(app);
-const io = new Server(httpServer);
+// 🟢 Danh sách người dùng online
+const onlineUsers = {};
 
+// 📌 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
-  
-  // Join room theo userId
+
+  // ✅ Đăng ký user vào phòng theo userId
   socket.on('registerUser', (userId) => {
-      socket.join(userId);
-      console.log(`User ${userId} joined room`);
+    socket.join(userId);
+    onlineUsers[userId] = socket.id;
+    console.log(`User ${userId} joined room`);
+  });
+
+  // ✅ Xử lý gửi tin nhắn
+  socket.on('sendMessage', ({ sender, receiver, content }) => {
+    const messageData = { sender, receiver, content, createdAt: new Date() };
+
+    // Gửi tin nhắn đến người nhận nếu họ đang online
+    io.to(receiver).emit('receiveMessage', messageData);
+
+    // Gửi tin nhắn đến chính người gửi để cập nhật UI
+    io.to(sender).emit('messageSent', messageData);
+  });
+
+  // ❌ Xóa user khi ngắt kết nối
+  socket.on('disconnect', () => {
+    for (const userId in onlineUsers) {
+      if (onlineUsers[userId] === socket.id) {
+        delete onlineUsers[userId];
+        console.log(`User ${userId} disconnected`);
+        break;
+      }
+    }
   });
 });
 
-
-
-// Middleware cơ bản
+// 🔧 Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(logger('dev'));
@@ -51,8 +67,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
-app.use(express.static('public'));
-app.use('/images', express.static('public/images'));
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper("isSender", function (sender, userId) {
@@ -70,7 +84,7 @@ hbs.registerHelper('formatDate', function(date) {
   return new Date(date).toLocaleDateString('vi-VN', options);
 });
 
-// Cấu hình session & Passport
+// 🛡 Cấu hình session & Passport
 app.use(session({
   secret: 'yourSecret',
   resave: false,
@@ -80,20 +94,19 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware xác thực
+// ✅ Xác thực user cho mọi request
 const { ensureAuthenticated } = require('./middleware/auth');
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-
-// Import Routes
+// 🔗 Import Routes
 const routes = {
   index: require('./routes/index'),
   users: require('./routes/users'),
   auth: require('./routes/auth'),
   tutor: require('./routes/Tutor'),
-  message: require('./routes/message')(io),
+  message: require('./routes/message')(io), // Truyền io vào router message
   meeting: require('./routes/meeting'),
   document: require('./routes/document'),
   blog: require('./routes/blog'),
@@ -103,7 +116,7 @@ const routes = {
   schedule: require('./routes/schedule')
 };
 
-// Định nghĩa Routes
+// 🛣 Định nghĩa Routes
 app.use('/', routes.index);
 app.use('/users', routes.users);
 app.use('/auth', routes.auth);
@@ -115,23 +128,22 @@ app.use('/blog', routes.blog);
 app.use('/admin/dashboard', routes.admin_dashboard);
 app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
-app.use('/schedule', routes.schedule)
-const onlineUsers = {};
+app.use('/schedule', routes.schedule);
 
-
-// Xử lý lỗi 404
+// ❌ Xử lý lỗi 404
 app.use((req, res, next) => next(createError(404)));
 
-// Xử lý lỗi chung
+// ❌ Xử lý lỗi chung
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 400);
+  res.status(err.status || 500);
   res.render('error');
 });
 
-app.listen(3001, () => {
-  console.log('Server is running');
+// 🚀 **Sử dụng httpServer.listen thay vì app.listen**
+httpServer.listen(3001, () => {
+  console.log('Server is running on port 3001');
 });
 
 module.exports = app;

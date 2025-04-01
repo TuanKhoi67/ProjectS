@@ -5,124 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhắn Tin</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-        }
-        .navbar a:hover {
-            text-decoration: underline;
-        }
-
-        /* Container */
-        .container {
-            display: flex;
-            flex: 1;
-        }
-
-        /* Danh sách người dùng */
-        .user-list {
-            width: 30%;
-            border-right: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: auto;
-            background: #f4f4f4;
-        }
-
-        .user-item {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-            cursor: pointer;
-            background: white;
-        }
-        .user-item:hover {
-            background: #ddd;
-        }
-
-        /* Khung chat */
-        .chat-box {
-            width: 70%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
-        .message {
-            margin: 10px;
-            padding: 12px;
-            border-radius: 15px;
-            clear: both;
-            position: relative;
-            max-width: 70%;
-        }
-
-        .sent {
-            background: #DCF8C6;
-            float: right;
-            margin-right: 10px;
-        }
-
-        .received {
-            background: #FFFFFF;
-            float: left;
-            margin-left: 10px;
-            border: 1px solid #EEE;
-        }
-
-        .messages {
-            padding: 20px;
-            background: #F0F2F5;
-        }
-
-        .input-box {
-            display: flex;
-            padding: 10px;
-            background: #fff;
-        }
-        .input-box input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .input-box button {
-            padding: 10px;
-            border: none;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-            border-radius: 5px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; flex-direction: column; height: 100vh; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #007bff; color: white; padding: 10px 20px; }
+        .navbar a { color: white; text-decoration: none; margin: 0 10px; font-weight: bold; }
+        .navbar a:hover { text-decoration: underline; }
+        .container { display: flex; flex: 1; }
+        .user-list { width: 30%; border-right: 1px solid #ccc; padding: 10px; overflow-y: auto; background: #f4f4f4; }
+        .user-item { padding: 10px; border-bottom: 1px solid #ccc; cursor: pointer; background: white; }
+        .user-item:hover { background: #ddd; }
+        .chat-box { width: 70%; display: flex; flex-direction: column; }
+        .chat-header { padding: 10px; background: #007bff; color: white; font-weight: bold; }
+        .messages { flex: 1; padding: 20px; background: #F0F2F5; overflow-y: auto; display: flex; flex-direction: column; }
+        .message { margin: 5px; padding: 10px; border-radius: 15px; max-width: 70%; word-wrap: break-word; }
+        .sent { background: #DCF8C6; align-self: flex-end; }
+        .received { background: #FFFFFF; align-self: flex-start; border: 1px solid #EEE; }
+        .input-box { display: flex; padding: 10px; background: #fff; }
+        .input-box input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .input-box button { padding: 10px; border: none; background: #007bff; color: white; cursor: pointer; margin-left: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -155,85 +57,92 @@
             <div class="chat-header" id="chat-header">Chọn một người để bắt đầu nhắn tin</div>
             <div class="messages" id="messages"></div>
             <div class="input-box">
-                <input type="text" id="message-input" placeholder="Nhập tin nhắn...">
+                <input type="text" id="message-input" placeholder="Nhập tin nhắn..." onkeypress="handleKeyPress(event)">
                 <button onclick="sendMessage()">Gửi</button>
             </div>
         </div>
     </div>
 
     <script>
-    var socket = io();
-    var currentUser = "{{user._id}}";
-    var currentReceiver = null;
+        var socket = io();
+        var currentUser = "{{user._id}}";
+        var currentReceiver = null;
 
-    // Kết nối socket và đăng ký user
-    socket.emit('registerUser', currentUser);
+        // Đăng ký user với socket server
+        socket.emit('registerUser', currentUser);
 
-    function selectUser(userId, fullname) {
-        currentReceiver = userId;
-        document.getElementById("chat-header").innerText = "Đang nhắn tin với " + fullname;
-        document.getElementById("messages").innerHTML = "";
+        function selectUser(userId, fullname) {
+            currentReceiver = userId;
+            document.getElementById("chat-header").innerText = "Đang nhắn tin với " + fullname;
+            document.getElementById("messages").innerHTML = "";
 
-        // Gửi yêu cầu lấy tin nhắn cũ
-        fetch(`/message/chat/${userId}`)
-            .then(response => response.json())
-            .then(messages => {
-                messages.forEach(msg => {
-                    let className = (msg.sender === "{{user._id}}") ? "sent" : "received";
-                    let msgElement = `<div class="message ${className}">${msg.content}</div>`;
-                    document.getElementById("messages").innerHTML += msgElement;
-                });
-            })
-            .catch(err => console.error("Lỗi khi tải tin nhắn:", err));
-    }
-
-    async function sendMessage() {
-        const messageInput = document.getElementById('message-input');
-        const message = messageInput.value.trim();
-        
-        if (!message || !currentReceiver) return;
-
-        try {
-            const response = await fetch('/message/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ receiver: currentReceiver, content: message })
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error);
-            }
-
-            messageInput.value = '';
-            scrollToBottom();
-        } catch (error) {
-            alert('Gửi tin nhắn thất bại: ' + error.message);
+            // Gửi yêu cầu lấy tin nhắn cũ
+            fetch(/message/chat/${userId})
+                .then(response => response.json())
+                .then(messages => {
+                    messages.forEach(msg => addMessageToChat(msg.sender, msg.content, msg.timestamp));
+                    scrollToBottom();
+                })
+                .catch(err => console.error("Lỗi khi tải tin nhắn:", err));
         }
-    }
-    socket.on('receiveMessage', (message) => {
-        if (message.receiver === currentUser || message.sender === currentReceiver) {
-            // Thêm tin nhắn vào khung chat
-            const className = message.sender === currentUser ? "sent" : "received";
-            const time = new Date(message.timestamp).toLocaleTimeString();
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (!message || !currentReceiver) return;
+
+            try {
+                const response = await fetch('/message/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ receiver: currentReceiver, content: message })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+
+                // Hiển thị tin nhắn ngay lập tức trên giao diện
+                addMessageToChat(currentUser, message, new Date().toISOString());
+                messageInput.value = '';
+                scrollToBottom();
+            } catch (error) {
+                alert('Gửi tin nhắn thất bại: ' + error.message);
+            }
+        }
+
+        socket.on('receiveMessage', (message) => {
+            if (message.receiver === currentUser || message.sender === currentReceiver) {
+                addMessageToChat(message.sender, message.content, message.timestamp);
+                scrollToBottom();
+            }
+        });
+
+        function addMessageToChat(sender, content, timestamp) {
+            const className = sender === currentUser ? "sent" : "received";
+            const time = new Date(timestamp).toLocaleTimeString();
             const msgElement = `
                 <div class="message ${className}">
-                    <div class="content">${message.content}</div>
-                    <div class="time">${time}</div>
+                    <div class="content">${content}</div>
+                    <div class="time" style="font-size: 0.8em; color: gray; text-align: right;">${time}</div>
                 </div>
             `;
             document.getElementById("messages").innerHTML += msgElement;
-            scrollToBottom();
         }
-    });
-    
-    function scrollToBottom() {
-        const messagesDiv = document.getElementById('messages');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
 
-</script>
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
 
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
 
 </body>
 </html>

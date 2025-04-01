@@ -1,29 +1,25 @@
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
-const { ensureAuthenticated } = require('../middleware/auth');
-const User = require('../models/Users');
-const Message = require('../models/Message');
-
 module.exports = (io) => {
+    const express = require('express');
+    const router = express.Router();
+    const mongoose = require('mongoose');
+    const { ensureAuthenticated } = require('../middleware/auth');
+    const User = require('../models/Users');
+    const Message = require('../models/Message');
+
     // Lấy danh sách người dùng và hiển thị trang chat
     router.get('/', ensureAuthenticated, async (req, res) => {
         try {
             const users = await User.find({ _id: { $ne: req.user._id } }).lean();
-            res.render('message/index', { 
-                users,
-                currentUser: req.user // Sửa thành req.user để trùng với template
-            });
+            res.render('message/index', { users, currentUser: req.user });
         } catch (err) {
             console.error(err);
             res.redirect('/dashboard');
         }
     });
 
-    // API lấy lịch sử chat với 1 người
+    // API lấy lịch sử chat với một người
     router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
         try {
-            // Validate ObjectId
             if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
                 return res.status(400).json({ error: "ID người dùng không hợp lệ" });
             }
@@ -48,7 +44,6 @@ module.exports = (io) => {
             const { receiver, content } = req.body;
             const sender = req.user._id;
 
-            // Validate input
             if (!mongoose.Types.ObjectId.isValid(receiver)) {
                 return res.status(400).json({ error: "ID người nhận không hợp lệ" });
             }
@@ -57,7 +52,7 @@ module.exports = (io) => {
                 return res.status(400).json({ error: "Nội dung tin nhắn không được để trống" });
             }
 
-            // Tạo và lưu tin nhắn
+            // Tạo tin nhắn mới
             const message = new Message({ 
                 sender, 
                 receiver, 
@@ -67,17 +62,22 @@ module.exports = (io) => {
             
             await message.save();
 
-            // Gửi real-time qua socket.io
-            io.to(receiver).emit('receiveMessage', message);
-            io.to(sender).emit('messageSent', message); // Xác nhận gửi thành công
+            // Tạo payload tin nhắn để gửi qua socket
+            const messageData = {
+                _id: message._id,
+                sender,
+                receiver,
+                content: message.content,
+                createdAt: message.createdAt
+            };
 
-            res.json({ 
-                success: true, 
-                message: {
-                    ...message._doc,
-                    timestamp: message.createdAt.toISOString()
-                }
-            });
+            // Gửi tin nhắn đến người nhận nếu họ đang online
+            io.to(receiver).emit('receiveMessage', messageData);
+            
+            // Xác nhận tin nhắn đã được gửi cho người gửi
+            io.to(sender).emit('messageSent', messageData);
+
+            res.json({ success: true, message: messageData });
 
         } catch (error) {
             console.error("Lỗi server:", error);
