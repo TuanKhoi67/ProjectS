@@ -218,7 +218,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 }
 
 .content .icon a {
@@ -235,6 +235,15 @@ a {
     color: #0056b3;
 }
 
+.content img {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    object-fit: cover;
+    /* Ensures the image is cropped proportionally */
+}
+
 .content .title {
     font-size: 40px;
     color: #000000;
@@ -246,7 +255,7 @@ a {
 }
 
 .content .title:hover {
-    text-decoration: underline;
+    color: #0056b3;
 }
 
 .content p {
