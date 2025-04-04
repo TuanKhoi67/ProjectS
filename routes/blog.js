@@ -203,7 +203,7 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
         res.json({ 
             success: true,
             likes: blog.likes,
-            isLiked: likeIndex === -1 // Trạng thái mới
+            isLiked: index === -1 
         });
     } catch (error) {
         console.error('Lỗi khi thả tim:', error);
