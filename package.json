@@ -21,6 +21,7 @@
     "morgan": "~1.9.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "sails-generate-views-handlebars": "^0.10.4"
+    "sails-generate-views-handlebars": "^0.10.4",
+    "socket.io": "^4.8.1"
   }
 }

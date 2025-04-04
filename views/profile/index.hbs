@@ -1,0 +1,29 @@
+
+<div class="profile-container">
+        <div class="profile-header">
+            <h1>Profile</h1>
+        </div>
+        <div class="p-3">
+            <p><strong>Full Name:</strong> {{user.fullname}}</p>
+            <p><strong>Email:</strong> {{user.email}}</p>
+            <p><strong>Role:</strong> {{user.role}}</p>
+
+            {{#if profileData}}
+                {{#ifEquals user.role "student"}}
+                    <p><strong>Enrollment Date:</strong> {{profileData.enrollment}}</p>
+                    <p><strong>Date of Birth:</strong> {{profileData.dob}}</p>
+                    <p><strong>Phone Number:</strong> {{profileData.phone}}</p>
+                {{/ifEquals}}
+                
+                {{#ifEquals user.role "tutor"}}
+                    <p><strong>Department:</strong> {{profileData.department}}</p>
+                    <p><strong>Date of Birth:</strong> {{profileData.dob}}</p>
+                    <p><strong>Phone Number:</strong> {{profileData.phone}}</p>
+                {{/ifEquals}}
+            {{/if}}
+            
+            <a href="/profile/edit" class="btn btn-primary w-100 mt-3">Edit Profile</a>
+        </div>
+    </div>
+
+<a href="/profile/edit">Edit</a>

@@ -30,6 +30,7 @@ var documentRoutes = require('./routes/document');
 var blogRoutes = require('./routes/blog');
 var dashboardRoutes = require('./routes/dashboard');
 var userpageRoutes = require('./routes/userpage');
+var profileRoutes = require('./routes/profile');
 
 const app = express();
 const server = http.createServer(app);
@@ -80,7 +81,8 @@ const routes = {
   document: require('./routes/document'),
   blog: require('./routes/blog'),
   dashboard: require('./routes/dashboard'),
-  userpage: require('./routes/userpage')
+  userpage: require('./routes/userpage'),
+  profile: require('./routes/profile')
 };
 
 // Định nghĩa Routes
@@ -94,6 +96,7 @@ app.use('/document', routes.document);
 app.use('/blog', routes.blog);
 app.use('/dashboard', routes.dashboard);
 app.use('/userpage', routes.userpage);
+app.use('/profile', routes.profile);
 
 const onlineUsers = {};
 
@@ -167,7 +170,7 @@ app.use((req, res, next) => next(createError(404)));
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 3001);
+  // res.status(err.status || 3002);
   res.render('error');
 });
 
