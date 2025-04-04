@@ -44,6 +44,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
+// Lưu Socket.io vào app để sử dụng trong routes
+app.set('socketio', io);
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper("isSender", function (sender, userId) {
@@ -81,7 +83,8 @@ const routes = {
   admin_dashboard: require('./routes/admin_dashboard'),
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
-  schedule: require('./routes/schedule')
+  schedule: require('./routes/schedule'),
+  attandance: require('./routes/attendance')
 };
 
 // Định nghĩa Routes
@@ -90,13 +93,15 @@ app.use('/users', routes.users);
 app.use('/auth', routes.auth);
 app.use('/tutor', routes.tutor);
 app.use('/message', routes.message);
-app.use('/meeting', routes.meeting);
+app.use('/api/meeting', routes.meeting);
 app.use('/document', routes.document);
 app.use('/blog', routes.blog);
 app.use('/admin/dashboard', routes.admin_dashboard);
 app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
-app.use('/schedule', routes.schedule)
+app.use('/schedule', routes.schedule);
+app.use('/attendance', routes.attandance);
+
 const onlineUsers = {};
 
 // Socket.io connection

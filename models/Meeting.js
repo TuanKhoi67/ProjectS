@@ -8,6 +8,22 @@ var MeetingSchema = mongoose.Schema({
         enum: ["Scheduled", "Ongoing", "Completed", "Cancelled"],
         required: true,
     },
+   student: [{ 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'students',
+   }],
+   tutor: [{ 
+           type: mongoose.Schema.Types.ObjectId,
+           ref: 'tutors',
+   }],
+   startTime: { 
+        type: Date,  // Thời gian bắt đầu cuộc họp
+        required: true 
+   },
+   endTime: { 
+        type: Date,  // Thời gian kết thúc cuộc họp
+        required: true 
+   },
    note: String
 });
 
