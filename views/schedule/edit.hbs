@@ -1,7 +1,6 @@
-<!-- Form tạo lịch học -->
-<h3>Thêm Lịch Học</h3>
-<form action="/schedule/add" method="POST">
-    <label for="day">Chọn Ngày:</label>
+<h2>Chỉnh sửa lịch học</h2>
+<form action="/schedule/edit/{{schedule._id}}" method="POST">
+    <label for="day">Thứ:</label>
     <select name="day" id="day">
         <option value="Monday">Thứ Hai</option>
         <option value="Tuesday">Thứ Ba</option>
@@ -19,12 +18,12 @@
         <option value="Evening">Tối</option>
     </select>
 
-    <label for="class">Chọn lớp học:</label>
-    <select name="class" required>
-        {{#each classes}}
-            <option value="{{this._id}}">{{this.classname}}</option>
-        {{/each}}
+    <label for="classId">Lớp học:</label>
+    <select name="classId">
+         {{#each classes }}
+         <option value="{{ _id }}"> {{ classname }}</option>
+         {{/each}}
     </select>
 
-    <button type="submit">Thêm Lịch</button>
+    <button type="submit">Cập nhật</button>
 </form>

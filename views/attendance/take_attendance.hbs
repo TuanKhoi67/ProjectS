@@ -1,0 +1,14 @@
+<h2>Điểm danh lớp: {{schedule.class.classname}} - Ngày: {{schedule.day}}, Giờ: {{schedule.time}}</h2>
+
+<form action="/attendance/take-attendance/{{schedule._id}}" method="POST">
+  {{#each students}}
+    <div>
+      <label>{{this.name}}</label>
+      <select name="attendance[{{this._id}}]">
+        <option value="present">Có mặt</option>
+        <option value="absent">Vắng mặt</option>
+      </select>
+    </div>
+  {{/each}}
+  <button type="submit">Lưu điểm danh</button>
+</form>
