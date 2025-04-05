@@ -1,0 +1,85 @@
+<h1>Danh sách sinh viên</h1>
+<h2>Tổng số sinh viên: <span id="total">{{totalStudents}}</span></h2>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Student name</th>
+                <th>Subject</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each students }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ subject }}</td>
+                <td>
+                    <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                </td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+
+<h1>Danh sách giảng viên</h1>
+<h2>Tổng số giảng viên: <span id="total">{{totalTutors}}</span></h2>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Tutor name</th>
+                <th>Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each tutors }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ department }}</td>
+                {{!-- <td>
+                    <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                </td> --}}
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+
+<h2>Danh sách sinh viên chưa có Tutor</h2>
+<h2>Tổng số sinh viên chưa có tutor: <span id="totalWithoutTutor">{{totalStudentsWithoutTutor}}</span></h2>
+<ul>
+    {{#if studentsWithoutTutor.length}}
+    <ul>
+        {{#each studentsWithoutTutor}}
+            <li>{{this.name}} - {{this.subject}}</li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>Không có sinh viên nào chưa có tutor.</p>
+    {{/if}}
+</ul>
+
+<h2>Danh sách giáo viên</h2>
+
+<!-- Form lọc theo môn học -->
+<form action="/admin/dashboard/filter" method="GET">
+    <label for="subject">Chọn môn học:</label>
+    <select name="subject" required>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Physics">Physics</option>
+    </select>
+    <button type="submit">Lọc</button>
+</form>
+
+<p>Tổng số giáo viên: {{teachers.length}}</p>
+
+<ul>
+    {{#each teachers}}
+        <li>
+            {{this.name}}</a> - Môn học: {{this.department}}
+        </li>
+    {{/each}}
+</ul> 

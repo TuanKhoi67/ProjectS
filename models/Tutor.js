@@ -1,8 +1,14 @@
-// models/Tutor.js
-const mongoose = require('mongoose');
-const AdvisorSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  phone: String
+var mongoose = require('mongoose');
+var TutorSchema = mongoose.Schema(
+{
+      name: String,
+      department: String,
+      email: String,
+      telephone: String,
+      user: {  // Thêm mối quan hệ 1-1 với bảng Users
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'users',
+      }
 });
-module.exports = mongoose.model('Tutor', AdvisorSchema);
+var TutorModel = mongoose.model('tutors', TutorSchema);
+module.exports = TutorModel;

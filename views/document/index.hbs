@@ -82,11 +82,12 @@
             <table class="table table-bordered table-hover document-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>Document Title</th>
-                        <th>Author</th>
-                        <th>Content</th>
-                        <th>Image</th>
-                        <th>Actions</th>
+                        <th>Tên tài liệu</th>
+                        <th>Người đăng</th>
+                        <th>Nội dung</th>
+                        <th>Hình ảnh</th>
+                        <th>File</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,7 +97,12 @@
                         <td>{{this.author}}</td>
                         <td>{{this.content}}</td>
                         <td>
-                            <img src="{{this.imageUrl}}" alt="{{this.title}}">
+                            <img src="{{this.imageUrl}}" alt="{{this.title}}" style="max-width: 70px; border-radius: 5px;">
+                        </td>
+                        <td>
+                            {{#if this.documentFile}}
+                                <a href="{{this.documentFile}}" class="btn btn-info btn-sm" download>📥 Tải tài liệu</a>
+                            {{/if}}
                         </td>
                         <td>
                             <a href="/document/edit/{{this._id}}"><i class="fa-solid fa-pen-to-square"></i></a>

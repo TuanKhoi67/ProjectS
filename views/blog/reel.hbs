@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Reel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .reel-card {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        .blog-card {
+            border: none!important;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .comment-body {
+            background-color: #f0f2f5;
+            border-radius: 15px;
+            padding: 8px 15px;
+            max-width: 80%;
+        }
+        .post-time {
+            font-size: 0.8rem;
+            color: #65676b;
+        }
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .interaction-section {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .liked {
+            color: #ff0000 !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">📚 eTutoring</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/blog/reel">🏠 Blog</a></li>                 
+                    <li class="nav-item"><a class="nav-link" href="/document">📝 Documents</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/auth/login">🔑 Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">🔥 Blog Reel</h2>
+        <div class="container mt-2">
+            <a href="/blog/reel" class="btn btn-secondary">⬅ Quay lại</a>
+        </div>
+        <div class="container mt-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Tìm bài viết..." onkeyup="searchBlogs()">
+        </div>
+        <br>
+        <div class="row">
+            {{#each blogs}}
+            <div class="col-md-12">
+                <div class="card blog-card shadow-sm">
+                    <div class="card-body">
+                        <!-- Header bài viết -->
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{#if this.author.profilePicture}}{{this.author.profilePicture}}{{else}}https://via.placeholder.com/40{{/if}}" 
+                                class="profile-img me-2" alt="Avatar">
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{this.author.fullname}}</h6>
+                                <small class="post-time">{{formatDate this.createdAt}}</small>
+                            </div>
+                        </div>
+
+                        <!-- Nội dung -->
+                        <p class="card-text mb-3">{{this.content}}</p>
+
+                        <!-- Hiển thị ảnh nếu có -->
+                        {{#if this.image}}
+                            <div class="text-center">
+                                <img src="{{this.image}}" class="img-fluid rounded mb-3" alt="Ảnh bài viết">
+                            </div>
+                        {{/if}}
+
+                        <!-- Thống kê like và comment -->
+                        <div class="interaction-section">
+                            <span class="text-muted me-3">❤️ {{this.likes}} lượt thích</span>
+                            <span class="text-muted">💬 {{this.comments.length}} bình luận</span>
+                        </div>
+
+                        <!-- Nút like và comment -->
+                        <div class="d-flex gap-2 mt-2">
+                            <button class="btn btn-outline-danger like-btn" data-id="{{this._id}}">  
+                                ❤️     
+                                <span class="like-count">{{this.likes}}</span>
+                            </button>
+                            <button class="btn btn-light flex-grow-1" onclick="toggleComment(this)">
+                                💬 Bình luận
+                            </button>
+                        </div>
+
+                        <!-- Form comment (ẩn mặc định) -->
+                        <form action="/blog/reel/comment/{{this._id}}" method="post" 
+                            class="mt-3 comment-form" style="display: none;">
+                            <div class="input-group">
+                                <input type="text" name="content" class="form-control" 
+                                    placeholder="Viết bình luận..." required>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Danh sách comment -->
+                        <div class="mt-3">
+                            {{#each this.comments}}
+                            <div class="d-flex align-items-start mb-2">                               
+                                <div class="comment-body">
+                                    <strong>{{this.user.fullname}}</strong>
+                                    <p class="mb-0">{{this.content}}</p>
+                                    <small class="text-muted">{{formatDate this.createdAt}}</small>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+        </div>
+    </div>
+
+  <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const postId = this.dataset.id;
+                    const likeCountSpan = this.querySelector('.like-count'); // Sửa chỗ này
+                    
+                    try {
+                        const response = await fetch(`/blog/like/${postId}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        // Xử lý response
+                        if (!response.ok) {
+                            const error = await response.json();
+                            throw new Error(error.error);
+                        }
+
+                        const data = await response.json();
+                        
+                        // Kiểm tra tồn tại phần tử trước khi cập nhật
+                        if (likeCountSpan) {
+                            likeCountSpan.textContent = data.likes;
+                            this.classList.toggle('liked', data.isLiked);
+                        }
+                        
+                    } catch (error) {
+                        console.error('Lỗi:', error);
+                        alert(error.message);
+                    }
+                });
+            });
+        });
+
+    function toggleComment(button) {
+        const form = button.closest('.card-body').querySelector('.comment-form');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function searchBlogs() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let blogCards = document.querySelectorAll('.blog-card');
+
+        blogCards.forEach(card => {
+            let title = card.querySelector('.card-title').textContent.toLowerCase();
+            let content = card.querySelector('.card-text').textContent.toLowerCase();
+            let author = card.querySelector('.author-name').textContent.toLowerCase();
+
+            if (title.includes(input) || content.includes(input) || author.includes(input)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
+
+
+
+</body>
+</html>

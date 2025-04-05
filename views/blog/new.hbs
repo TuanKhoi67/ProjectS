@@ -3,30 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Write a New Blog</title>
+    <title>Edit Blog</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .image-preview {
+            max-width: 300px;
+            margin-top: 10px;
+            display: {{#if blog.image}}block{{else}}none{{/if}};
+        }
+        .upload-option {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h2 class="text-center mb-4">Write a New Blog</h2>
-        <form action="/blog" method="post">
+        <h2 class="text-center mb-4">✏ Edit Blog</h2>
+        <form action="/blog/edit/{{blog._id}}" method="post" enctype="multipart/form-data">
+            <!-- Các trường hiện tại -->
             <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+                <label class="form-label">Ảnh bài viết</label>
+                
+                <!-- Radio chọn phương thức -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imageSource" 
+                               id="uploadRadio" value="upload" checked>
+                        <label class="form-check-label" for="uploadRadio">
+                            Tải ảnh lên
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imageSource" 
+                               id="urlRadio" value="url">
+                        <label class="form-check-label" for="urlRadio">
+                            Dùng link ảnh
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phần upload file -->
+                <div id="uploadSection">
+                    <input type="file" class="form-control" id="imageFile" 
+                           name="imageFile" accept="image/*">
+                    <small class="text-muted">Chỉ chấp nhận ảnh (JPEG, PNG)</small>
+                </div>
+
+                <!-- Phần nhập URL -->
+                <div id="urlSection" style="display: none;">
+                    <input type="url" class="form-control" id="imageUrl" 
+                           name="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <!-- Xem trước ảnh -->
+                <img id="imagePreview" src="{{blog.image}}" 
+                     class="image-preview" alt="Preview">
+                
+                <!-- Nút xóa ảnh -->
+                {{#if blog.image}}
+                <div class="mt-2">
+                    <button type="button" class="btn btn-danger btn-sm" 
+                            onclick="clearImage()">Xóa ảnh</button>
+                </div>
+                {{/if}}
             </div>
-            <div class="mb-3">
-                <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select class="form-control" id="role" name="role" required>
-                    <option value="student">Student</option>
-                    <option value="tutor">Tutor</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </form>
     </div>
+
+    <script>
+        // Xử lý chuyển đổi giữa upload và URL
+        document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const isUpload = document.getElementById('uploadRadio').checked;
+                document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
+                document.getElementById('urlSection').style.display = isUpload ? 'none' : 'block';
+            });
+        });
+
+        // Xem trước ảnh khi chọn file hoặc nhập URL
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('imageUrl').addEventListener('input', function(e) {
+            const url = e.target.value;
+            if (url) {
+                document.getElementById('imagePreview').src = url;
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+        });
+
+        function clearImage() {
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.querySelector('input[name="imageUrl"]').value = '';
+            document.querySelector('input[name="imageFile"]').value = '';
+        }
+    </script>
 </body>
 </html>

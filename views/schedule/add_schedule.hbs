@@ -1,0 +1,26 @@
+<!-- Form tạo lịch học -->
+<h3>Thêm Lịch Học</h3>
+<form action="/schedule/add" method="POST">
+    <label for="day">Chọn Ngày:</label>
+    <select name="day" id="day">
+        <option value="Monday">Thứ Hai</option>
+        <option value="Tuesday">Thứ Ba</option>
+        <option value="Wednesday">Thứ Tư</option>
+        <option value="Thursday">Thứ Năm</option>
+        <option value="Friday">Thứ Sáu</option>
+        <option value="Saturday">Thứ Bảy</option>
+        <option value="Sunday">Chủ Nhật</option>
+    </select>
+
+    <label for="time">Chọn Ca Học:</label>
+    <select name="time" id="time">
+        <option value="Morning">Sáng</option>
+        <option value="Afternoon">Chiều</option>
+        <option value="Evening">Tối</option>
+    </select>
+
+    <label for="class">Nhập tên lớp:</label>
+    <input type="text" name="class" id="class" required>
+
+    <button type="submit">Thêm Lịch</button>
+</form>
