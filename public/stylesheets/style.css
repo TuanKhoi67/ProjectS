@@ -154,6 +154,7 @@ a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
 }
+
 .profile-header {
     background-color: #2a2a91;
     color: white;
@@ -170,6 +171,7 @@ a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
 }
+
 .edit-profile-header {
     background-color: #2a2a91;
     color: white;
@@ -213,7 +215,7 @@ a {
 }
 
 .form-label {
-    color: black; /* Đặt màu chữ của label thành đen */
+    color: white;
 }
 
 .input-group-text {
@@ -235,12 +237,6 @@ a {
 .toggle:hover {
     color: #8371fd;
 }
-
-/* New styles for form labels */
-/* .form-label {
-    color: white;
-    /* Change form labels color to white */
-/* } */
 
 /* Blogs */
 .content {

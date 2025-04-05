@@ -71,9 +71,14 @@ app.use(methodOverride('_method'));
 app.use(flash());
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
+hbs.registerHelper('eq', function(a, b) {
+  return a === b;
+});
+
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
+
 hbs.registerHelper('formatDate', function(date) {
   if (!date) return '';
   return new Date(date).toLocaleDateString('vi-VN', {
@@ -83,6 +88,34 @@ hbs.registerHelper('formatDate', function(date) {
       month: '2-digit',
       year: 'numeric'
   });
+});
+
+hbs.registerHelper('absolutePath', function (path) {
+    if (!path) {
+        return ''; // Return an empty string if the path is undefined or null
+    }
+
+    // Check if the path is a URL (starts with http:// or https://)
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path; // Return the URL as is
+    }
+
+    // Check if the path is a pdf (ends with .pdf or .PDF)
+    if (path.endsWith('.pdf') || path.endsWith('.PDF')) {
+        return path; // Return the URL as is
+    }
+
+    // Check if the path is a doc (ends with .doc or .docx)
+    if (path.endsWith('.doc') || path.endsWith('.docx') || path.endsWith('.DOC') || path.endsWith('.DOCX')) {
+        return path; // Return the URL as is
+    }
+
+    // Otherwise, ensure the path starts with a '/'
+    if (!path.startsWith('/')) {
+        path = '/' + path;
+    }
+
+    return path;
 });
 
 // 🛡 Cấu hình session & Passport
@@ -132,6 +165,7 @@ app.use('/admin/dashboard', routes.admin_dashboard);
 app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
+app.use('/profile', routes.profile);
 
 // ❌ Xử lý lỗi 404
 app.use((req, res, next) => next(createError(404)));
