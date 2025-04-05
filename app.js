@@ -115,7 +115,8 @@ const routes = {
   admin_dashboard: require('./routes/admin_dashboard'),
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
-  schedule: require('./routes/schedule')
+  schedule: require('./routes/schedule'),
+  profile: require('./routes/profile')
 };
 
 // 🛣 Định nghĩa Routes

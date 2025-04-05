@@ -26,11 +26,21 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/blog">Blogs</a></li>
                     <li><a href="/document/mainDocument">Documents</a></li>
-                    <li><a href="/message">Messages</a></li>
-                    <li><a href="#">Profile</a></li>
+                    {{#if user}}
+                        <li>
+                            <a href="/profile">Profile</a>
+                            <a href="/auth/logout">Logout</a>
+                        </li>
+                    {{!-- {{#if role.user}}
+                    {{!-- {{#eq role.user "admin"}}
+                    {{!-- <li><a href="/userpage/admin">Account</a></li>
+                    <li><a href="/auth/logout">Logout</a></li>
+                    {{/eq}}
+                   {{!-- {{/if}}
+                   {{/if}}
                 </ul>
             </nav>
-            <a href="/auth/login"><i class="fa-solid fa-user fa-xl" style="color: #545454;"></i></a>
+            <a href="/profile"><i class="fa-solid fa-user fa-xl" style="color: #545454;"></i></a>
             <i class="menu-icon fa-solid fa-bars fa-xl" style="color: #545454;" onclick="menutoggle()"></i>
             <a href="/auth/logout"><i class="logout-icon fa-solid fa-right-from-bracket fa-xl" style="color: #545454;"></i></a>
         </div>

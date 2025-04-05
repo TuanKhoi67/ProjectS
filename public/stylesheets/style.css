@@ -146,6 +146,38 @@ a {
     margin-right: auto;
 }
 
+.profile-container {
+    max-width: 600px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+}
+.profile-header {
+    background-color: #2a2a91;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+}
+
+.edit-profile-container {
+    max-width: 600px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+}
+.edit-profile-header {
+    background-color: #2a2a91;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+}
+
 .card {
     background: #000080b3;
     /* Navy blue with transparency */
@@ -180,6 +212,10 @@ a {
     /* Semi-transparent background for input fields */
 }
 
+.form-label {
+    color: black; /* Đặt màu chữ của label thành đen */
+}
+
 .input-group-text {
     background: rgba(255, 255, 255, 0.8);
     /* Semi-transparent background for input group */
@@ -201,10 +237,10 @@ a {
 }
 
 /* New styles for form labels */
-.form-label {
+/* .form-label {
     color: white;
     /* Change form labels color to white */
-}
+/* } */
 
 /* Blogs */
 .content {
