@@ -37,6 +37,17 @@
         transition: background-color 0.3s ease;
     }
 
+    .download-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        display: inline-block;
+        padding: 10px 10px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
     .delete-btn {
         background-color: transparent;
         border: none;
@@ -44,11 +55,23 @@
         border-radius: 30px;
     }
 
+    .delete-btn:hover {
+        color: #f44336;
+    }
+
+    .edit-btn:hover {
+        color: #ff8000;
+    }
+
     .search-btn:hover {
         background-color: #0056b3;
     }
 
     .add-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .download-btn:hover {
         background-color: #0056b3;
     }
 
@@ -79,15 +102,15 @@
 
         <!-- Bảng danh sách tài liệu -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover document-table">
+            <table class="table table-bordered table-hover document-table" style="width: 100%;">
                 <thead class="table-dark">
                     <tr>
-                        <th>Tên tài liệu</th>
-                        <th>Người đăng</th>
-                        <th>Nội dung</th>
-                        <th>Hình ảnh</th>
-                        <th>File</th>
-                        <th>Thao tác</th>
+                        <th style="width: 10%;">Title</th>
+                        <th style="width: 10%;">Author</th>
+                        <th style="width: 30%;">Content</th>
+                        <th style="width: 25%;">Image</th>
+                        <th style="width: 20%;">File</th>
+                        <th style="width: 5%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,15 +120,15 @@
                         <td>{{this.author}}</td>
                         <td>{{this.content}}</td>
                         <td>
-                            <img src="{{this.imageUrl}}" alt="{{this.title}}" style="max-width: 70px; border-radius: 5px;">
+                            <img src="{{this.imageUrl}}" alt="{{this.title}}" style="max-width: 200px; border-radius: 5px;">
                         </td>
                         <td>
                             {{#if this.documentFile}}
-                                <a href="{{this.documentFile}}" class="btn btn-info btn-sm" download>📥 Tải tài liệu</a>
+                                <a href="{{this.documentFile}}" class="download-btn" download><i class="fa-solid fa-download"></i> Download Document</a>
                             {{/if}}
                         </td>
                         <td>
-                            <a href="/document/edit/{{this._id}}"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/document/edit/{{this._id}}" class="edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
                             <form action="/document/delete/{{this._id}}?_method=DELETE" method="POST"
                                 onsubmit="return confirm('Are you sure you want to delete this document?');">
                                 <button type="submit" class="delete-btn"><i class="fa-solid fa-trash-can"></i></button>
