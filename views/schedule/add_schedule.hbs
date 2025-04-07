@@ -19,8 +19,12 @@
         <option value="Evening">Tối</option>
     </select>
 
-    <label for="class">Nhập tên lớp:</label>
-    <input type="text" name="class" id="class" required>
+    <label for="class">Chọn lớp học:</label>
+    <select name="class" required>
+        {{#each classes}}
+            <option value="{{this._id}}">{{this.classname}}</option>
+        {{/each}}
+    </select>
 
     <button type="submit">Thêm Lịch</button>
 </form>

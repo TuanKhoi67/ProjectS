@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Blog</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script>
+        function toggleImageInput() {
+            var option = document.getElementById("imageOption").value;
+            document.getElementById("imageFileInput").style.display = (option === "file") ? "block" : "none";
+            document.getElementById("imageUrlInput").style.display = (option === "url") ? "block" : "none";
+        }
+
+        // Đảm bảo trạng thái ban đầu của dropdown phản ánh dữ liệu blog.image
+        window.onload = function() {
+            var imageUrlField = document.getElementById("imageUrl");
+            var imageOption = document.getElementById("imageOption");
+
+            if (imageUrlField.value.trim() !== "") {
+                imageOption.value = "url"; // Nếu có URL, chọn "Use Image URL"
+            } else {
+                imageOption.value = "file"; // Mặc định chọn "Upload from Device"
+            }
+
+            toggleImageInput(); // Cập nhật hiển thị ban đầu
+        };
+    </script>
 </head>
 <body>
     <div class="container mt-4">
         <h2 class="text-center mb-4">✏ Edit Blog</h2>
-        <form action="/blog/edit/{{blog._id}}" method="post">
+        <form action="/blog/edit/{{blog._id}}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" name="title" value="{{blog.title}}" required>
@@ -18,6 +40,39 @@
                 <label for="content" class="form-label">Content</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required>{{blog.content}}</textarea>
             </div>
+            
+            <!-- Dropdown chọn kiểu ảnh -->
+            <div class="mb-3">
+                <label for="imageOption" class="form-label">Choose Image Source</label>
+                <select class="form-control" id="imageOption" name="imageOption" onchange="toggleImageInput()">
+                    <option value="file">Upload from Device</option>
+                    <option value="url">Use Image URL</option>
+                </select>
+            </div>
+            
+            <!-- Chọn ảnh từ máy tính -->
+            <div class="mb-3" id="imageFileInput" style="display: none;">
+                <label for="imageFile" class="form-label">Upload image from device</label>
+                <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+            </div>
+            
+            <!-- Nhập link ảnh từ web -->
+            <div class="mb-3" id="imageUrlInput" style="display: none;">
+                <label for="imageUrl" class="form-label">Enter image URL</label>
+                <input type="url" class="form-control" id="imageUrl" name="imageUrl" placeholder="Enter image URL" value="{{blog.image}}">
+            </div>
+            
+            <!-- Hiển thị ảnh hiện tại nếu có -->
+            {{#if blog.image}}
+            <div class="mb-3">
+                <label class="form-label">Current Image</label>
+                <div>
+                    <a href="{{blog.image}}" target="_blank">View Image</a>
+                    <img src="{{blog.image}}" alt="Blog Image" class="img-fluid rounded d-block mt-2" style="max-width: 300px;">
+                </div>
+            </div>
+            {{/if}}
+
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>

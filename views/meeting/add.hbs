@@ -1,65 +1,61 @@
-<h1>Add Meeting</h1>
-
-<div class="container">
-    <form action="/meeting/add" method="post">
-        <label for="">Title</label>
-        <input type="text" id="" name="title" required>
-
-        <label for="">Form</label>
-        <input type="text" id="" name="form" required>
-
-        <label for="">Location</label>
-        <input type="text" id="" name="location" required>
-
-        <label for="">Status</label>
-        <input type="text" id="" name="status" required>
-
-        <label for="">Note</label>
-        <input type="text" id="" name="note" required>
-
-        <input type="submit" value="Add">
-    </form>
-</div>
-
-<style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    * {
-        box-sizing: border-box;
-    }
-
-    input[type=url],
-    input[type=text],
-    select,
-    textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        margin-top: 6px;
-        margin-bottom: 16px;
-        resize: vertical;
-    }
-
-    input[type=submit] {
-        background-color: #04AA6D;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    input[type=submit]:hover {
-        background-color: #45a049;
-    }
-
-    .container {
-        border-radius: 5px;
-        background-color: #f2f2f2;
-        padding: 20px;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Tạo Lịch Họp</h2>
+        <form action="/api/meeting/create" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hình thức</label>
+                <input type="text" class="form-control" name="form" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Địa điểm</label>
+                <input type="text" class="form-control" name="location" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Sinh viên</label>
+                <select class="form-control" name="students[]" required>
+                    {{#each students}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+                <select class="form-control" name="students[]" required>
+                    {{#each students}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Giáo viên</label>
+                <select class="form-control" name="tutors[]" required>
+                    {{#each tutors}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+                        <div class="mb-3">
+                <label class="form-label">Thời gian bắt đầu</label>
+                <input type="dateTime-local" name="startTime" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thời gian kết thúc</label>
+                <input type="dateTime-local" name="endTime" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ghi chú</label>
+                <textarea class="form-control" name="note"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Tạo Lịch Họp</button>
+        </form>
+    </div>
+</body>
+</html>
