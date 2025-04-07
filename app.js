@@ -11,8 +11,6 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs'); 
 const dotenv = require('dotenv');
-var mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 
 require('./config/database'); 
 require('./config/passport')(passport);
@@ -73,6 +71,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
+// Lưu Socket.io vào app để sử dụng trong routes
+app.set('socketio', io);
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
 hbs.registerHelper('eq', function (a, b) {
@@ -148,7 +148,7 @@ const routes = {
   index: require('./routes/index'),
   users: require('./routes/users'),
   auth: require('./routes/auth'),
-  message: require('./routes/message')(io), // Truyền io vào router message
+  message: require('./routes/message')(io), 
   meeting: require('./routes/meeting'),
   document: require('./routes/document'),
   blog: require('./routes/blog'),
@@ -169,7 +169,7 @@ app.use('/users', routes.users);
 app.use('/auth', routes.auth);
 app.use('/tutor', routes.tutor);
 app.use('/message', routes.message);
-app.use('/meeting', routes.meeting);
+app.use('/api/meeting', routes.meeting);
 app.use('/document', routes.document);
 app.use('/blog', routes.blog);
 app.use('/admin/dashboard', routes.admin_dashboard);
@@ -191,6 +191,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 // 🚀 **Chạy server**
 httpServer.listen(3001, () => {

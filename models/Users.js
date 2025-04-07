@@ -40,6 +40,6 @@ userSchema.statics.createDefaultAdmin = async function() {
 const User = mongoose.model('User', userSchema);
 
 // Call this after model initialization
-User.createDefaultAdmin();
+UserModel.createDefaultAdmin();
 
-module.exports = User;
+module.exports = UserModel;

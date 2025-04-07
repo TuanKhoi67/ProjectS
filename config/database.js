@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var uri = "mongodb+srv://ptn123:123@project.r7zcg.mongodb.net/?retryWrites=true&w=majority&appName=Project";
+var uri = "mongodb+srv://TestProject123456:123@cluster0.zbmtc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.set('strictQuery', true);
 mongoose.connect(uri, {

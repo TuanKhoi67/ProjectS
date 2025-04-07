@@ -4,16 +4,20 @@ var StudentSchema = mongoose.Schema({
    telephone: String,
    email: String,
    subject: String,
-   enrollmentYear: Number,
-   tutor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'tutors'  
-   },
+   enrollmentDate: {
+      type: Date,
+      default: Date.now
+  },
    user: {  // Thêm mối quan hệ 1-1 với bảng Users
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
    }
 });
+
+// Format lại ngày tháng năm trước khi trả về dữ liệu JSON
+StudentSchema.methods.formatEnrollmentDate = function () {
+   return this.enrollmentDate.toISOString().split('T')[0];
+};
 
 var StudentModel = mongoose.model('students', StudentSchema); 
 module.exports = StudentModel;

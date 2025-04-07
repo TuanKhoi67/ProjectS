@@ -77,7 +77,7 @@ router.get('/edit/:id', async (req, res) => {
       return res.status(404).send('Document not found');
     }
 
-      res.render('document/edit', { document });
+    res.render('document/edit', { document });
   } catch (error) {
     console.error('Error fetching document:', error);
     res.status(500).send('Internal Server Error');
