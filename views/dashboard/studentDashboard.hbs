@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .blog-image {
+  max-width: 150px;  /* Giảm kích thước ảnh */
+  height: auto;
+  object-fit: cover;  /* Cắt ảnh sao cho không bị méo */
+  border-radius: 8px;  /* Bo tròn viền ảnh */
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">Hello, {{studentName}}!</h2>
+    <h4 class="mb-4">📚 Your Blog</h4>
+
+    {{#if blogs.length}}
+  <div class="row row-cols-1 g-4">
+    {{#each blogs}}
+      <div class="col">
+        <div class="card shadow rounded-4">
+          <div class="card-body">
+            <h5 class="card-title">{{this.title}}</h5>
+            <p class="card-text">{{this.content}}</p>
+
+            <!-- Hiển thị ảnh nếu có và giảm kích thước -->
+            {{#if this.image}}
+              <div class="mb-3">
+                <img src="{{this.image}}" alt="Blog Image" class="img-fluid rounded mb-3" style="max-width: 100px; height: auto;">
+              </div>
+            {{/if}}
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <!-- Hiển thị lượt thích -->
+              <div>
+                👍 <strong>{{this.likes}}</strong> lượt thích
+                💬 <strong>{{this.comments.length}}</strong> bình luận
+              </div>
+              <div>
+                <a href="/blog/edit/{{this._id}}" class="btn btn-sm btn-outline-primary">Chỉnh sửa</a>
+                <form action="/blog/delete/{{this._id}}" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+                </form>
+                <!-- Thích bài viết -->
+                <form action="/blog/like/{{this._id}}" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-success">Thích</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+{{else}}
+  <p class="text-muted">Bạn chưa có bài viết nào.</p>
+{{/if}}
+
+<h4 class="mt-5">📊 Thống kê Blog</h4>
+<div class="row">
+  <div class="col-md-6">
+    <canvas id="myBlogsChart"></canvas>
+  </div>
+  <div class="col-md-6">
+    <canvas id="interactionChart"></canvas>
+  </div>
+</div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartData = {{{json chartData}}};
+
+  // Biểu đồ blog của tôi
+  const ctx1 = document.getElementById('myBlogsChart').getContext('2d');
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ['Bài viết', 'Lượt thích', 'Bình luận'],
+      datasets: [{
+        label: 'Blog của tôi',
+        data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
+        backgroundColor: ['#0d6efd', '#198754', '#ffc107']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Hoạt động của tôi'
+        }
+      }
+    }
+  });
+
+  // Biểu đồ tương tác của tôi
+  const ctx2 = document.getElementById('interactionChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'pie',
+    data: {
+      labels: ['Đã thả tim', 'Đã bình luận'],
+      datasets: [{
+        label: 'Tương tác của tôi',
+        data: [chartData.likedCount, chartData.commentedCount],
+        backgroundColor: ['#dc3545', '#20c997']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Tương tác với bài viết khác'
+        }
+      }
+    }
+  });
+  
+</script>
+
+</body>
+
+</html>
