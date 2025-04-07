@@ -31,7 +31,7 @@ const upload = multer({
 router.get('/', async (req, res) => {
   try {
     const documents = await Document.find().populate('author', 'fullname');
-    res.render('document/index', { title: 'Quản lý tài liệu', documents });
+    res.render('document/index', { documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách tài liệu');
@@ -77,7 +77,7 @@ router.get('/edit/:id', async (req, res) => {
       return res.status(404).send('Document not found');
     }
 
-    res.render('document/edit', { document });
+      res.render('document/edit', { document });
   } catch (error) {
     console.error('Error fetching document:', error);
     res.status(500).send('Internal Server Error');
@@ -134,7 +134,9 @@ const ensureAuthenticated = (req, res, next) => {
 // Hiển thị trang danh sách tài liệu với bình luận
 router.get('/mainDocument', async (req, res) => {
   try {
-      const documents = await Document.find().populate('comments.user', 'username'); // Lấy dữ liệu bình luận kèm tên user
+      const documents = await Document.find()
+          .populate('author', 'fullname') // Populate the author's fullname
+          .populate('comments.user', 'username'); // Populate the comment user's username
       res.render('document/mainDocument', { documents, user: req.user });
   } catch (error) {
       console.error('Lỗi lấy dữ liệu:', error);

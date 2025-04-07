@@ -8,21 +8,21 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Chỉnh sửa người dùng</h1>
+        <h1 class="text-center">Edit User</h1>
 
         <form action="/userpage/edit/{{user._id}}" method="POST" class="mt-4">
             <div class="mb-3">
-                <label for="fullname" class="form-label">Tên đầy đủ</label>
+                <label for="fullname">Full Name</label>
                 <input type="text" id="fullname" name="fullname" class="form-control" value="{{user.fullname}}" required>
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control" value="{{user.email}}" required>
             </div>
 
             <div class="mb-3">
-                <label for="role" class="form-label">Vai trò</label>
+                <label for="role">Role</label>
                 <select id="role" name="role" class="form-control">
                     <option value="student" {{#if (eq user.role "student")}}selected{{/if}}>Student</option>
                     <option value="tutor" {{#if (eq user.role "tutor")}}selected{{/if}}>Tutor</option>
@@ -30,8 +30,8 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <a href="/userpage/admin" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="/userpage/admin" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 </body>

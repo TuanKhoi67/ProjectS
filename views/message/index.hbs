@@ -1,176 +1,189 @@
-<!DOCTYPE html>
-<html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhắn Tin</title>
+    <title>Messages</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-        }
-
-        .navbar a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            display: flex;
-            flex: 1;
-        }
-
-        .user-list {
-            width: 30%;
-            border-right: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: auto;
-            background: #f4f4f4;
-        }
-
-        .user-item {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-            cursor: pointer;
-            background: white;
-        }
-
-        .user-item:hover {
-            background: #ddd;
-        }
-
-        .chat-box {
-            width: 70%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
-        .messages {
-            flex: 1;
-            padding: 20px;
-            background: #F0F2F5;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .message {
-            margin: 5px;
-            padding: 10px;
-            border-radius: 15px;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
-
-        .sent {
-            background: #DCF8C6;
-            align-self: flex-end;
-        }
-
-        .received {
-            background: #FFFFFF;
-            align-self: flex-start;
-            border: 1px solid #EEE;
-        }
-
-        .input-box {
-            display: flex;
-            padding: 10px;
-            background: #fff;
-        }
-
-        .input-box input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .input-box button {
-            padding: 10px;
-            border: none;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-            border-radius: 5px;
-        }
-    </style>
 </head>
+<style>
+    .chat-container {
+        max-width: 1300px;
+        margin: auto;
+        padding-left: 25px;
+        padding-right: 25px;
+        display: flex;
+        overflow: hidden;
+        margin-bottom: 10px;
+        height: 87vh;
+    }
+
+    .sidebar {
+        width: 300px;
+        background: #f4f4f4;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-profile {
+        height: 80px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        background: #000080ce;
+        color: white;
+    }
+
+    .user-profile img {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    .search-box {
+        padding: 10px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+    }
+
+    .chat-list {
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .chat-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .chat-item:hover {
+        background: #ddd;
+    }
+
+    .chat-item.selected {
+        background: #000080ce;
+        /* Change to your desired color */
+        color: white;
+        /* Optional: Change text color */
+    }
+
+    .chat-box {
+        width: 1000px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        height: 80px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        background: #000080ce;
+        color: white;
+        font-weight: bold;
+    }
+
+    .messages {
+        flex: 1;
+        padding: 20px;
+        background: #F0F2F5;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        margin: 5px;
+        padding: 10px;
+        border-radius: 15px;
+        max-width: 70%;
+        word-wrap: break-word;
+    }
+
+    .sent {
+        background: #000080ce;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .sent .time {
+        align-self: flex-end;
+    }
+
+    .received {
+        background: #dedddd;
+        align-self: flex-start;
+        border: 1px solid #EEE;
+    }
+
+    .received .time {
+        align-self: flex-start;
+    }
+
+    .input-box {
+        display: flex;
+        padding: 10px;
+        background: #F0F2F5;
+        align-items: center;
+    }
+
+    .input-box input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+    }
+
+    .input-box button {
+        margin-left: 10px;
+        border: none;
+        background: #000080ce;
+        color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+    }
+</style>
 
 <body>
-
-    <div class="navbar">
-        <div>
-            <a href="/">🏠 Trang Chủ</a>
-            <a href="/profile">👤 Hồ Sơ</a>
-            <a href="/message">💬 Nhắn Tin</a>
-        </div>
-        <div>
-            <a href="/auth/logout">🚪 Đăng Xuất</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="user-list">
-            <h2>Người Dùng: {{user.fullname}}</h2>
-            {{#each users}}
-            <div class="user-item" onclick="selectUser('{{this._id}}', '{{this.fullname}}')">
-                {{this.fullname}}
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="user-profile">
+                <img src="https://placehold.co/40x40" alt="User Avatar">
+                <span>{{user.fullname}}</span>
             </div>
-            {{/each}}
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search for conversation...">
+            </div>
+            <div class="chat-list" id="chat-list">
+                {{#each users}}
+                <div class="chat-item" data-fullname="{{this.fullname}}"
+                    onclick="selectUser('{{this._id}}', '{{this.fullname}}')">
+                    <img src="https://placehold.co/40x40" class="rounded-circle" width="40" height="40">
+                    <span class="ms-2">{{this.fullname}}</span>
+                </div>
+                {{/each}}
+            </div>
         </div>
-
         <div class="chat-box">
-            <div class="chat-header" id="chat-header">Chọn một người để bắt đầu nhắn tin</div>
+            <div class="chat-header" id="chat-header">Choose a person to chat with</div>
             <div class="messages" id="messages"></div>
             <div class="input-box">
-                <input type="text" id="message-input" placeholder="Nhập tin nhắn..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">Gửi</button>
+                <input type="text" id="message-input" placeholder="Message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('message-input').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
         var socket = io();
         var currentUser = "{{user._id}}";
         var currentReceiver = null;
@@ -179,9 +192,20 @@
 
         function selectUser(userId, fullname) {
             currentReceiver = userId;
-            document.getElementById("chat-header").innerText = "Đang nhắn tin với " + fullname;
+            document.getElementById("chat-header").innerText = "Chat with " + fullname;
             document.getElementById("messages").innerHTML = "";
 
+            // Remove 'selected' class from all chat items
+            const chatItems = document.querySelectorAll('.chat-item');
+            chatItems.forEach(item => item.classList.remove('selected'));
+
+            // Add 'selected' class to the clicked chat item
+            const selectedItem = document.querySelector(`.chat-item[data-fullname="${fullname}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('selected');
+            }
+
+            // Fetch messages for the selected user
             fetch(`/message/chat/${userId}`)
                 .then(response => response.json())
                 .then(messages => {
@@ -232,11 +256,17 @@
 
         function addMessageToChat(sender, content, timestamp) {
             const className = sender === currentUser ? "sent" : "received";
-            const time = new Date(timestamp).toLocaleTimeString();
+            const time = new Date(timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
             const msgElement = `
                 <div class="message ${className}">
-                    <div class="content">${content}</div>
-                    <div class="time" style="font-size: 0.8em; color: gray; text-align: right;">${time}</div>
+                    <div class="message-content">${content}</div>
+                    <div class="time" style="font-size: 12px;">${time}</div>
                 </div>
             `;
             document.getElementById("messages").innerHTML += msgElement;
@@ -252,8 +282,26 @@
             const messagesDiv = document.getElementById('messages');
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
+
+        //Search function
+        document.getElementById('search-input').addEventListener('input', function () {
+            const query = removeDiacritics(this.value.toLowerCase());
+            const chatItems = document.querySelectorAll('.chat-item');
+
+            chatItems.forEach(item => {
+                const fullname = removeDiacritics(item.getAttribute('data-fullname').toLowerCase());
+                if (fullname.includes(query)) {
+                    item.style.display = 'flex'; // Show matching items
+                } else {
+                    item.style.display = 'none'; // Hide non-matching items
+                }
+            });
+        });
+
+        // Function to remove diacritics (accents) from a string
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
     </script>
 
 </body>
-
-</html>

@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
-const http = require('http');
+const http = require('http'); 
 const socketIo = require('socket.io');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,12 +9,12 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
-const hbs = require('hbs');
+const hbs = require('hbs'); 
+const dotenv = require('dotenv');
 var mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
 
-require('./config/database');
+require('./config/database'); 
 require('./config/passport')(passport);
 require('./config/upload');
 require('./middleware/auth');
@@ -31,36 +31,36 @@ const onlineUsers = {};
 
 // 📡 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
-  console.log("⚡ Client kết nối:", socket.id);
+    console.log("⚡ Client kết nối:", socket.id);
 
-  // ✅ Đăng ký user vào phòng theo userId
-  socket.on('registerUser', (userId) => {
-    socket.join(userId);
-    onlineUsers[userId] = socket.id;
-    console.log(`✅ User ${userId} joined room`);
-  });
+    // ✅ Đăng ký user vào phòng theo userId
+    socket.on('registerUser', (userId) => {
+        socket.join(userId);
+        onlineUsers[userId] = socket.id;
+        console.log(`✅ User ${userId} joined room`);
+    });
 
-  // ✅ Xử lý gửi tin nhắn
-  socket.on('sendMessage', (data) => {
-    console.log("📩 Nhận tin nhắn từ client:", data);
+    // ✅ Xử lý gửi tin nhắn
+    socket.on('sendMessage', (data) => {
+        console.log("📩 Nhận tin nhắn từ client:", data);
 
-    // 📡 Gửi tin nhắn đến người nhận
-    io.to(data.receiver).emit('receiveMessage', data);
+        // 📡 Gửi tin nhắn đến người nhận
+        io.to(data.receiver).emit('receiveMessage', data);
 
-    // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
-    io.to(data.sender).emit('messageSent', data);
-  });
+        // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
+        io.to(data.sender).emit('messageSent', data);
+    });
 
-  // ❌ Xóa user khi ngắt kết nối
-  socket.on('disconnect', () => {
-    for (const userId in onlineUsers) {
-      if (onlineUsers[userId] === socket.id) {
-        delete onlineUsers[userId];
-        console.log(`❌ User ${userId} disconnected`);
-        break;
-      }
-    }
-  });
+    // ❌ Xóa user khi ngắt kết nối
+    socket.on('disconnect', () => {
+        for (const userId in onlineUsers) {
+            if (onlineUsers[userId] === socket.id) {
+                delete onlineUsers[userId];
+                console.log(`❌ User ${userId} disconnected`);
+                break;
+            }
+        }
+    });
 });
 
 // 🔧 Middleware cơ bản
@@ -95,31 +95,31 @@ hbs.registerHelper('formatDate', function (date) {
 });
 
 hbs.registerHelper('absolutePath', function (path) {
-  if (!path) {
-    return ''; // Return an empty string if the path is undefined or null
-  }
+    if (!path) {
+        return ''; // Return an empty string if the path is undefined or null
+    }
 
-  // Check if the path is a URL (starts with http:// or https://)
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path; // Return the URL as is
-  }
+    // Check if the path is a URL (starts with http:// or https://)
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path; // Return the URL as is
+    }
 
-  // Check if the path is a pdf (ends with .pdf or .PDF)
-  if (path.endsWith('.pdf') || path.endsWith('.PDF')) {
-    return path; // Return the URL as is
-  }
+    // Check if the path is a pdf (ends with .pdf or .PDF)
+    if (path.endsWith('.pdf') || path.endsWith('.PDF')) {
+        return path; // Return the URL as is
+    }
 
-  // Check if the path is a doc (ends with .doc or .docx)
-  if (path.endsWith('.doc') || path.endsWith('.docx') || path.endsWith('.DOC') || path.endsWith('.DOCX')) {
-    return path; // Return the URL as is
-  }
+    // Check if the path is a doc (ends with .doc or .docx)
+    if (path.endsWith('.doc') || path.endsWith('.docx') || path.endsWith('.DOC') || path.endsWith('.DOCX')) {
+        return path; // Return the URL as is
+    }
 
-  // Otherwise, ensure the path starts with a '/'
-  if (!path.startsWith('/')) {
-    path = '/' + path;
-  }
+    // Otherwise, ensure the path starts with a '/'
+    if (!path.startsWith('/')) {
+        path = '/' + path;
+    }
 
-  return path;
+    return path;
 });
 
 hbs.registerHelper('json', function (context) {
@@ -148,7 +148,7 @@ const routes = {
   index: require('./routes/index'),
   users: require('./routes/users'),
   auth: require('./routes/auth'),
-  message: require('./routes/message')(io),
+  message: require('./routes/message')(io), // Truyền io vào router message
   meeting: require('./routes/meeting'),
   document: require('./routes/document'),
   blog: require('./routes/blog'),
@@ -159,9 +159,9 @@ const routes = {
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
   tutor: require('./routes/tutor'),
-  attendance: require('./routes/attendance')
+  attendance: require('./routes/attendance'),
+  profile: require('./routes/profile')
 };
-
 
 // 🛣 Định nghĩa Routes
 app.use('/', routes.index);
@@ -179,7 +179,7 @@ app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
 app.use('/attendance', routes.attendance);
-
+app.use('/profile', routes.profile);
 
 // ❌ Xử lý lỗi 404
 app.use((req, res, next) => next(createError(404)));
@@ -188,10 +188,9 @@ app.use((req, res, next) => next(createError(404)));
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 400);
+  res.status(err.status || 500);
   res.render('error');
 });
-
 
 // 🚀 **Chạy server**
 httpServer.listen(3001, () => {

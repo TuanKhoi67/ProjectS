@@ -28,7 +28,7 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
 
         let imagePath = '';
         if (req.file) {
-            imagePath = 'images/' + req.file.filename; // Chỉ giữ "images/"
+            imagePath = '/images/' + req.file.filename; // Chỉ giữ "images/"
         } else if (imageUrl) {
             imagePath = imageUrl;
         }
@@ -166,11 +166,10 @@ router.get('/reel', async (req, res) => {
                 select: 'fullname profilePicture'
             });
 
-        // Đảm bảo đường dẫn ảnh chỉ chứa "images/"
+        // Add `isLiked` property for each blog
+        const userId = req.user ? req.user._id.toString() : null;
         blogs.forEach(blog => {
-            if (blog.image && !blog.image.startsWith('http')) {
-                blog.image = '/' + blog.image.replace(/^\/?uploads\//, 'images/'); 
-            }
+            blog.isLiked = userId && blog.likedBy.some(id => id.toString() === userId);
         });
 
         res.render('blog/reel', { blogs, user: req.user });
@@ -204,7 +203,7 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
         res.json({ 
             success: true,
             likes: blog.likes,
-            iisLiked: index === -1 
+            isLiked: index === -1 // Correctly calculate the new liked state
         });
     } catch (error) {
         console.error('Lỗi khi thả tim:', error);
