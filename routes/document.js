@@ -62,9 +62,16 @@ router.post('/add', upload.single('documentFile'), async (req, res) => {
 
 // Xử lý tìm kiếm tài liệu
 router.get('/search', async (req, res) => {
-    const query = req.query.query;
-    const documents = await Document.find({ title: new RegExp(query, 'i') });
-    res.render('document/index', { documents });
+    const query = req.query.query || '';
+    try {
+        const documents = await Document.find({
+            title: { $regex: query, $options: 'i' } // Case-insensitive search
+        }).populate('author'); // Adjust based on your schema
+        res.json({ documents }); // Return JSON response
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Edit document route
@@ -169,9 +176,5 @@ router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
       res.status(500).send('Lỗi máy chủ ');
   }
 });
-
-
-
-
 
 module.exports = router;
