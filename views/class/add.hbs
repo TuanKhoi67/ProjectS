@@ -91,5 +91,18 @@
     </form>
 {{/if}}
 
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get("error");
+
+        if (error === "exists") {
+            const confirmResult = confirm("Sinh viên đã có trong lớp này. Bạn có muốn tiếp tục không?");
+            if (!confirmResult) {
+                window.location.href = "/class"; // hoặc quay về trang trước
+            }
+        }
+    });
+</script>
 
 

@@ -19,6 +19,18 @@ hbs.registerHelper('eq', function(a, b) {
     return a === b;
 });
 
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
+hbs.registerHelper('formatDate', function (date) {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+});
+
 // Import các route
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -51,6 +63,8 @@ app.set('socketio', io);
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
+
+
 
 
 // Cấu hình session & Passport

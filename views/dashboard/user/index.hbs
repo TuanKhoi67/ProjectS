@@ -1,0 +1,76 @@
+<h2>Danh sách {{#if (eq type "tutor")}}Tutor{{else}}Student{{/if}}</h2>
+
+<div>
+  <a href="/admin/dashboard/user?type=student">
+    <button {{#unless (eq type "tutor")}}disabled{{/unless}}>Xem Student</button>
+  </a>
+  <a href="/admin/dashboard/user?type=tutor">
+    <button {{#if (eq type "tutor")}}disabled{{/if}}>Xem Tutor</button>
+  </a>
+</div>
+
+{{#if students}}
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Điện thoại</th>
+        <th>Email</th>
+        <th>Môn học</th>
+        <th>Ngày nhập học</th>
+        <th>User liên kết</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each students}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td>{{this.telephone}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.subject}}</td>
+          <td>{{this.enrollmentDateFormatted}}</td>
+          <td>
+            {{#if this.user}}
+              {{this.user.fullname}} ({{this.user.role}})
+            {{else}}
+              <em>Không tìm thấy user</em>
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+
+{{#if tutors}}
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Điện thoại</th>
+        <th>Email</th>
+        <th>Phòng ban</th>
+        <th>Ngày nhập học</th>
+        <th>User liên kết</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each tutors}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td>{{this.telephone}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.department}}</td>
+          <td>{{this.enrollmentDateFormatted}}</td>
+          <td>
+            {{#if this.user}}
+              {{this.user.fullname}} ({{this.user.role}})
+            {{else}}
+              <em>Không tìm thấy user</em>
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}

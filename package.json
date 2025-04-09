@@ -8,10 +8,12 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "chart.js": "^4.4.8",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",
     "googleapis": "^146.0.0",
     "hbs": "~4.0.4",

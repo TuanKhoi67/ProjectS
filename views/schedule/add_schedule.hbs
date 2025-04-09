@@ -28,3 +28,17 @@
 
     <button type="submit">Thêm Lịch</button>
 </form>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get("error");
+
+        if (error === "exists") {
+            const confirmResult = confirm("Lịch học cho lớp này vào ngày và ca học đã tồn tại. Bạn có muốn tiếp tục không?");
+            if (!confirmResult) {
+                window.location.href = "/schedule/schedule-view"; // hoặc quay lại trang trước
+            }
+        }
+    });
+</script>

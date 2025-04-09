@@ -13,8 +13,6 @@ router.get('/index', function(req, res, next) {
   res.send('This is the users index page');
 });
 
-
-
 // Create new user with role
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;

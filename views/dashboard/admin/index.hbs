@@ -1,0 +1,342 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- Bar Chart: Lớp -->
+<h2>Biểu đồ số lượng lớp theo tháng</h2>
+<canvas id="classChart" width="800" height="400"></canvas>
+
+<!-- Bar Chart: Sinh viên -->
+<h2>Biểu đồ số lượng sinh viên theo tháng</h2>
+<canvas id="studentChart" width="500" height="200"></canvas>
+
+<!-- Pie Chart: Môn học -->
+<h2>Biểu đồ phân bố sinh viên theo môn học</h2>
+<canvas id="subjectChart" width="400" height="400"></canvas>
+
+<script>
+    const chartData = {{{chartData}}};
+    const studentChartData = {{{studentChartData}}};
+    const subjectLabels = {{{subjectLabels}}};
+    const subjectCounts = {{{subjectCounts}}};
+
+    const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12']
+                    .slice(0, chartData.length);
+
+    // Chart 1: Class Chart
+    const ctx1 = document.getElementById('classChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Số lớp được tạo',
+                data: chartData,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Chart 2: Student Chart
+    const ctx2 = document.getElementById('studentChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Số sinh viên đăng ký',
+                data: studentChartData,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Chart 3: Subject Pie Chart
+    const ctx3 = document.getElementById('subjectChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: subjectLabels,
+            datasets: [{
+                data: subjectCounts,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#66BB6A', '#BA68C8', '#FFA726'
+                ],
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+
+<h2>Biểu đồ cuộc họp</h2>
+<div>
+    <button onclick="toggleMeetingChart('7days')">7 ngày gần nhất</button>
+    <button onclick="toggleMeetingChart('monthly')">Theo tháng</button>
+</div>
+
+<canvas id="meetingChart" width="800" height="400"></canvas>
+
+<script>
+    const meeting7Labels = {{{meeting7Labels}}};
+    const meeting7Counts = {{{meeting7Counts}}};
+
+    const meetingMonthLabels = {{{meetingMonthLabels}}};
+    const meetingMonthCounts = {{{meetingMonthCounts}}};
+
+    let meetingChart;
+
+    function renderMeetingChart(labels, data) {
+        const ctx = document.getElementById('meetingChart').getContext('2d');
+        if (meetingChart) {
+            meetingChart.destroy();
+        }
+
+        meetingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số cuộc họp',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+    function toggleMeetingChart(type) {
+        if (type === '7days') {
+            renderMeetingChart(meeting7Labels, meeting7Counts);
+        } else {
+            renderMeetingChart(meetingMonthLabels, meetingMonthCounts);
+        }
+    }
+
+    // Mặc định hiển thị biểu đồ 7 ngày
+    toggleMeetingChart('7days');
+</script>
+
+<h2>Thống kê Tài liệu</h2>
+<div>
+    <button onclick="toggleDocChart('7days')">7 ngày gần nhất</button>
+    <button onclick="toggleDocChart('compareMonth')">Tháng trước vs Tháng này</button>
+    <button onclick="toggleDocChart('monthly')">Từng tháng từ đầu năm</button>
+</div>
+
+<canvas id="docChart" width="800" height="400"></canvas>
+<script>
+    const doc7Labels = {{{doc7Labels}}};
+    const doc7Counts = {{{doc7Counts}}};
+
+    const docMonthCompareLabels = {{{docMonthCompareLabels}}};
+    const docMonthCompareCounts = {{{docMonthCompareCounts}}};
+
+    const docMonthlyLabels = {{{docMonthlyLabels}}};
+    const docMonthlyCounts = {{{docMonthlyCounts}}};
+
+    let docChart;
+
+    function renderBarChart(labels, data, label = 'Số tài liệu') {
+        const ctx = document.getElementById('docChart').getContext('2d');
+        if (docChart) docChart.destroy();
+
+        docChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+    }
+
+    function renderPieChart(labels, data, label = 'Tỷ lệ tài liệu') {
+        const ctx = document.getElementById('docChart').getContext('2d');
+        if (docChart) docChart.destroy();
+
+        docChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(255, 206, 86, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    }
+
+    function toggleDocChart(type) {
+        if (type === '7days') {
+            renderBarChart(doc7Labels, doc7Counts, 'Số tài liệu (7 ngày gần nhất)');
+        } else if (type === 'compareMonth') {
+            renderPieChart(docMonthCompareLabels, docMonthCompareCounts, 'Tài liệu theo tháng');
+        } else if (type === 'monthly') {
+            renderBarChart(docMonthlyLabels, docMonthlyCounts, 'Tài liệu từ đầu năm');
+        }
+    }
+
+    // Mặc định hiển thị biểu đồ 7 ngày
+    toggleDocChart('7days');
+</script>
+
+<h1>Thống kê Blogs</h1>
+  
+  <button class="btn-toggle" onclick="toggleChart('chart7Days')">7 Ngày Gần Nhất</button>
+  <button class="btn-toggle" onclick="toggleChart('chartWeek')">So Sánh Tuần</button>
+  <button class="btn-toggle" onclick="toggleChart('chartMonth')">So Sánh Tháng</button>
+  <button class="btn-toggle" onclick="toggleChart('chartAllMonths')">Thống kê các tháng</button>
+
+  <div id="chart7Days" class="chart-container">
+    <canvas id="blog7Chart"></canvas>
+  </div>
+
+  <div id="chartWeek" class="chart-container">
+    <canvas id="blogWeekPie"></canvas>
+  </div>
+
+  <div id="chartMonth" class="chart-container">
+    <canvas id="blogMonthPie"></canvas>
+  </div>
+
+  <div id="chartAllMonths" class="chart-container">
+    <canvas id="blogMonthChart"></canvas>
+  </div>
+
+  <script>
+    const chart7Labels = {{{blog7Labels}}};
+    const chart7Counts = {{{blog7Counts}}};
+    const chartWeekLabels = {{{blogWeekCompareLabels}}};
+    const chartWeekCounts = {{{blogWeekCompareCounts}}};
+    const chartMonthLabels = {{{blogMonthCompareLabels}}};
+    const chartMonthCounts = {{{blogMonthCompareCounts}}};
+    const chartMonthlyLabels = {{{blogMonthlyLabels}}};
+    const chartMonthlyCounts = {{{blogMonthlyCounts}}};
+
+    new Chart(document.getElementById('blog7Chart'), {
+      type: 'bar',
+      data: {
+        labels: chart7Labels,
+        datasets: [{
+          label: 'Số blog được tạo',
+          data: chart7Counts,
+          backgroundColor: 'rgba(255, 99, 132, 0.6)'
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('blogWeekPie'), {
+      type: 'pie',
+      data: {
+        labels: chartWeekLabels,
+        datasets: [{
+          label: 'So sánh tuần',
+          data: chartWeekCounts,
+          backgroundColor: ['#1abc9c', '#9b59b6']
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('blogMonthPie'), {
+      type: 'pie',
+      data: {
+        labels: chartMonthLabels,
+        datasets: [{
+          label: 'So sánh tháng',
+          data: chartMonthCounts,
+          backgroundColor: ['#f1c40f', '#e67e22']
+        }]
+      }
+    });
+
+    new Chart(document.getElementById('blogMonthChart'), {
+      type: 'bar',
+      data: {
+        labels: chartMonthlyLabels,
+        datasets: [{
+          label: 'Tổng blog theo tháng',
+          data: chartMonthlyCounts,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        }]
+      }
+    });
+
+    function toggleChart(chartId) {
+      document.querySelectorAll('.chart-container').forEach(el => el.style.display = 'none');
+      document.getElementById(chartId).style.display = 'block';
+    }
+
+    // Mặc định hiển thị biểu đồ 7 ngày
+    toggleChart('chart7Days');
+</script>
+
+
+<style>
+.chart-container { display: none; margin: 30px 0; }
+.btn-toggle { margin: 10px; padding: 10px 20px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 5px; }
+.btn-toggle:hover { background: #2980b9; }
+</style>

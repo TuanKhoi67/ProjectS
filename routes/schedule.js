@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { sendEmail } = require("../services/mailer");
+//const { sendEmail } = require("../services/mailer");
 const moment = require('moment'); 
 var ScheduleModel = require('../models/Schedule');
 var ClassModel = require('../models/Class');
@@ -43,7 +43,6 @@ router.get('/add', async (req, res) => {
     }
 });
 
-
 router.post('/add', async (req, res) => {
     try {
         const { day, time, class: classId } = req.body;
@@ -51,6 +50,17 @@ router.post('/add', async (req, res) => {
 
         if (!classObj) {
             return res.status(400).send("Lớp học không tồn tại.");
+        }
+
+        // Kiểm tra lịch học đã tồn tại chưa (cùng ngày, cùng ca, cùng lớp)
+        const existingSchedule = await ScheduleModel.findOne({
+            day,
+            time,
+            class: classObj._id
+        });
+
+        if (existingSchedule) {
+            return res.redirect(`/schedule/add?error=exists&classId=${classId}`);
         }
 
         // Lấy danh sách sinh viên và giáo viên từ lớp học

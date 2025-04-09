@@ -1,0 +1,51 @@
+<h1>Tutor Informations Management</h1>
+
+<h2>Thêm giảng viên mới</h2>
+<form action="/admin/dashboard/add-tutor" method="POST">
+    <label for="">Tutor Name</label>
+    <input type="text" id="" name="name" required>
+
+    <label for="">Telephone</label>
+    <input type="text" id="" name="telephone" required>
+
+    <label for="">Email</label>
+    <input type="tel" id="" name="email" required>
+
+    <label for="">Department</label>
+    <input type="text" id="" name="department" required>
+
+    <button type="submit">Thêm</button>
+</form>
+
+<h2>Danh sách giảng viên</h2>
+<h3>Tổng số giảng viên: <span id="total">{{totalTutors}}</span></h3>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Tutor name</th>
+                <th>Email</th>
+                <th>Telephone</th>              
+                <th>Department</th>
+                <th>Enrollment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each tutors }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ email }}</td>
+                <td>{{ telephone }}</td>
+                <td>{{ department }}</td>
+                <td>{{ formatDate enrollmentDate }}</td>
+                <td>
+                    <a class="button-3" href="/admin/dashboard/tutor-edit/{{ _id }}">Edit</a>
+                    <a class="button-3" href="/admin/dashboard/tutor-delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this product ?');">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
