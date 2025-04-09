@@ -1,12 +1,14 @@
 <h1>Show All Classes</h1> 
-
+<div class="container">
+<a href="create" class="btn">Create to Class</a>
 <div class="table-container">
-    <table>
+    <table class="table table-bordered"> 
         <thead>
             <tr>
                 <th>Class Name</th>
                 <th>Student Name</th>
                 <th>Teacher Name</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -29,10 +31,12 @@
                     <a class="button-3" href="/brand/delete/{{ _id }}"
                         onclick="return confirm('Are you sure to delete this brand ?');">Delete</a>
                 </td>-->
+                <td></td>
             </tr>
             {{/each}}
         </tbody>
     </table>
+</div>
 </div>
 
 <style>
@@ -77,4 +81,16 @@
     tr.highlight td {
         color: #008060;
     }
+    table.table-bordered th {
+    background-color: #082995 !important;
+    color: white !important;
+    text-align: center;
+    }
+    table.table-bordered td {
+        text-align: center;
+    }
+    .table-container{
+        margin-left: 25%;
+    }
+
 </style>

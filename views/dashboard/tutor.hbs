@@ -1,3 +1,78 @@
 
 <h1>Tutor Dashboard</h1>
 <p>Welcome, {{user.fullname}}</p>
+<div class="tutor-dashboard">
+    <header class="dashboard-header">
+        <h1>Tutor Dashboard</h1>
+        <p>Welcome, {{user.fullname}}</p>
+        <div class="tutor-stats">
+            <div class="stat-card">
+                <h3>Total Tutees</h3>
+                <span>{{tuteeCount}}</span>
+            </div>
+            <div class="stat-card">
+                <h3>Active Sessions</h3>
+                <span>{{activeSessions}}</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="tutee-management">
+        <div class="filter-controls">
+            <input type="text" id="tuteeSearch" placeholder="Search tutees...">
+            <select id="sortBy">
+                <option value="name">Sort by Name</option>
+                <option value="lastActive">Sort by Last Active</option>
+                <option value="progress">Sort by Progress</option>
+            </select>
+        </div>
+
+        <div class="tutee-list">
+            {{#each tutees}}
+            <div class="tutee-card">
+                <div class="tutee-info">
+                    <img src="{{this.avatar}}" alt="{{this.name}} avatar">
+                    <h3>{{this.name}}</h3>
+                    <p>{{this.studentId}}</p>
+                </div>
+                <div class="recent-activity">
+                    <h4>Recent Activity</h4>
+                    <ul>
+                        {{#each this.recentActivities}}
+                        <li>{{this.description}} - {{this.date}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="quick-actions">
+                    <a href="/student/{{this._id}}" class="btn">View Profile</a>
+                    <a href="/messages/{{this._id}}" class="btn">Send Message</a>
+                    <a href="/documents/{{this._id}}" class="btn">View Documents</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+
+    <section class="upcoming-sessions">
+        <h2>Upcoming Sessions</h2>
+        <div class="session-list">
+            {{#each upcomingSessions}}
+            <div class="session-card">
+                <h4>{{this.title}}</h4>
+                <p>{{this.date}} - {{this.time}}</p>
+                <p>Tutee: {{this.tuteeName}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+</div>
+
+<script>
+document.getElementById('tuteeSearch').addEventListener('input', function(e) {
+    // Implement live search functionality
+});
+
+document.getElementById('sortBy').addEventListener('change', function(e) {
+    // Implement sorting functionality
+});
+</script>

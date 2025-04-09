@@ -1,3 +1,58 @@
 
 <h1>Admin Dashboard</h1>
 <p>Welcome, {{user.fullname}}</p>
+<div class="admin-dashboard">
+    <header class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <div class="user-info">
+            <p>Welcome, {{user.fullname}}</p>
+            <span class="role-badge">Administrator</span>
+        </div>
+    </header>
+
+        <!-- Appointment Management -->
+        <section class="dashboard-section">
+            <h2>Appointments</h2>
+            <div class="action-cards">
+                <div class="card">
+                    <h3>Schedule Overview</h3>
+                    <a href="/appointment" class="btn">View All Appointments</a>
+                </div>
+                <div class="card">
+                    <h3>Meeting Types</h3>
+                    <a href="/admin/meeting-settings" class="btn">Configure Settings</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Reports -->
+        <section class="dashboard-section">
+            <h2>Reports & Analytics</h2>
+            <div class="action-cards">
+                <div class="card">
+                    <h3>Usage Statistics</h3>
+                    <a href="/dashboard/usage" class="btn">View Reports</a>
+                </div>
+                <div class="card">
+                    <h3>User Activity</h3>
+                    <a href="/dashboard/activity" class="btn">View Activity</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Configuration -->
+        <section class="dashboard-section">
+            <h2>System Settings</h2>
+            <div class="action-cards">
+                <div class="card">
+                    <h3>General Settings</h3>
+                    <a href="/admin/settings" class="btn">Configure</a>
+                </div>
+                <div class="card">
+                    <h3>Backup & Maintenance</h3>
+                    <a href="/admin/maintenance" class="btn">Manage</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

@@ -25,12 +25,43 @@
 
 <body>
     <div class="container">
+        <a href="/" class="navbar-brand"><i class="fas fa-home"></i> Student Portal</a>
+        <div class="d-flex align-items-center">
+            <a href="/document/mainDocument" class="btn btn-light me-2">Main Document</a>
+            <a href="/blog" class="btn btn-light me-2">Blog</a>
+            <a href="/dashboard/student_dashboard" class="btn btn-light me-2">Dashboard</a>
+            
+            <!-- Biểu tượng tin nhắn -->
+            <a href="/message" class="btn btn-light me-2">
+                <i class="fas fa-envelope"></i> Messages
+            </a>
+
+            <a href="/auth/logout" class="btn btn-danger ms-2 logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
         <h1 class="text-center">Student User Page</h1>
         <p class="text-center">Welcome, <strong>{{user.fullname}}</strong></p>
 
         <!-- Form đăng bài -->
-        <h2 class="text-center mt-4">Write a New Blog</h2>
-        <form action="/blog" method="post" class="shadow p-4 bg-white rounded">
+<h2 class="text-center mt-4">Write a New Blog</h2>
+<form action="/blog" method="post" enctype="multipart/form-data" class="shadow p-4 bg-white rounded">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="content" class="form-label">Content</label>
+        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+    </div>
+    
+    <!-- Phần upload ảnh -->
+    <div class="mb-3">
+            <label class="form-label">Ảnh bài viết</label>
+            
             <div class="mb-3">
                 <label for="title">Title</label>
                 <input type="text" class="form-control" id="title" name="title" required>
@@ -57,9 +88,76 @@
                         <a href="#" class="title">{{this.title}}</a>
                         <p class="card-text">{{this.content}}</p>
                     </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="imageSource" 
+                        id="uploadRadio" value="upload" checked>
+                    <label class="form-check-label" for="uploadRadio">
+                        Tải ảnh lên
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="imageSource" 
+                        id="urlRadio" value="url">
+                    <label class="form-check-label" for="urlRadio">
+                        Dùng link ảnh
+                    </label>
                 </div>
             </div>
-            {{/each}}
+
+            <div id="uploadSection">
+                <input type="file" class="form-control" id="imageFile" 
+                    name="imageFile" accept="image/*">
+                <small class="text-muted">Chấp nhận ảnh JPEG, PNG (tối đa 5MB)</small>
+            </div>
+
+            <div id="urlSection" style="display: none;">
+                <input type="url" class="form-control" id="imageUrl" 
+                    name="imageUrl" placeholder="https://example.com/image.jpg">
+            </div>
+
+            <img id="imagePreview" class="image-preview mt-2" style="max-width: 300px; display: none;">
         </div>
     </div>
 </body>
+
+        <input type="hidden" name="role" value="student">
+        <button type="submit" class="btn btn-primary w-100">Đăng bài</button>
+    </form>
+
+    <footer>
+        <p>&copy; 2025 Student Portal. All rights reserved.</p>
+    </footer>
+</body>
+    <script>
+        // Xử lý chuyển đổi giữa upload và URL
+        document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const isUpload = document.getElementById('uploadRadio').checked;
+                document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
+                document.getElementById('urlSection').style.display = isUpload ? 'none' : 'block';
+            });
+        });
+
+        // Xem trước ảnh khi chọn file
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Xem trước ảnh khi nhập URL
+        document.getElementById('imageUrl').addEventListener('input', function(e) {
+            const url = e.target.value;
+            if (url) {
+                document.getElementById('imagePreview').src = url;
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+        });
+    </script>
+</html>

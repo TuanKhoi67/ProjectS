@@ -1,84 +1,82 @@
 <h1>Add Schedules</h1>
 
 <div class="container">
-    <form action="/schedule/add" method="post">
-        <label for="">Time</label>
-        <input type="text" id="" name="time" required>
-
-        <label for="">Subject</label>
-        <input type="text" id="" name="subject" required>
-
-        <label for="student">Student:</label>
-        <select name="student" required>
-        {{#each students}}
-            <option value="{{_id}}">{{ name }}</option>
-        {{/each}}
+    <form action="/schedule/add" method="POST">
+        <label for="day">Day:</label>
+        <select name="day" id="day">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
         </select>
 
-        <select name="student" required>
-        {{#each students}}
-            <option value="{{_id}}">{{ name }}</option>
-        {{/each}}
+        <label for="time">Time:</label>
+        <select name="time" id="time">
+            <option value="Slot1">8:50 - 10:20</option>
+            <option value="Slot4">10:30 - 12:00</option>
+            <option value="Slot2">12:50 - 14:20</option>
+            <option value="Slot3">14:30 - 16:00</option>
+            <option value="Slot5">16:10 - 17:40</option>
         </select>
 
-        <label for="tutor">Tutor:</label>
-        <select name="tutor">
-        {{#each tutors}}
-            <option value="{{_id}}">{{ name }}</option>
-        {{/each}}
+        <label for="class">Class:</label>
+        <select name="class" required>
+            {{#each classes}}
+            <option value="{{this._id}}">{{this.classname}}</option>
+            {{/each}}
         </select>
 
-        <br>
-        <br>
-
-        <input type="submit" value="Add">
+        <button type="submit" class="btn">Add Schedule</button>
     </form>
 </div>
 
 <style>
     body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-}
+        font-family: Arial, sans-serif;
+        margin: 40px;
+    }
 
-h1 {
-    font-size: 28px;
-    font-weight: bold;
-}
+    h1 {
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-form {
-    width: 300px;
-}
+    form {
+        width: 300px;
+    }
 
-label {
-    font-size: 18px;
-    font-weight: normal;
-}
+    label {
+        font-size: 18px;
+        font-weight: normal;
+    }
 
-input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #000;
-    border-radius: 4px;
-}
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #000;
+        border-radius: 4px;
+    }
 
-select {
-    width: 100%; /* Hoặc một giá trị cụ thể như 300px */
-    padding: 5px;
-    font-size: 16px;
-}
+    select {
+        width: 100%;
+        /* Hoặc một giá trị cụ thể như 300px */
+        padding: 5px;
+        font-size: 16px;
+    }
 
-button {
-    padding: 8px 16px;
-    font-size: 16px;
-    border: 1px solid #000;
-    background-color: #f8f8f8;
-    cursor: pointer;
-}
+    button {
+        padding: 8px 16px;
+        font-size: 16px;
+        border: 1px solid #000;
+        background-color: #f8f8f8;
+        cursor: pointer;
+    }
 
-button:hover {
-    background-color: #e0e0e0;
-}
-
+    button:hover {
+        background-color: #e0e0e0;
+    }
 </style>

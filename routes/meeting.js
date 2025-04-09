@@ -11,7 +11,7 @@ router.get("/create", async (req, res) => {
   try {
       const students = await StudentModel.find().lean();
       const tutors = await TutorModel.find().lean();
-      res.render("meeting/add", { students, tutors });
+      res.render("meeting/add", { students, tutors, layout: 'authedLayout' });
   } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
       res.status(500).send("Lỗi server");

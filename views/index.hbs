@@ -1,28 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <title>Home</title>
-</head>
-<style>
-    .hero-image {
-        filter: blur(2px);
-        width: 100%;
-    }
+    <style>
+        .carousel-item img {
+            height: 500px;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
 
-    .hero-text {
-        text-align: center;
-        position: absolute;
-        color: black;
-    }
-</style>
+        .carousel-caption {
+            bottom: 30%;
+        }
+
+        .carousel-caption h1,
+        .carousel-caption p {
+            color: white;
+            text-shadow: 1px 1px 4px black;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            background-color: #2a2a91;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #2a2a91;
+        }
+    </style>
+</head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <img class="hero-image"
-                src="https://www.pcisecuritystandards.org/wp-content/uploads/2022/05/document-library.jpg" />
-            <div class="hero-text">
-                <h1 class="display-15">Welcome to Our Document Library</h1>
-                <p class="display-18">Browse and manage your documents easily</p>
+    <div class="container-fluid p-0">
+        <div id="homeCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2"></button>
             </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://www.pcisecuritystandards.org/wp-content/uploads/2022/05/document-library.jpg"
+                        class="d-block w-100" alt="Slide 1">
+                    <div class="carousel-caption">
+                        <h1>Welcome to Our Document Library</h1>
+                        <p>Browse and manage your documents easily</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1581093588401-050f49f5a144?auto=format&fit=crop&w=1170&q=80"
+                        class="d-block w-100" alt="Slide 2">
+                    <div class="carousel-caption">
+                        <h1>Fast Access</h1>
+                        <p>Find any class or schedule within seconds</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1170&q=80"
+                        class="d-block w-100" alt="Slide 3">
+                    <div class="carousel-caption">
+                        <h1>Organized & Efficient</h1>
+                        <p>Designed with clarity and focus</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+</html>

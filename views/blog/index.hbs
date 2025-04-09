@@ -1,5 +1,45 @@
 <head>
     <title>All Blogs</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        .blog-card {
+            transition: transform 0.3s ease-in-out;
+            height: 100%;
+        }
+        .blog-card:hover {
+            transform: scale(1.05);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px 5px 0 0;
+        }
+        .card-text {
+            height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .comment-section {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .like-btn {
+            position: relative;
+            padding-left: 30px;
+        }
+        .like-btn::before {
+            content: '❤️';
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
 </head>
 
 <style>
@@ -24,10 +64,37 @@
 </style>
 
 <body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">📚 eTutoring</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/blog/reel">🏠 Blog</a></li>                 
+                    <li class="nav-item"><a class="nav-link" href="/document">📝 Documents</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/auth/login">🔑 Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
     <!-- Main Content -->
     <div class="container">
         <h2 class="text-center mb-4">📖 All Blogs</h2>
-        <div class="row">
+        <div class="container mt-2">
+            <a href="/blog" class="btn btn-secondary">⬅ Quay lại</a>
+        </div>
+        <br>
+        <form action="/blog/search" method="get" class="mb-3 d-flex">
+            <input type="text" class="form-control me-2" name="q" placeholder="🔍 Search blog..." required>
+            <button type="submit" class="btn btn-primary">🔍 Tìm kiếm</button>
+        </form>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             {{#each blogs}}
             <div class="col-4 mb-4">
                 <div class="blog-card shadow-sm">
@@ -43,6 +110,59 @@
                         <form action="/blog/delete/{{this._id}}" method="post" class="d-inline">
                             <button type="submit" class="btn"><i class="fa-regular fa-trash-can"></i> Delete</button>
                         </form>
+            <div class="col">
+                <div class="card blog-card shadow-sm h-100">
+                    <!-- Ảnh bài viết -->
+                    {{#if this.image}}
+                    <img src="{{this.image}}" class="card-img-top" alt="{{this.title}}">
+                    {{else}}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center">
+                        <span class="text-white">No Image</span>
+                    </div>
+                    {{/if}}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary">{{this.title}}</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <small class="text-muted">
+                                <img src="{{#if this.author.profilePicture}}{{this.author.profilePicture}}{{else}}https://via.placeholder.com/30{{/if}}" 
+                                     class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                {{this.author.fullname}}
+                            </small>
+                        </div>
+                        <p class="card-text flex-grow-1">{{this.content}}</p>
+                        
+                        <!-- Thông tin tương tác -->
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <button class="btn btn-link like-btn text-danger p-0">
+                                    <span>{{this.likes}}</span>
+                                </button>
+                                <small class="text-muted">{{this.comments.length}} 💬</small>
+                            </div>
+                            
+                            <!-- Comment section -->
+                            <div class="comment-section border-top pt-2">
+                                {{#each this.comments}}
+                                <div class="d-flex align-items-start mb-2">
+                                    <img src="{{#if this.user.profilePicture}}{{this.user.profilePicture}}{{else}}https://via.placeholder.com/25{{/if}}" 
+                                         class="rounded-circle me-2" style="width: 25px; height: 25px; object-fit: cover;">
+                                    <div>
+                                        <strong>{{this.user.fullname}}</strong>
+                                        <p class="mb-0">{{this.content}}</p>
+                                    </div>
+                                </div>
+                                {{/each}}
+                            </div>
+                            
+                            <!-- Nút chỉnh sửa/xóa -->
+                            <div class="d-flex gap-2 mt-3">
+                                <a href="/blog/edit/{{this._id}}" class="btn btn-warning btn-sm flex-grow-1">✏ Edit</a>
+                                <form action="/blog/delete/{{this._id}}" method="post" class="flex-grow-1">
+                                    <button type="submit" class="btn btn-danger btn-sm w-100">🗑 Delete</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,5 +205,5 @@
                 </li>
             </ul>
         </div>
-    </section> --}}
+    </section>
 </body>

@@ -78,7 +78,7 @@ function getRedirectPath(role) {
     }
 
     switch (role) {
-        case 'admin': return '/auth/admin';
+        case 'admin': return '/userpage/admin';
         case 'tutor': return '/auth/tutor';
         case 'student': return '/auth/student';
         default: return '/';
