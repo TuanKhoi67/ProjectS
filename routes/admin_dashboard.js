@@ -285,6 +285,7 @@ router.get('/', async (req, res) => {
 
           blogMonthlyLabels: JSON.stringify(monthlyLabels),
           blogMonthlyCounts: JSON.stringify(monthlyCounts),
+          layout: 'admin'
       });
 
   } catch (err) {
