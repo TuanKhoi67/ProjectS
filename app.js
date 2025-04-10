@@ -11,7 +11,7 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs');
 const dotenv = require('dotenv');
-const MongoStore = require('connect-mongo');
+
 
 require('./config/database');
 require('./config/passport')(passport);
@@ -148,10 +148,7 @@ app.use(session({
   secret: 'yourSecret',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false },
-  store: MongoStore.create({
-    mongoUrl: process.env.uri
-  })
+  cookie: { secure: false }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -210,9 +207,8 @@ app.use((err, req, res, next) => {
 });
 
 // 🚀 Khởi động server
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`🌐 Server is running on port ${PORT}`);
+httpServer.listen(process.env.PORT || 3001, () => {
+  console.log("Server started...");
 });
 
 module.exports = app;

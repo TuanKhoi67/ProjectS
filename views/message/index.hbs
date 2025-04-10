@@ -188,7 +188,9 @@
     </div>
 
     <script>
-        var socket = io();
+        const socket = io('https://your-render-app.onrender.com', {
+            transports: ['websocket']
+        });
         var currentUser = "{{user._id}}";
         var currentReceiver = null;
 

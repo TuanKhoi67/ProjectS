@@ -6,6 +6,7 @@ module.exports = (io) => {
     const User = require('../models/Users');
     const Message = require('../models/Message');
 
+    
     // 📨 Lấy danh sách người dùng và hiển thị trang chat
     router.get('/', ensureAuthenticated, async (req, res) => {
         try {
@@ -81,4 +82,5 @@ module.exports = (io) => {
     });
 
     return router;
+    
 };
