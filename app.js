@@ -21,7 +21,11 @@ dotenv.config();
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer, {
-  cors: { origin: "*" }
+  cors: { 
+    origin: "*", 
+    methods: ["GET", "POST"],
+    credentials: true
+   }
 });
 
 // 🟢 Danh sách người dùng online
