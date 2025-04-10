@@ -166,7 +166,6 @@ const routes = {
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
-  tutor: require('./routes/tutor'),
   attendance: require('./routes/attendance')
 };
 
@@ -175,7 +174,6 @@ const routes = {
 app.use('/', routes.index);
 app.use('/users', routes.users);
 app.use('/auth', routes.auth);
-app.use('/tutor', routes.tutor);
 app.use('/message', routes.message);
 app.use('/api/meeting', routes.meeting);
 app.use('/document', routes.document);
