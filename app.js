@@ -174,43 +174,41 @@ const routes = {
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
-  attendance: require('./routes/attendance')
 };
 
-
-// 🛣 Định nghĩa Routes
+// 🚏 Sử dụng các route
 app.use('/', routes.index);
 app.use('/users', routes.users);
 app.use('/auth', routes.auth);
-app.use('/message', routes.message);
-app.use('/api/meeting', routes.meeting);
-app.use('/document', routes.document);
-app.use('/blog', routes.blog);
-app.use('/admin/dashboard', routes.admin_dashboard);
-app.use('/dashboard', routes.tutorDashboard);
-app.use('/dashboard', routes.studentDashboard);
+app.use('/messages', routes.message);
+app.use('/meetings', routes.meeting);
+app.use('/documents', routes.document);
+app.use('/blogs', routes.blog);
+app.use('/admin_dashboard', routes.admin_dashboard);
+app.use('/student_dashboard', routes.studentDashboard);
+app.use('/tutor_dashboard', routes.tutorDashboard);
 app.use('/userpage', routes.userpage);
-app.use('/class', routes.class);
+app.use('/classes', routes.class);
 app.use('/schedule', routes.schedule);
-app.use('/attendance', routes.attendance);
 
+// ⚠️ Xử lý 404
+app.use((req, res, next) => {
+  next(createError(404));
+});
 
-// ❌ Xử lý lỗi 404
-app.use((req, res, next) => next(createError(404)));
-
-// ❌ Xử lý lỗi chung
+// 💥 Xử lý lỗi
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 400);
+
+  res.status(err.status || 500);
   res.render('error');
 });
 
-
-// 🚀 **Chạy server**
-const PORT = 3000;
+// 🚀 Khởi động server
+const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`🌐 Server is running on http://localhost:${PORT}`);
 });
 
 module.exports = app;
