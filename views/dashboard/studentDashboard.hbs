@@ -3,7 +3,6 @@
 </head>
 
 <style>
-  /* === Independent Styling === */
   .dashboard-section {
     margin-bottom: 2.5rem;
   }
@@ -260,178 +259,180 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      const chartData = {{{ json chartData }}};
 
-      // === Weekly Activity Chart (Line) ===
-      const weeklyLabels = Object.keys(chartData.weeklyActivity);
-      const blogsData = weeklyLabels.map(d => chartData.weeklyActivity[d].blogs);
-      const messagesData = weeklyLabels.map(d => chartData.weeklyActivity[d].messages);
-      const commentsData = weeklyLabels.map(d => chartData.weeklyActivity[d].comments);
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chartData = {{{ json chartData }}};
 
-      new Chart(document.getElementById('weeklyActivityChart').getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: weeklyLabels,
-          datasets: [
-            {
-              label: 'Blogs',
-              data: blogsData,
-              borderColor: '#0d6efd',
-              backgroundColor: 'rgba(13, 110, 253, 0.1)',
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'Messages',
-              data: messagesData,
-              borderColor: '#198754',
-              backgroundColor: 'rgba(25, 135, 84, 0.1)',
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'Comments',
-              data: commentsData,
-              borderColor: '#ffc107',
-              backgroundColor: 'rgba(255, 193, 7, 0.1)',
-              fill: true,
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Weekly Interaction Timeline'
-            }
+    // === Weekly Activity Chart (Line) ===
+    const weeklyLabels = Object.keys(chartData.weeklyActivity);
+    const blogsData = weeklyLabels.map(d => chartData.weeklyActivity[d].blogs);
+    const messagesData = weeklyLabels.map(d => chartData.weeklyActivity[d].messages);
+    const commentsData = weeklyLabels.map(d => chartData.weeklyActivity[d].comments);
+
+    new Chart(document.getElementById('weeklyActivityChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: weeklyLabels,
+        datasets: [
+          {
+            label: 'Blogs',
+            data: blogsData,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            fill: true,
+            tension: 0.3
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 1
-              }
-            }
-          }
-        }
-      });
-
-      // === Document Types Chart (Doughnut for PDF & Word Only) ===
-      new Chart(document.getElementById('fileTypesChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: ['PDF', 'Word'],
-          datasets: [{
-            data: [
-              chartData.fileTypes.pdf,
-              chartData.fileTypes.word
-            ],
-            backgroundColor: ['#6610f2', '#0dcaf0']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Document Types Uploaded'
-            }
-          }
-        }
-      });
-
-      // === Blog Summary Chart (Bar) ===
-      new Chart(document.getElementById('myBlogsChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: ['Posts', 'Likes', 'Comments'],
-          datasets: [{
-            label: 'Your Blog Stats',
-            data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
-            backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
-            borderRadius: 8
-          }]
-        },
-        options: {
-          indexAxis: 'y', // Horizontal bars
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Blog Summary'
-            }
+          {
+            label: 'Messages',
+            data: messagesData,
+            borderColor: '#198754',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            fill: true,
+            tension: 0.3
           },
-          scales: {
-            x: {
-              beginAtZero: true
+          {
+            label: 'Comments',
+            data: commentsData,
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Weekly Interaction Timeline'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
             }
           }
         }
-      });
+      }
+    });
 
-      // === Interactions with Others Chart (Doughnut) ===
-      new Chart(document.getElementById('interactionChart').getContext('2d'), {
-        type: 'polarArea',
-        data: {
-          labels: ['Liked Posts', 'Commented Posts'],
-          datasets: [{
-            data: [chartData.likedCount, chartData.commentedCount],
-            backgroundColor: ['#20c997', '#6f42c1']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Interactions with Others'
-            }
+    // === Document Types Chart (Doughnut for PDF & Word Only) ===
+    new Chart(document.getElementById('fileTypesChart').getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['PDF', 'Word'],
+        datasets: [{
+          data: [
+            chartData.fileTypes.pdf,
+            chartData.fileTypes.word
+          ],
+          backgroundColor: ['#6610f2', '#0dcaf0']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Document Types Uploaded'
           }
         }
-      });
+      }
+    });
 
-      // === Attendance Chart (Bar) === CHƯA CÓ DỮ LIỆU
-      // Sample data for attendance chart (replace with actual data)
-      // This data should be fetched from your server or database
-      // and passed to the template as `attendanceData`.
-      const attendanceData = {
-        classes: ['Class A', 'Class B', 'Class C'],
-        presentCounts: [10, 15, 8],
-        absentCounts: [2, 3, 1]
-      };
-      new Chart(document.getElementById('attendanceChart'), {
-        type: 'bar',
-        data: {
-          labels: attendanceData.classes,
-          datasets: [
-            {
-              label: 'Có mặt',
-              data: attendanceData.presentCounts,
-              backgroundColor: '#198754'
-            },
-            {
-              label: 'Vắng mặt',
-              data: attendanceData.absentCounts,
-              backgroundColor: '#dc3545'
-            }
-          ]
+    // === Blog Summary Chart (Bar) ===
+    new Chart(document.getElementById('myBlogsChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Posts', 'Likes', 'Comments'],
+        datasets: [{
+          label: 'Your Blog Stats',
+          data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
+          backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        indexAxis: 'y', // Horizontal bars
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Blog Summary'
+          }
         },
-        options: {
-          plugins: {
-            title: { display: true, text: 'Tình trạng điểm danh theo lớp' }
+        scales: {
+          x: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // === Interactions with Others Chart (Doughnut) ===
+    new Chart(document.getElementById('interactionChart').getContext('2d'), {
+      type: 'polarArea',
+      data: {
+        labels: ['Liked Posts', 'Commented Posts'],
+        datasets: [{
+          data: [chartData.likedCount, chartData.commentedCount],
+          backgroundColor: ['#20c997', '#6f42c1']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Interactions with Others'
+          }
+        }
+      }
+    });
+
+    // === Attendance Chart (Bar) === CHƯA CÓ DỮ LIỆU
+    // Sample data for attendance chart (replace with actual data)
+    // This data should be fetched from your server or database
+    // and passed to the template as `attendanceData`.
+    const attendanceData = {
+      classes: ['Class A', 'Class B', 'Class C'],
+      presentCounts: [10, 15, 8],
+      absentCounts: [2, 3, 1]
+    };
+    new Chart(document.getElementById('attendanceChart'), {
+      type: 'bar',
+      data: {
+        labels: attendanceData.classes,
+        datasets: [
+          {
+            label: 'Có mặt',
+            data: attendanceData.presentCounts,
+            backgroundColor: '#198754'
           },
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true }
+          {
+            label: 'Vắng mặt',
+            data: attendanceData.absentCounts,
+            backgroundColor: '#dc3545'
           }
+        ]
+      },
+      options: {
+        plugins: {
+          title: { display: true, text: 'Tình trạng điểm danh theo lớp' }
+        },
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
         }
-      });
-    </script>
+      }
+    });
+  </script>
 </body>
