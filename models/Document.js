@@ -6,7 +6,8 @@ const documentSchema = new mongoose.Schema({
     required: true
   },
   author: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, ref: 'User', 
+    ref: 'User',
     required: true
   },
   content: {
@@ -16,6 +17,10 @@ const documentSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true
+  },
+  documentFile: {
+    type: String,
+    required: false
   },
   comments: [
     {

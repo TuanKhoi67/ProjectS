@@ -1,0 +1,94 @@
+<h1>Tạo Lớp Học</h1>
+
+<!-- Form chọn môn học -->
+<form action="/class/filter" method="POST">
+    <label for="subject">Chọn Môn Học:</label>
+    <select name="subject" required>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Physics">Physics</option>
+    </select>
+    <button type="submit">Lọc</button>
+</form>
+
+<h2>Tìm kiếm sinh viên theo email</h2>
+<form action="/class/search-student" method="GET">
+    <label for="email">Nhập email sinh viên:</label>
+    <input type="email" name="email" id="email" required>
+    <button type="submit">Tìm kiếm</button>
+</form>
+
+{{#if students}} 
+<!-- Nếu đã lọc xong, hiển thị phần chọn thành viên -->
+<hr>
+<h2>Chọn Thành Viên cho Lớp Học</h2>
+
+<form action="/class/create" method="POST">
+    <input type="hidden" name="subject" value="{{subject}}">
+
+    <label for="classname">Tên Lớp:</label>
+    <input type="text" name="classname" required>
+
+    <h3>Chọn Sinh Viên</h3>
+    {{#each students}}
+        <input type="checkbox" name="studentIds" value="{{this._id}}"> {{this.name}} <br>
+    {{/each}}
+
+    <h3>Chọn Giáo Viên</h3>
+    {{#each tutors}}
+        <input type="radio" name="tutorId" value="{{this._id}}"> {{this.name}} <br>
+    {{/each}}
+
+    <button type="submit">Tạo Lớp</button>
+</form>
+{{/if}}
+
+
+{{#if error}}
+    <p style="color: red;">{{error}}</p>
+{{/if}}
+
+{{#if studentResult}}
+    <h3>Kết quả tìm kiếm:</h3>
+    <ul>
+        <li><strong>Tên:</strong> {{studentResult.name}}</li>
+        <li><strong>Email:</strong> {{studentResult.email}}</li>
+        <li><strong>Môn học:</strong> {{studentResult.subject}}</li>
+    </ul>
+
+    {{#if classes.length}}
+        <h3>Thêm sinh viên vào lớp</h3>
+        <form action="/class/assign-student" method="POST">
+            <input type="hidden" name="studentId" value="{{studentResult._id}}">
+            
+            <label for="classId">Chọn lớp học (Chỉ hiển thị lớp có < 10 sinh viên):</label>
+            <select name="classId" id="classId">
+                {{#each classes}}
+                    <option value="{{this._id}}">{{this.classname}} ({{this.student.length}} sinh viên)</option>
+                {{/each}}
+            </select>
+            
+            <button type="submit">Thêm vào lớp</button>
+        </form>
+    {{else}}
+        <p>Hiện tại không có lớp học nào phù hợp, vui lòng tạo lớp mới.</p>
+    {{/if}}
+
+    <h3>Tạo lớp học mới</h3>
+    <form action="/class/create-class" method="POST">
+        <input type="hidden" name="studentId" value="{{studentResult._id}}">
+        
+        <label for="classname">Tên lớp học:</label>
+        <input type="text" name="classname" id="classname" required>
+
+        <label for="tutorId">Chọn giảng viên (Chỉ hiện giáo viên có department = subject của sinh viên):</label>
+        <select name="tutorId" id="tutorId">
+            {{#each tutors}}
+                <option value="{{this._id}}">{{this.name}}</option>
+            {{/each}}
+        </select>
+
+        <button type="submit">Tạo lớp mới</button>
+    </form>
+{{/if}}
+
+

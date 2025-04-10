@@ -1,0 +1,139 @@
+<h2>Thêm sinh viên mới</h2>
+<form action="/admin/dashboard/add-student" method="POST">
+    <label for="">Student Name</label>
+    <input type="text" id="" name="name" required>
+
+    <label for="">Telephone</label>
+    <input type="text" id="" name="telephone" required>
+
+    <label for="">Email</label>
+    <input type="tel" id="" name="email" required>
+
+    <label for="">Subject</label>
+    <input type="text" id="" name="subject" required>
+
+    <button type="submit">Thêm</button>
+</form>
+
+<h2>Danh sách sinh viên</h2>
+<h2>Tổng số sinh viên: <span id="total">{{totalStudents}}</span></h2>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Student name</th>
+                <th>Telephone</th>
+                <th>Email</th>
+                <th>Subject</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each students }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ telephone }}</td>
+                <td>{{ email }}</td>
+                <td>{{ subject }}</td>
+                <td>
+                    <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                </td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+
+<h2>Thêm giảng viên mới</h2>
+<form action="/admin/dashboard/add-tutor" method="POST">
+    <label for="">Tutor Name</label>
+    <input type="text" id="" name="name" required>
+
+    <label for="">Telephone</label>
+    <input type="text" id="" name="telephone" required>
+
+    <label for="">Email</label>
+    <input type="tel" id="" name="email" required>
+
+    <label for="">Department</label>
+    <input type="text" id="" name="department" required>
+
+    <button type="submit">Thêm</button>
+</form>
+
+<h2>Danh sách giảng viên</h2>
+<h2>Tổng số giảng viên: <span id="total">{{totalTutors}}</span></h2>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Tutor name</th>
+                <th>Email</th>
+                <th>Telephone</th>              
+                <th>Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each tutors }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ email }}</td>
+                <td>{{ telephone }}</td>
+                <td>{{ department }}</td>
+                {{!-- <td>
+                    <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                </td> --}}
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+
+<h2>Danh sách sinh viên chưa có lớp</h2>
+<ul>
+    {{#each unassignedStudents}}
+        <li>{{this.name}} - {{this.email}}</li>
+    {{else}}
+        <li>Không có sinh viên nào chưa có lớp.</li>
+    {{/each}}
+</ul>
+
+
+<script>
+    var socket = io();
+
+    // Cập nhật danh sách khi có sinh viên mới
+    socket.on('studentAdded', function(student) {
+        var studentList = document.getElementById('student-list');
+        var newStudent = document.createElement('li');
+        var newLink = document.createElement('a');
+
+        newLink.href = '/students/' + student._id;
+        newLink.textContent = student.name;
+
+        newStudent.appendChild(newLink);
+        studentList.appendChild(newStudent);
+
+        // Cập nhật tổng số sinh viên
+        var totalElement = document.getElementById('totalStudents');
+        totalElement.textContent = parseInt(totalElement.textContent) + 1;
+    });
+
+    // Cập nhật danh sách khi có giáo viên mới
+    socket.on('teacherAdded', function(teacher) {
+        var teacherList = document.getElementById('teacher-list');
+        var newTeacher = document.createElement('li');
+        var newLink = document.createElement('a');
+
+        newLink.href = '/teachers/' + teacher._id;
+        newLink.textContent = teacher.name;
+
+        newTeacher.appendChild(newLink);
+        teacherList.appendChild(newTeacher);
+
+        // Cập nhật tổng số giáo viên
+        var totalElement = document.getElementById('totalTeachers');
+        totalElement.textContent = parseInt(totalElement.textContent) + 1;
+    });
+</script>

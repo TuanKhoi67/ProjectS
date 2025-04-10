@@ -1,15 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const Document = require('../models/Document');
+const multer = require('multer');
+const path = require('path');
+// Cấu hình Multer để lưu file
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, './public/uploads/'); // Chỉ định thư mục lưu trữ file tải lên
+  },
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Đặt tên file là thời gian hiện tại
+  }
+});
 
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+      const filetypes = /pdf|doc|docx/; // Hạn chế chỉ cho phép file PDF và Word
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = filetypes.test(file.mimetype);
 
+      if (mimetype && extname) {
+          return cb(null, true);
+      }
+      cb(new Error('Chỉ chấp nhận các file PDF, DOC, DOCX'));
+  }
+});
 
 // Hiển thị trang quản lý tài liệu
 router.get('/', async (req, res) => {
   try {
-    const documents = await Document.find(); // Lấy tất cả tài liệu từ database
-    console.log('documents:', documents); // Debug log để kiểm tra dữ liệu
-    res.render('document/index', { title: 'Quản lý tài liệu', documents });
+    const documents = await Document.find().populate('author', 'fullname');
+    res.render('document/index', { documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách tài liệu');
@@ -22,53 +44,79 @@ router.get('/add', (req, res) => {
 });
 
 // Xử lý thêm tài liệu
-router.post('/add', async (req, res) => {
-    const { title, author, content, imageUrl } = req.body;
-    const newDocument = new Document({ title, author, content, imageUrl });
-    await newDocument.save();
-    res.redirect('/document');
+router.post('/add', upload.single('documentFile'), async (req, res) => {
+  const { title, author, content } = req.body;
+  const documentFile = req.file ? '/uploads/documents/' + req.file.filename : '';
+
+  const newDocument = new Document({ 
+      title, 
+      author: req.user._id, 
+      content, 
+      imageUrl: req.body.imageUrl, // nếu có ảnh
+      documentFile // Thêm file tải lên
+  });
+
+  await newDocument.save();
+  res.redirect('/document');
 });
 
 // Xử lý tìm kiếm tài liệu
 router.get('/search', async (req, res) => {
-    const query = req.query.query;
-    const documents = await Document.find({ title: new RegExp(query, 'i') });
-    res.render('document/index', { documents });
+    const query = req.query.query || '';
+    try {
+        const documents = await Document.find({
+            title: { $regex: query, $options: 'i' } // Case-insensitive search
+        }).populate('author'); // Adjust based on your schema
+        res.json({ documents }); // Return JSON response
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Edit document route
 router.get('/edit/:id', async (req, res) => {
   try {
-      const documentId = req.params.id;
-      const document = await Document.findById(documentId);
+    const documentId = req.params.id;
+    const document = await Document.findById(documentId).populate('author', 'fullname');
 
-      if (!document) {
-          return res.status(404).send('Document not found');
-      }
+    if (!document) {
+      return res.status(404).send('Document not found');
+    }
 
-      res.render('document/edit', { document });
+    res.render('document/edit', { document });
   } catch (error) {
-      console.error('Error fetching document:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Error fetching document:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 // Update document route
-router.post('/update/:id', async (req, res) => {
+router.post('/update/:id', upload.single('documentFile'), async (req, res) => {
   try {
-      const documentId = req.params.id;
-      const { title, author, content, imageUrl } = req.body;
+    const documentId = req.params.id;
+    const { title, content, imageUrl } = req.body;
 
-      await Document.findByIdAndUpdate(documentId, {
-          title,
-          author,
-          content,
-          imageUrl
-      });
+    let documentFileUrl = null;
+    if (req.file) {
+      documentFileUrl = `/uploads/${req.file.filename}`;
+    }
 
-      res.redirect('/document'); // Redirect to the document list page after updating
+    const updateData = {
+      title,
+      content,
+      imageUrl
+    };
+
+    if (documentFileUrl) {
+      updateData.documentFile = documentFileUrl;
+    }
+
+    await Document.findByIdAndUpdate(documentId, updateData);
+
+    res.redirect('/document');
   } catch (error) {
-      console.error('Error updating document:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Error updating document:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -93,7 +141,9 @@ const ensureAuthenticated = (req, res, next) => {
 // Hiển thị trang danh sách tài liệu với bình luận
 router.get('/mainDocument', async (req, res) => {
   try {
-      const documents = await Document.find().populate('comments.user', 'username'); // Lấy dữ liệu bình luận kèm tên user
+      const documents = await Document.find()
+          .populate('author', 'fullname') // Populate the author's fullname
+          .populate('comments.user', 'username'); // Populate the comment user's username
       res.render('document/mainDocument', { documents, user: req.user });
   } catch (error) {
       console.error('Lỗi lấy dữ liệu:', error);
@@ -126,9 +176,5 @@ router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
       res.status(500).send('Lỗi máy chủ ');
   }
 });
-
-
-
-
 
 module.exports = router;
