@@ -185,7 +185,8 @@
                             id="dropdownMenuButton{{this._id}}" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-ellipsis"></i>
                         </button> --}}
-                        {{!-- <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{this._id}}">
+                        {{!-- <ul class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="dropdownMenuButton{{this._id}}">
                             <li><a class="dropdown-item" href="/blog/edit/{{this._id}}">Edit</a></li>
                             <li>
                                 <a class="dropdown-item" href="#"
@@ -253,8 +254,8 @@
             document.querySelectorAll('.like-btn').forEach(button => {
                 button.addEventListener('click', async function () {
                     const postId = this.dataset.id;
-                    const likeCountSpan = this.nextElementSibling; // Select the span next to the button
-                    const heartIcon = this.querySelector('i'); // Select the heart icon inside the button
+                    const likeCountSpan = this.nextElementSibling;
+                    const heartIcon = this.querySelector('i');
 
                     try {
                         const response = await fetch(`/blog/like/${postId}`, {
@@ -262,36 +263,43 @@
                             headers: { 'Content-Type': 'application/json' }
                         });
 
+                        const contentType = response.headers.get('content-type');
+
                         if (!response.ok) {
-                            const error = await response.json();
-                            return res.status(401).json({ error: 'Bạn cần đăng nhập để like bài viết.' });
+                            if (contentType && contentType.includes('application/json')) {
+                                const error = await response.json();
+                                alert(error.error || 'Có lỗi xảy ra.');
+                            } else {
+                                // Nếu không phải JSON, có thể là HTML -> chuyển hướng đến trang đăng nhập
+                                window.location.href = '/auth/login';
+                            }
+                            return;
                         }
 
                         const data = await response.json();
 
-                        // Update the like count
                         if (likeCountSpan) {
                             likeCountSpan.textContent = `${data.likes} Likes`;
                         }
 
-                        // Toggle the heart icon style
                         if (heartIcon) {
                             if (data.isLiked) {
                                 heartIcon.classList.remove('fa-regular');
-                                heartIcon.classList.add('fa-solid', 'liked'); // Add 'fa-solid' and 'liked' classes
+                                heartIcon.classList.add('fa-solid', 'liked');
                             } else {
                                 heartIcon.classList.remove('fa-solid', 'liked');
-                                heartIcon.classList.add('fa-regular'); // Revert to 'fa-regular'
+                                heartIcon.classList.add('fa-regular');
                             }
                         }
 
                     } catch (error) {
                         console.error('Error:', error);
-                        alert(error.message);
+                        alert('Đăng nhập rồi mới like được nghen!!!!!');
                     }
                 });
             });
         });
+
 
         function toggleComment(button) {
             const form = button.closest('.post').querySelector('.comment-form');
