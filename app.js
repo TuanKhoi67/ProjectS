@@ -48,16 +48,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Cấu hình Handlebars với nhiều layout
-app.engine('hbs', exphbs.engine({
-  extname: 'hbs',
-  defaultLayout: 'main', // layout mặc định
-  layoutsDir: __dirname + '/views/layouts/',
-  partialsDir: __dirname + '/views/partials/'
-}));
-app.set('view engine', 'hbs');
-app.set('views', './views');
-
 
 // Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
