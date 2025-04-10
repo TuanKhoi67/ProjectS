@@ -12,21 +12,19 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
   try {
     const tutorId = req.user._id;
 
-    // Original: Count documents & comments
+    // Count tutor's documents & comments
     const documents = await Document.find({ author: tutorId });
     const documentCount = documents.length;
-    const totalComments = documents.reduce((sum, doc) => {
-      return sum + (doc.comments ? doc.comments.length : 0);
-    }, 0);
+    const totalComments = documents.reduce((sum, doc) => sum + (doc.comments?.length || 0), 0);
 
-    // Enhanced: Find students the tutor has interacted with
+    // Find students the tutor interacted with
     const messageSenders = await Message.find({ receiver: tutorId }).distinct('sender');
     const meetingStudents = await Meeting.find({ tutor: tutorId }).distinct('student');
     const tuteeIds = [...new Set([...messageSenders, ...meetingStudents])];
 
     const tutees = await User.find({ _id: { $in: tuteeIds }, role: 'student' });
 
-    // Summary stats
+    // Get all messages and meetings from those students
     const messages = await Message.find({ sender: { $in: tuteeIds }, receiver: tutorId });
     const meetings = await Meeting.find({ student: { $in: tuteeIds }, tutor: tutorId });
 
@@ -39,44 +37,46 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       documentsShared: documents.length
     };
 
-    // Tutee activity list
+    // Build tutee activity data
     const tuteeData = await Promise.all(tutees.map(async (t) => {
       const lastMsg = await Message.findOne({ sender: t._id }).sort({ createdAt: -1 });
       const lastMeeting = await Meeting.findOne({ student: t._id }).sort({ startTime: -1 });
 
-      let lastActive;
+      let lastActiveDate;
       if (lastMsg && lastMeeting) {
-        lastActive = moment.max(moment(lastMsg.createdAt), moment(lastMeeting.startTime)).fromNow();
+        lastActiveDate = moment.max(moment(lastMsg.createdAt), moment(lastMeeting.startTime));
       } else if (lastMsg) {
-        lastActive = moment(lastMsg.createdAt).fromNow();
+        lastActiveDate = moment(lastMsg.createdAt);
       } else if (lastMeeting) {
-        lastActive = moment(lastMeeting.startTime).fromNow();
-      } else {
-        lastActive = 'No activity';
+        lastActiveDate = moment(lastMeeting.startTime);
       }
+
+      const lastActive = lastActiveDate ? lastActiveDate.fromNow() : 'No activity';
 
       const messageCount = await Message.countDocuments({ sender: t._id });
       const meetingCount = await Meeting.countDocuments({ student: t._id });
       const documentCount = await Document.countDocuments({ author: t._id });
 
       return {
+        _id: t._id,
         fullname: t.fullname,
         email: t.email,
         lastActive,
+        lastActiveDate: lastActiveDate || null,
         messageCount,
         meetingCount,
         documentCount
       };
     }));
 
-    // Exception reports
-    const inactive7 = tuteeData.filter(t => t.lastActive === 'No activity' || moment().diff(moment(t.lastActive), 'days') >= 7).length;
-    const inactive28 = tuteeData.filter(t => t.lastActive === 'No activity' || moment().diff(moment(t.lastActive), 'days') >= 28).length;
+    // Exception reporting
+    const inactive7 = tuteeData.filter(t => !t.lastActiveDate || moment().diff(t.lastActiveDate, 'days') >= 7).length;
+    const inactive28 = tuteeData.filter(t => !t.lastActiveDate || moment().diff(t.lastActiveDate, 'days') >= 28).length;
 
-    // Example: dummy classes (replace with real logic later)
+    // Dummy classes for now
     const classes = [
-      { name: 'SE Practice', subject: 'Software Engineering', studentCount: 25 },
-      { name: 'AI Basics', subject: 'Artificial Intelligence', studentCount: 18 }
+      { _id: 'class1', name: 'SE Practice', subject: 'Software Engineering', studentCount: 25 },
+      { _id: 'class2', name: 'AI Basics', subject: 'Artificial Intelligence', studentCount: 18 }
     ];
 
     res.render('dashboard/tutorDashboard', {
@@ -88,7 +88,6 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       exceptions: { inactive7, inactive28 },
       classes
     });
-
   } catch (error) {
     console.error('❌ Lỗi khi tải dashboard tutor:', error);
     res.status(500).send('Lỗi server khi lấy dữ liệu dashboard.');

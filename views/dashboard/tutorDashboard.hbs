@@ -115,7 +115,7 @@
               <td>{{this.meetingCount}}</td>
               <td>{{this.documentCount}}</td>
               <td>
-                <a href="/profile/{{this._id}}" class="btn btn-sm btn-outline-primary">View</a>
+                <a href="/profile/{{this._id}}" class="btn btn-sm">View</a>
               </td>
             </tr>
             {{/each}}
@@ -142,7 +142,7 @@
             <td>{{this.name}}</td>
             <td>{{this.subject}}</td>
             <td>{{this.studentCount}}</td>
-            <td><a href="/manage_class/{{this._id}}" class="btn btn-sm btn-outline-secondary">Manage</a></td>
+            <td><a href="/manage_class/{{this._id}}" class="btn btn-sm">Manage</a></td>
           </tr>
           {{/each}}
         </tbody>
@@ -172,39 +172,41 @@
 
     const ctx = document.getElementById('docBarChart').getContext('2d');
 
-    new Chart(ctx, {
+
+    // Bar Chart for Document and Comment Statistics
+    const docBarChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Tài liệu đã đăng', 'Tổng số comment'],
+        labels: ['Posted Document', 'Total Comments'],
         datasets: [{
-          label: 'Thống kê',
+          label: 'Statistics',
           data: [{{ documentCount }}, {{ totalComments }}],
-      backgroundColor: ['#4e73df', '#1cc88a'],
-      borderColor: ['#4e73df', '#1cc88a'],
-      borderWidth: 1
-    }]
-    },
+          backgroundColor: ['#4e73df', '#1cc88a'],
+          borderColor: ['#4e73df', '#1cc88a'],
+          borderWidth: 1
+        }]
+      },
       options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            precision: 0
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: 'Document and Comment Statistics'
           }
         }
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        title: {
-          display: true,
-          text: 'Số lượng tài liệu và bình luận'
-        }
       }
-    }
-  });
+    });
 
     new Chart(document.getElementById('tuteeMessagesChart'), {
       type: 'bar',
