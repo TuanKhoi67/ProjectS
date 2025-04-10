@@ -8,25 +8,19 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
-<<<<<<< HEAD
-    "chart.js": "^4.4.8",
-=======
     "body-parser": "^1.20.3",
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.4.7",
     "express": "~4.16.1",
-    "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",
     "googleapis": "^146.0.0",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "method-override": "^3.0.0",
     "moment": "^2.30.1",
-    "mongodb": "^6.14.1",
-    "mongoose": "^8.12.0",
+    "mongoose": "^8.12.1",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.10.0",

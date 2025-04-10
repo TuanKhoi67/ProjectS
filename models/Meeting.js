@@ -24,15 +24,11 @@ var MeetingSchema = mongoose.Schema({
         type: Date,  // Thời gian kết thúc cuộc họp
         required: true 
    },
-<<<<<<< HEAD
    note: String,
    createDate: {
      type: Date,
       default: Date.now
      },
-=======
-   note: String
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 });
 
 MeetingSchema.methods.formatEnrollmentDate = function () {

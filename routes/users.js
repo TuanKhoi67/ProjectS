@@ -4,18 +4,6 @@ var bcrypt = require('bcryptjs');
 var User = require('../models/Users');
 var mongoose = require('mongoose');
 
-<<<<<<< HEAD
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
-router.get('/index', function(req, res, next) {
-  res.send('This is the users index page');
-});
-
-=======
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 // Create new user with role
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;

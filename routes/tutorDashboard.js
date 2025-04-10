@@ -21,7 +21,9 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
         res.render('dashboard/tutorDashboard', {
             documentCount,
             totalComments,
-            tutor: req.user
+            tutor: req.user,
+            documents,
+            classes: req.user.classes
         });
 
     } catch (error) {

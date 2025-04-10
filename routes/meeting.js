@@ -4,7 +4,10 @@ const router = express.Router();
 const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
-//const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+
+
+
 
 // Route GET: Render form tạo meeting
 router.get("/create", async (req, res) => {
@@ -103,7 +106,6 @@ router.post("/create", async (req, res) => {
         res.status(500).json({ error: "Lỗi khi tạo lịch họp", details: error.message });
     }
   });
-  
 
 
 module.exports = router;

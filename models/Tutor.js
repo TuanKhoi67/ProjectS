@@ -5,13 +5,10 @@ var TutorSchema = mongoose.Schema(
       email: String,
       telephone: String,
       department: String,
-<<<<<<< HEAD
       enrollmentDate: {
             type: Date,
             default: Date.now
       },
-=======
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
       user: {  // Thêm mối quan hệ 1-1 với bảng Users
               type: mongoose.Schema.Types.ObjectId,
               ref: 'users',

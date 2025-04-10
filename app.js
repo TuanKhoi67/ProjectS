@@ -10,12 +10,7 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs'); 
-<<<<<<< HEAD
-const exphbs = require('express-handlebars');
-
-=======
 const dotenv = require('dotenv');
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 
 require('./config/database'); 
 require('./config/passport')(passport);
@@ -29,42 +24,13 @@ const io = socketIo(httpServer, {
   cors: { origin: "*" }
 });
 
-<<<<<<< HEAD
-hbs.registerHelper('json', function(context) {
-  return JSON.stringify(context);
-});
-
-hbs.registerHelper('formatDate', function (date) {
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-});
-
-// Import các route
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var authRoutes = require('./routes/auth');
-var tutorRoutes = require('./routes/Tutor');
-var messageRoutes = require('./routes/message');
-var documentRoutes = require('./routes/document');
-var blogRoutes = require('./routes/blog');
-var dashboardRoutes = require('./routes/admin_dashboard');
-var userpageRoutes = require('./routes/userpage');
-=======
 // 🟢 Danh sách người dùng online
 const onlineUsers = {};
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 
 // 📡 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
     console.log("⚡ Client kết nối:", socket.id);
 
-<<<<<<< HEAD
-
-// Middleware cơ bản
-=======
     // ✅ Đăng ký user vào phòng theo userId
     socket.on('registerUser', (userId) => {
         socket.join(userId);
@@ -96,7 +62,6 @@ io.on('connection', (socket) => {
 });
 
 // 🔧 Middleware cơ bản
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(logger('dev'));
@@ -110,62 +75,24 @@ app.use(flash());
 app.set('socketio', io);
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
-hbs.registerHelper('eq', function (a, b) {
-  return a === b;
-});
-
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
-
-<<<<<<< HEAD
-// Cấu hình session & Passport
-=======
-hbs.registerHelper('formatDate', function (date) {
+hbs.registerHelper('formatDate', function(date) {
   if (!date) return '';
   return new Date(date).toLocaleDateString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
+      hour: '2-digit', 
+      minute: '2-digit', 
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
   });
 });
-
-hbs.registerHelper('absolutePath', function (path) {
-    if (!path) {
-        return ''; // Return an empty string if the path is undefined or null
-    }
-
-    // Check if the path is a URL (starts with http:// or https://)
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-        return path; // Return the URL as is
-    }
-
-    // Check if the path is a pdf (ends with .pdf or .PDF)
-    if (path.endsWith('.pdf') || path.endsWith('.PDF')) {
-        return path; // Return the URL as is
-    }
-
-    // Check if the path is a doc (ends with .doc or .docx)
-    if (path.endsWith('.doc') || path.endsWith('.docx') || path.endsWith('.DOC') || path.endsWith('.DOCX')) {
-        return path; // Return the URL as is
-    }
-
-    // Otherwise, ensure the path starts with a '/'
-    if (!path.startsWith('/')) {
-        path = '/' + path;
-    }
-
-    return path;
-});
-
-hbs.registerHelper('json', function (context) {
+hbs.registerHelper('json', function(context) {
   return JSON.stringify(context);
 });
 
 // 🛡 Cấu hình session & Passport
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 app.use(session({
   secret: 'yourSecret',
   resave: false,
@@ -197,14 +124,10 @@ const routes = {
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
-<<<<<<< HEAD
-  attandance: require('./routes/attendance')
-=======
   tutor: require('./routes/tutor'),
-  attendance: require('./routes/attendance'),
-  profile: require('./routes/profile')
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
+  attendance: require('./routes/attendance')
 };
+
 
 // 🛣 Định nghĩa Routes
 app.use('/', routes.index);
@@ -221,14 +144,10 @@ app.use('/dashboard', routes.studentDashboard);
 app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
-<<<<<<< HEAD
-app.use('/attendance', routes.attandance);
-
-const onlineUsers = {};
-=======
 app.use('/attendance', routes.attendance);
-app.use('/profile', routes.profile);
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
+
+// const onlineUsers = {};
+
 
 // ❌ Xử lý lỗi 404
 app.use((req, res, next) => next(createError(404)));
@@ -237,7 +156,7 @@ app.use((req, res, next) => next(createError(404)));
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
+  res.status(err.status || 400);
   res.render('error');
 });
 

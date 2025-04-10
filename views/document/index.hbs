@@ -9,7 +9,6 @@
         display: flex;
         position: relative;
         align-items: center;
-        margin-bottom: 20px;
     }
 
     .search-container form {
@@ -18,29 +17,20 @@
 
     .search-bar {
         width: 100%;
-        max-width: 1050px;
-        padding: 10px 10px;
+        max-width: 985px;
+        padding: 8px 16px;
         border: 1px solid #d1d5db;
-        border-radius: 30px;
+        border-radius: 9999px;
+        margin-bottom: 16px;
     }
 
+    .search-btn,
     .add-btn {
         background-color: black;
         color: white;
         border: none;
         display: inline-block;
         margin-left: 10px;
-        padding: 10px 10px;
-        border-radius: 30px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .download-btn {
-        background-color: black;
-        color: white;
-        border: none;
-        display: inline-block;
         padding: 10px 10px;
         border-radius: 30px;
         cursor: pointer;
@@ -54,14 +44,6 @@
         border-radius: 30px;
     }
 
-    .delete-btn:hover {
-        color: #f44336;
-    }
-
-    .edit-btn:hover {
-        color: #ff8000;
-    }
-
     .search-btn:hover {
         background-color: #0056b3;
     }
@@ -70,43 +52,15 @@
         background-color: #0056b3;
     }
 
-    .download-btn:hover {
-        background-color: #0056b3;
-    }
-
     .document-table img {
         max-width: 280px;
         border-radius: 5px;
     }
 
-    .document-table th,
-    .document-table td {
+    .table th,
+    .table td {
         text-align: center;
         vertical-align: middle;
-    }
-
-    .table-responsive {
-        max-height: 500px;
-        /* Set the height of the scrollable area */
-        overflow-y: auto;
-        /* Enable vertical scrolling */
-        margin-bottom: 10px;
-        /* Add some space below the table */
-    }
-
-    .document-table thead th {
-        position: sticky;
-        top: -1px;
-        /* Stick to the top of the container */
-        z-index: 2;
-        /* Ensure it stays above the body rows */
-        border: 1px solid #dee2e6;
-        /* Add a solid border */
-    }
-
-    .table {
-        margin-bottom: 0px;
-        /* Remove margin to avoid double spacing */
     }
 </style>
 
@@ -116,9 +70,11 @@
 
         <!-- Thanh tìm kiếm -->
         <div class="search-container">
-            <input type="text" id="search-bar" class="search-bar" placeholder="Search document by title..."
-                autocomplete="off">
-            <a href="/document/add" class="add-btn"><i class="fa-solid fa-plus"></i> Add new document</a>
+            <form action="/document/search" method="get">
+                <input type="text" name="query" class="search-bar" placeholder="Search document by title..." required>
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
+                <a href="/document/add" class="add-btn"><i class="fa-solid fa-plus"></i> Add new document</a>
+            </form>
         </div>
 
         <!-- Bảng danh sách tài liệu -->
@@ -126,12 +82,12 @@
             <table class="table table-bordered table-hover document-table">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 10%;">Title</th>
-                        <th style="width: 10%;">Author</th>
-                        <th style="width: 30%;">Content</th>
-                        <th style="width: 25%;">Image</th>
-                        <th style="width: 20%;">File</th>
-                        <th style="width: 5%;">Actions</th>
+                        <th>Document Title</th>
+                        <th>Author</th>
+                        <th>Content</th>
+                        <th>Image</th>
+                        <th>File</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -141,18 +97,15 @@
                         <td>{{this.author.fullname}}</td>
                         <td>{{this.content}}</td>
                         <td>
-                            <img src="{{this.imageUrl}}" alt="{{this.title}}"
-                                style="max-width: 200px; border-radius: 5px;">
+                            <img src="{{this.imageUrl}}" alt="{{this.title}}" style="max-width: 70px; border-radius: 5px;">
                         </td>
                         <td>
                             {{#if this.documentFile}}
-                            <a href="{{this.documentFile}}" class="download-btn" download><i
-                                    class="fa-solid fa-download"></i> Download Document</a>
+                                <a href="{{this.documentFile}}" class="btn btn-info btn-sm" download>📥 Tải tài liệu</a>
                             {{/if}}
                         </td>
                         <td>
-                            <a href="/document/edit/{{this._id}}" class="edit-btn"><i
-                                    class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/document/edit/{{this._id}}"><i class="fa-solid fa-pen-to-square"></i></a>
                             <form action="/document/delete/{{this._id}}?_method=DELETE" method="POST"
                                 onsubmit="return confirm('Are you sure you want to delete this document?');">
                                 <button type="submit" class="delete-btn"><i class="fa-solid fa-trash-can"></i></button>
@@ -164,48 +117,4 @@
             </table>
         </div>
     </div>
-
-    <script>
-        document.getElementById('search-bar').addEventListener('input', function () {
-            const query = this.value;
-
-            // Send an AJAX request to the server
-            fetch(`/document/search?query=${encodeURIComponent(query)}`)
-                .then(response => response.json()) // Parse the JSON response
-                .then(data => {
-                    // Update the table with the search results
-                    const tableBody = document.querySelector('.document-table tbody');
-                    tableBody.innerHTML = ''; // Clear existing rows
-
-                    if (data.documents.length > 0) {
-                        data.documents.forEach(doc => {
-                            const row = `
-                                <tr>
-                                    <td>${doc.title}</td>
-                                    <td>${doc.author.fullname}</td>
-                                    <td>${doc.content}</td>
-                                    <td>
-                                        <img src="${doc.imageUrl}" alt="${doc.title}" style="max-width: 200px; border-radius: 5px;">
-                                    </td>
-                                    <td>
-                                        ${doc.documentFile ? `<a href="${doc.documentFile}" class="download-btn" download><i class="fa-solid fa-download"></i> Download Document</a>` : ''}
-                                    </td>
-                                    <td>
-                                        <a href="/document/edit/${doc._id}" class="edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <form action="/document/delete/${doc._id}?_method=DELETE" method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this document?');">
-                                            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash-can"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            `;
-                            tableBody.insertAdjacentHTML('beforeend', row);
-                        });
-                    } else {
-                        tableBody.innerHTML = '<tr><td colspan="6">No documents found</td></tr>';
-                    }
-                })
-                .catch(error => console.error('Error fetching search results:', error));
-        });
-    </script>
 </body>

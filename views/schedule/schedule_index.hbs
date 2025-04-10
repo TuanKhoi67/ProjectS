@@ -1,104 +1,67 @@
-{{!-- layout.hbs --}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <style>
+<style>
+    .btn-primary {
+        background-color: #2a2a91;
+        border-color: #2a2a91;
+    }
 
-<<<<<<< HEAD
-<table border="1">
-    <thead>
-        <tr>
-            <th>Thứ</th>
-            <th>Ca Học</th>
-            <th>Lớp</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each schedules}}
-        <tr>
-            <td>{{this.day}}</td>
-            <td>{{this.time}}</td>
-            <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
-            
-            <td>
-                <a class="button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
-                <a class="button-3" href="/schedule/edit/{{_id }}">Edit</a>
-                <a class="button-3" href="/schedule/delete/{{ _id }}"
-                    onclick="return confirm('Are you sure to delete this product ?');">Delete</a>
-             </td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
+    .btn-primary:hover {
+        background-color: #1f1f6e;
+        border-color: #1f1f6e;
+    }
 
-<a href="/schedule/schedule-view/{{prevWeek}}">Tuần trước</a> |
-<a href="/schedule/schedule-view/{{nextWeek}}">Tuần sau</a>
-=======
-        .btn-primary {
-            background-color: #2a2a91;
-            border-color: #2a2a91;
-        }
-        .btn-primary:hover {
-            background-color: #1f1f6e;
-            border-color: #1f1f6e;
-        }
+    th,
+    td {
+        text-align: center;
+    }
+</style>
 
-    </style>
-</head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Schedule</a>
-        </div>
-    </nav>
     <div class="container mt-4">
         {{{body}}}
     </div>
 </body>
+
 </html>
 
 {{!-- schedule_index.hbs --}}
-{{!-- Kế thừa từ layout.hbs --}}
-{{#> layout}}
-<div class="card">
-    <div class="card-header text-center">
-        <h3>{{title}}</h3>
-        <p>Week: {{weekRange}}</p>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Slot</th>
-                    <th>Class</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each schedules}}
-                <tr>
-                    <td>{{this.day}}</td>
-                    <td>{{this.time}}</td>
-                    <td>{{this.class.classname}}</td>
-                    <td>
-                        <a href="/schedule/edit/{{this._id}}" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="/schedule/delete/{{this._id}}" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-        <a href="/schedule/add" class="btn btn-primary">Add Schedule</a>
-        <a href="/schedule/schedule-view/{{prevWeek}}" class="btn btn-light">Previous Week</a>
-        <a href="/schedule/schedule-view/{{nextWeek}}" class="btn btn-light">Next Week</a>
-    </div>
+
+
+<div class="card-header text-center">
+    <h3>{{title}}</h3>
+    <p>Week: {{weekRange}}</p>
 </div>
-{{/layout}}
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
+<div class="card-body">
+    <div class="col-6 col-md-4">
+        <a href="/schedule/add" class="btn btn-primary" style="margin-left: 100px;">Add Schedule</a>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Slot</th>
+                <th>Class</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each schedules}}
+            <tr>
+                <td>{{this.day}}</td>
+                <td>{{this.time}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+
+                <td>
+                    <a class="button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
+                    <a class="button-3" href="/schedule/edit/{{_id }}">Edit</a>
+                    <a class="button-3" href="/schedule/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this schedule ?');">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/schedule/schedule-view/{{prevWeek}}" class="btn btn-light" style="margin-left: 20px;">Previous Week</a>
+    <a href="/schedule/schedule-view/{{nextWeek}}" class="btn btn-light" style="margin-left: 80%;">Next Week</a>
+
+</div>

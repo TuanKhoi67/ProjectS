@@ -1,6 +1,23 @@
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
 <h1>Tutor Informations Management</h1>
 
-<h2>Thêm giảng viên mới</h2>
+<h2>Add New Tutor</h2>
 <form action="/admin/dashboard/add-tutor" method="POST">
     <label for="">Tutor Name</label>
     <input type="text" id="" name="name" required>
@@ -14,11 +31,11 @@
     <label for="">Department</label>
     <input type="text" id="" name="department" required>
 
-    <button type="submit">Thêm</button>
+    <button class="btn btn-primary" type="submit">Add</button>
 </form>
 
-<h2>Danh sách giảng viên</h2>
-<h3>Tổng số giảng viên: <span id="total">{{totalTutors}}</span></h3>
+<h2>Tutor List</h2>
+<h3>Tutor Total: <span id="total">{{totalTutors}}</span></h3>
 
 <div class="table-wrapper">
     <table class="fl-table">
@@ -42,10 +59,18 @@
                 <td>
                     <a class="button-3" href="/admin/dashboard/tutor-edit/{{ _id }}">Edit</a>
                     <a class="button-3" href="/admin/dashboard/tutor-delete/{{ _id }}"
-                        onclick="return confirm('Are you sure to delete this product ?');">Delete</a>
+                        onclick="return confirm('Are you sure to delete this user ?');">Delete</a>
                 </td>
             </tr>
             {{/each}}
         <tbody>
     </table>
 </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>

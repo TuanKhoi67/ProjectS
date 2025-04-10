@@ -1,0 +1,80 @@
+<h1>Show All Classes</h1> 
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Student Name</th>
+                <th>Teacher Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each classes}}
+            <tr>
+                <td><a>{{classname}}</a></td>
+                <td>
+                    {{#each student}}
+                        {{this.name}}<br>  
+                    {{/each}}
+                </td>
+                <td>
+                    {{#each tutor}}
+                        {{this.name}}<br>  
+                    {{/each}}
+                </td>
+                {{!-- <td>{{tutor.name}}</td> --}}
+                <!--<td>
+                    <a class="button-3" href="/brand/edit/{{ _id }}">Edit</a>
+                    <a class="button-3" href="/brand/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this brand ?');">Delete</a>
+                </td>-->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .table-container {
+        width: 50%;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #008060;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr.highlight {
+        background-color: #e6f4ea;
+        font-weight: bold;
+    }
+
+    tr.highlight td {
+        color: #008060;
+    }
+</style>

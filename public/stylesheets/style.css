@@ -70,7 +70,7 @@ a {
 }
 
 /* media query for menu */
-@media only screen and (max-width: 860px) {
+@media only screen and (max-width: 800px) {
     nav ul {
         position: absolute;
         top: 70px;
@@ -154,7 +154,6 @@ a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
 }
-
 .profile-header {
     background-color: #2a2a91;
     color: white;
@@ -171,7 +170,6 @@ a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
 }
-
 .edit-profile-header {
     background-color: #2a2a91;
     color: white;
@@ -215,7 +213,7 @@ a {
 }
 
 .form-label {
-    color: white;
+    color: black; /* Đặt màu chữ của label thành đen */
 }
 
 .input-group-text {
@@ -237,6 +235,12 @@ a {
 .toggle:hover {
     color: #8371fd;
 }
+
+/* New styles for form labels */
+/* .form-label {
+    color: white;
+    /* Change form labels color to white */
+/* } */
 
 /* Blogs */
 .content {
@@ -302,7 +306,7 @@ a {
     background: #000000;
     color: #8a8a8a;
     font-size: 14px;
-    padding: 60px 0 5px;
+    padding: 60px 0 20px;
 }
 
 .footer p {
@@ -344,4 +348,171 @@ ul {
 
 .copyright {
     text-align: center;
+}
+h1,h2,h3,h4,label,p,select,input,button{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+th {
+    background-color: #2a2a91 !important;
+    color: white !important;
+}
+
+.chart-container {
+    display: none;
+    margin: 30px 0;
+}
+
+.btn-toggle {
+    margin: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-toggle:hover {
+    background: #2980b9;
+}
+
+.dashboard-header {
+    margin-right: 150px;
+    margin-left: 320px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2a2a91;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+/* Toggle Button */
+.toggle-sidebar-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background-color: #2a2a91;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.toggle-sidebar-btn:hover {
+    background-color: #1c1c7a;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2a2a91;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.sidebar .logo {
+    font-size: 22px;
+    margin-left: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar ul li {
+    margin: 12px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.sidebar.closed {
+    transform: translateX(-100%);
+}
+
+
+/* Adjust main content margin */
+.main-content {
+    margin-left: 240px;
+    padding: 20px;
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.hidden+.main-content {
+    margin-left: 20px;
+}
+
+.sidebar a:hover {
+    text-decoration: none;
+    color: white;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 240px;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* Responsive Charts */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.chart-wrapper {
+    max-width: 500px;
+    margin-bottom: 40px;
+}
+
+.chart-wrapper-wide {
+    max-width: 800px;
+    margin-bottom: 40px;
+}
+
+canvas {
+    width: 80% !important;
+    height: auto !important;
 }

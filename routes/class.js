@@ -81,17 +81,6 @@ router.post('/create', async (req, res) => {
 
         await newClass.save();
 
-<<<<<<< HEAD
-=======
-        // Cập nhật tất cả sinh viên để thêm tutorId vào field "tutor"
-        const updatedStudents = await StudentModel.updateMany(
-            { _id: { $in: studentIds } }, 
-            { tutor: tutorId }
-        );
-
-        console.log("Updated students:", updatedStudents);
-
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
         res.redirect('/class'); // Điều hướng sau khi tạo lớp thành công
     } catch (error) {
         console.error("Lỗi khi tạo lớp học:", error);  // In lỗi chi tiết
@@ -99,30 +88,19 @@ router.post('/create', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 router.get('/search-student', async (req, res) => {
     try {
         const { email } = req.query;
 
         if (!email) {
-<<<<<<< HEAD
             return res.render('class/add', { error: "Vui lòng nhập email sinh viên!", studentResult: null, classes: [] });
-=======
-            return res.render('class/add_class', { error: "Vui lòng nhập email sinh viên!", studentResult: null, classes: [] });
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
         }
 
         const student = await StudentModel.findOne({ email });
 
         if (!student) {
-<<<<<<< HEAD
             return res.render('class/add', { error: "Không tìm thấy sinh viên!", studentResult: null, classes: [] });
-=======
-            return res.render('class/add_class', { error: "Không tìm thấy sinh viên!", studentResult: null, classes: [] });
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
         }
 
         // Lấy danh sách giáo viên có department trùng với subject của sinh viên
@@ -132,17 +110,10 @@ router.get('/search-student', async (req, res) => {
         const classes = await ClassModel.find().populate('student');
         const availableClasses = classes.filter(c => c.student.length < 10);
 
-<<<<<<< HEAD
         res.render('class/add', { studentResult: student, classes: availableClasses, tutors, error: null });
     } catch (error) {
         console.error("Lỗi khi tìm kiếm sinh viên:", error);
         res.render('class/add', { error: 'Lỗi khi tìm kiếm sinh viên', studentResult: null, classes: [] });
-=======
-        res.render('class/add_class', { studentResult: student, classes: availableClasses, tutors, error: null });
-    } catch (error) {
-        console.error("Lỗi khi tìm kiếm sinh viên:", error);
-        res.render('staff/add_class', { error: 'Lỗi khi tìm kiếm sinh viên', studentResult: null, classes: [] });
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
     }
 });
 
@@ -160,7 +131,6 @@ router.post('/assign-student', async (req, res) => {
             return res.status(400).send("Lớp đã đủ 10 sinh viên, không thể thêm.");
         }
 
-<<<<<<< HEAD
         // Kiểm tra nếu sinh viên đã tồn tại trong lớp
         const isAlreadyInClass = selectedClass.student.some(
             (s) => s._id.toString() === studentId
@@ -170,8 +140,6 @@ router.post('/assign-student', async (req, res) => {
             return res.redirect(`/class/search-student?error=exists&studentId=${studentId}`);
         }
 
-=======
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
         await ClassModel.findByIdAndUpdate(classId, { $push: { student: studentId } });
 
         res.redirect('/class');
@@ -204,10 +172,4 @@ router.post('/create-class', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
 module.exports = router;

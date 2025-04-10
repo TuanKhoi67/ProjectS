@@ -1,12 +1,31 @@
-<h1>Show All Classes</h1> 
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
 
+<div class="main-content">
+<h1>Show All Classes</h1> 
+<div class="container">
+<a href="create" class="btn">Create to Class</a>
 <div class="table-container">
-    <table>
+    <table class="table table-bordered"> 
         <thead>
             <tr>
                 <th>Class Name</th>
                 <th>Student Name</th>
                 <th>Teacher Name</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -23,16 +42,18 @@
                         {{this.name}}<br>  
                     {{/each}}
                 </td>
-                {{!-- <td>{{tutor.name}}</td> --}}
-                <!--<td>
-                    <a class="button-3" href="/brand/edit/{{ _id }}">Edit</a>
-                    <a class="button-3" href="/brand/delete/{{ _id }}"
-                        onclick="return confirm('Are you sure to delete this brand ?');">Delete</a>
-                </td>-->
+                <td>
+                    <a class="btn btn-primary" href="/class/edit/{{ _id }}">Edit</a>
+                    <a class="btn btn-primary" href="/class/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this class ?');">Delete</a>
+                </td>
+                <td></td>
             </tr>
             {{/each}}
         </tbody>
     </table>
+</div>
+</div>
 </div>
 
 <style>
@@ -77,4 +98,22 @@
     tr.highlight td {
         color: #008060;
     }
+    table.table-bordered th {
+    background-color: #082995 !important;
+    color: white !important;
+    text-align: center;
+    }
+    table.table-bordered td {
+        text-align: center;
+    }
+    .table-container{
+        margin-left: 25%;
+    }
 </style>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>

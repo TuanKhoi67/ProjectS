@@ -1,69 +1,85 @@
-<!DOCTYPE html>
-<<<<<<< HEAD
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Tạo Lịch Họp</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-=======
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
->>>>>>> 1ac059a5e9eb7b5ebac7c3352e41da7709e44792
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Tạo Lịch Họp</h2>
-        <form action="/api/meeting/create" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Tiêu đề</label>
-                <input type="text" class="form-control" name="title" required>
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<div class="content">
+
+    <head>
+        <title>Create A Meeting</title>
+    </head>
+
+    <body>
+        <div class="container mt-5">
+            <h2 class="mb-4">Create A Meeting</h2>
+            <div class="container">
+                <form action="/api/meeting/create" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Form</label>
+                        <input type="text" class="form-control" name="form" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <select class="form-control" name="students[]" required>
+                            {{#each students}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                        <select class="form-control" name="students[]" required>
+                            {{#each students}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tutor</label>
+                        <select class="form-control" name="tutors[]" required>
+                            {{#each tutors}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Begin Time</label>
+                        <input type="dateTime-local" name="startTime" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Time</label>
+                        <input type="dateTime-local" name="endTime" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Note</label>
+                        <textarea class="form-control" name="note"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Hình thức</label>
-                <input type="text" class="form-control" name="form" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Địa điểm</label>
-                <input type="text" class="form-control" name="location" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Sinh viên</label>
-                <select class="form-control" name="students[]" required>
-                    {{#each students}}
-                        <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
-                <select class="form-control" name="students[]" required>
-                    {{#each students}}
-                        <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Giáo viên</label>
-                <select class="form-control" name="tutors[]" required>
-                    {{#each tutors}}
-                        <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-                        <div class="mb-3">
-                <label class="form-label">Thời gian bắt đầu</label>
-                <input type="dateTime-local" name="startTime" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Thời gian kết thúc</label>
-                <input type="dateTime-local" name="endTime" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Ghi chú</label>
-                <textarea class="form-control" name="note"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Tạo Lịch Họp</button>
-        </form>
-    </div>
-</body>
-</html>
+        </div>
+    </body>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>
