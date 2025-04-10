@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
-const http = require('http'); 
+const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,10 +9,10 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
-const hbs = require('hbs'); 
+const hbs = require('hbs');
 const dotenv = require('dotenv');
 
-require('./config/database'); 
+require('./config/database');
 require('./config/passport')(passport);
 require('./config/upload');
 require('./middleware/auth');
@@ -29,36 +29,45 @@ const onlineUsers = {};
 
 // 📡 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
-    console.log("⚡ Client kết nối:", socket.id);
+  console.log(`⚡ Client kết nối: ${socket.id}`);
 
-    // ✅ Đăng ký user vào phòng theo userId
-    socket.on('registerUser', (userId) => {
-        socket.join(userId);
-        onlineUsers[userId] = socket.id;
-        console.log(`✅ User ${userId} joined room`);
-    });
+  // 🧾 Khi người dùng đăng nhập hoặc kết nối
+  socket.on('registerUser', (userId) => {
+    socket.join(userId); // Tham gia vào room riêng theo userId
+    onlineUsers[userId] = socket.id;
+    console.log(`✅ User ${userId} đã vào phòng (${socket.id})`);
+  });
 
-    // ✅ Xử lý gửi tin nhắn
-    socket.on('sendMessage', (data) => {
-        console.log("📩 Nhận tin nhắn từ client:", data);
+  // 📩 Khi người dùng gửi tin nhắn
+  socket.on('sendMessage', (data) => {
+    const { sender, receiver, message, timestamp } = data;
 
-        // 📡 Gửi tin nhắn đến người nhận
-        io.to(data.receiver).emit('receiveMessage', data);
+    console.log(`📨 Tin nhắn từ ${sender} đến ${receiver}: ${message}`);
 
-        // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
-        io.to(data.sender).emit('messageSent', data);
-    });
+    // Gửi tin nhắn cho người nhận nếu đang online
+    if (onlineUsers[receiver]) {
+      io.to(receiver).emit('receiveMessage', {
+        sender,
+        message,
+        timestamp
+      });
+      console.log(`📤 Tin nhắn gửi đến ${receiver}`);
+    } else {
+      console.log(`⛔ Người dùng ${receiver} đang offline`);
+      // TODO: Lưu vào DB hoặc xử lý khi người dùng offline
+    }
+  });
 
-    // ❌ Xóa user khi ngắt kết nối
-    socket.on('disconnect', () => {
-        for (const userId in onlineUsers) {
-            if (onlineUsers[userId] === socket.id) {
-                delete onlineUsers[userId];
-                console.log(`❌ User ${userId} disconnected`);
-                break;
-            }
-        }
-    });
+  // ❌ Khi người dùng ngắt kết nối
+  socket.on('disconnect', () => {
+    const disconnectedUser = Object.keys(onlineUsers).find(
+      key => onlineUsers[key] === socket.id
+    );
+    if (disconnectedUser) {
+      delete onlineUsers[disconnectedUser];
+      console.log(`❌ User ${disconnectedUser} (${socket.id}) đã ngắt kết nối`);
+    }
+  });
 });
 
 // 🔧 Middleware cơ bản
@@ -75,23 +84,56 @@ app.use(flash());
 app.set('socketio', io);
 
 // ✅ Đăng ký helper "eq" sau khi import hbs
+hbs.registerHelper('eq', function (a, b) {
+  return a === b;
+});
+
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
-hbs.registerHelper('formatDate', function(date) {
+
+hbs.registerHelper('formatDate', function (date) {
   if (!date) return '';
   return new Date(date).toLocaleDateString('vi-VN', {
-      hour: '2-digit', 
-      minute: '2-digit', 
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    hour: '2-digit',
+    minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
   });
 });
-hbs.registerHelper('json', function(context) {
-  return JSON.stringify(context);
+
+hbs.registerHelper('absolutePath', function (path) {
+  if (!path) {
+    return ''; // Return an empty string if the path is undefined or null
+  }
+
+  // Check if the path is a URL (starts with http:// or https://)
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path; // Return the URL as is
+  }
+
+  // Check if the path is a pdf (ends with .pdf or .PDF)
+  if (path.endsWith('.pdf') || path.endsWith('.PDF')) {
+    return path; // Return the URL as is
+  }
+
+  // Check if the path is a doc (ends with .doc or .docx)
+  if (path.endsWith('.doc') || path.endsWith('.docx') || path.endsWith('.DOC') || path.endsWith('.DOCX')) {
+    return path; // Return the URL as is
+  }
+
+  // Otherwise, ensure the path starts with a '/'
+  if (!path.startsWith('/')) {
+    path = '/' + path;
+  }
+
+  return path;
 });
 
+hbs.registerHelper('json', function (context) {
+  return JSON.stringify(context);
+});
 // 🛡 Cấu hình session & Passport
 app.use(session({
   secret: 'yourSecret',
@@ -114,7 +156,7 @@ const routes = {
   index: require('./routes/index'),
   users: require('./routes/users'),
   auth: require('./routes/auth'),
-  message: require('./routes/message')(io), 
+  message: require('./routes/message')(io),
   meeting: require('./routes/meeting'),
   document: require('./routes/document'),
   blog: require('./routes/blog'),
@@ -145,8 +187,6 @@ app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
 app.use('/attendance', routes.attendance);
-
-// const onlineUsers = {};
 
 
 // ❌ Xử lý lỗi 404

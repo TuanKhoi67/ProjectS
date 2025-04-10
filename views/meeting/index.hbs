@@ -1,25 +1,64 @@
-<h2>Brand Management</h2>
-<div class="table-wrapper">
-    <table class="fl-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Form</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Note</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each meetings }}
-            <tr>
-                <td><a>{{ title }}</a></td>
-                <td>{{form}}</td>
-                <td>{{location}}</td>
-                <td>{{status}}</td>
-                <td>{{note}}</td>
-            </tr>
-            {{/each}}
-        <tbody>
-    </table>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
 </div>
+
+<head>
+    <title>Meeting List</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Meeting List</h2>
+        {{#if meetings.length}}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Form</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Student</th>
+                        <th>Tutor</th>
+                        <th>Note</th>
+                        <th>Begin Time</th>
+                        <th>End Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each meetings}}
+                        <tr>
+                            <td>{{this.title}}</td>
+                            <td>{{this.form}}</td>
+                            <td>{{this.location}}</td>
+                            <td>{{this.status}}</td>
+                            <td>{{this.student.name}}</td>
+                            <td>{{this.tutor.name}}</td>
+                            <td>{{this.note}}</td>
+                            <td>{{this.startTime}}</td>
+                            <td>{{this.endTime}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <div class="alert alert-warning">No meeting exist.</div>
+        {{/if}}
+    </div>
+</body>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>

@@ -1,0 +1,387 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+
+    <!-- Bar Chart: Lớp -->
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Classes by Month</h2>
+            <div class="chart-wrapper">
+                <canvas id="classChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h2>Students by Month</h2>
+            <div class="chart-wrapper">
+                <canvas id="studentChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <h2>Student Allocation by Subject</h2>
+    <div class="chart-wrapper">
+        <canvas id="subjectChart"></canvas>
+    </div>
+
+
+    <script>
+        const chartData = {{{ chartData }}};
+        const studentChartData = {{{ studentChartData }}};
+        const subjectLabels = {{{ subjectLabels }}};
+        const subjectCounts = {{{ subjectCounts }}};
+
+        const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+            'August', 'September', 'October', 'November', 'December',]
+            .slice(0, chartData.length);
+
+        // Chart 1: Class Chart
+        const ctx1 = document.getElementById('classChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Created Classes',
+                    data: chartData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Student Chart
+        const ctx2 = document.getElementById('studentChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Registered Students',
+                    data: studentChartData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 3: Subject Pie Chart
+        const ctx3 = document.getElementById('subjectChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'pie',
+            data: {
+                labels: subjectLabels,
+                datasets: [{
+                    data: subjectCounts,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#66BB6A', '#BA68C8', '#FFA726'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+
+    <div class="row">
+        <div class="col-md 4">
+            <h2>Meeting Dashboard</h2>
+            <div>
+                <button class="btn btn-toggle" onclick="toggleMeetingChart('7days')">Weekly</button>
+                <button class="btn btn-toggle" onclick="toggleMeetingChart('monthly')">Monthly</button>
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="meetingChart"></canvas>
+            </div>
+        </div>
+        <script>
+            const meeting7Labels = {{{ meeting7Labels }}};
+            const meeting7Counts = {{{ meeting7Counts }}};
+
+            const meetingMonthLabels = {{{ meetingMonthLabels }}};
+            const meetingMonthCounts = {{{ meetingMonthCounts }}};
+
+            let meetingChart;
+
+            function renderMeetingChart(labels, data) {
+                const ctx = document.getElementById('meetingChart').getContext('2d');
+                if (meetingChart) {
+                    meetingChart.destroy();
+                }
+
+                meetingChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Meetings',
+                            data: data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function toggleMeetingChart(type) {
+                if (type === '7days') {
+                    renderMeetingChart(meeting7Labels, meeting7Counts);
+                } else {
+                    renderMeetingChart(meetingMonthLabels, meetingMonthCounts);
+                }
+            }
+
+            // Mặc định hiển thị biểu đồ 7 ngày
+            toggleMeetingChart('7days');
+        </script>
+
+        <div class="col-md 10">
+            <h2>Document Dashboard</h2>
+            <div>
+                <button class="btn btn-toggle" onclick="toggleDocChart('7days')">Weekly</button>
+                <button class="btn btn-toggle" onclick="toggleDocChart('compareMonth')">Previous Month & Next
+                    Month</button>
+                <button class="btn btn-toggle" onclick="toggleDocChart('monthly')">Monthly</button>
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="docChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        const doc7Labels = {{{ doc7Labels }}};
+        const doc7Counts = {{{ doc7Counts }}};
+
+        const docMonthCompareLabels = {{{ docMonthCompareLabels }}};
+        const docMonthCompareCounts = {{{ docMonthCompareCounts }}};
+
+        const docMonthlyLabels = {{{ docMonthlyLabels }}};
+        const docMonthlyCounts = {{{ docMonthlyCounts }}};
+
+        let docChart;
+
+        function renderBarChart(labels, data, label = 'Documents') {
+            const ctx = document.getElementById('docChart').getContext('2d');
+            if (docChart) docChart.destroy();
+
+            docChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        function renderPieChart(labels, data, label = 'Document Types') {
+            const ctx = document.getElementById('docChart').getContext('2d');
+            if (docChart) docChart.destroy();
+
+            docChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(255, 206, 86, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function toggleDocChart(type) {
+            if (type === '7days') {
+                renderBarChart(doc7Labels, doc7Counts, 'Weekly');
+            } else if (type === 'compareMonth') {
+                renderPieChart(docMonthCompareLabels, docMonthCompareCounts, 'Monthly');
+            } else if (type === 'monthly') {
+                renderBarChart(docMonthlyLabels, docMonthlyCounts, 'Yearly');
+            }
+        }
+
+        // Mặc định hiển thị biểu đồ 7 ngày
+        toggleDocChart('7days');
+    </script>
+
+    <h1>Blog Dashboard</h1>
+
+    <button class="btn-toggle" onclick="toggleChart('chart7Days')">Weekly</button>
+    <button class="btn-toggle" onclick="toggleChart('chartWeek')">Week Comparison</button>
+    <button class="btn-toggle" onclick="toggleChart('chartMonth')">Month Comparsion</button>
+    <button class="btn-toggle" onclick="toggleChart('chartAllMonths')">Months</button>
+
+    <div class="row">
+        <div id="chart7Days" class="col-md-4 chart-wrapper">
+            <h4>Created Blog by Day</h4>
+            <canvas id="blog7Chart"></canvas>
+        </div>
+
+        <div id="chartAllMonths" class="col-md-12 chart-wrapper">
+            <h4>Created Blog Total by Month</h4>
+            <canvas id="blogMonthChart"></canvas>
+        </div>
+    </div>
+
+    <h3>Blog Comparison by Time</h3>
+    <div class="row">
+        <div id="chartWeek" class="col-md-6 chart-wrapper">
+            <canvas id="blogWeekPie"></canvas>
+        </div>
+
+        <div id="chartMonth" class="col-md-6 chart-wrapper">
+            <canvas id="blogMonthPie"></canvas>
+        </div>
+    </div>
+
+</div>
+<script>
+    const chart7Labels = {{{ blog7Labels }}};
+    const chart7Counts = {{{ blog7Counts }}};
+    const chartWeekLabels = {{{ blogWeekCompareLabels }}};
+    const chartWeekCounts = {{{ blogWeekCompareCounts }}};
+    const chartMonthLabels = {{{ blogMonthCompareLabels }}};
+    const chartMonthCounts = {{{ blogMonthCompareCounts }}};
+    const chartMonthlyLabels = {{{ blogMonthlyLabels }}};
+    const chartMonthlyCounts = {{{ blogMonthlyCounts }}};
+
+    new Chart(document.getElementById('blog7Chart'), {
+        type: 'bar',
+        data: {
+            labels: chart7Labels,
+            datasets: [{
+                label: 'Created Blogs',
+                data: chart7Counts,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('blogWeekPie'), {
+        type: 'pie',
+        data: {
+            labels: chartWeekLabels,
+            datasets: [{
+                label: 'Week Comparsion',
+                data: chartWeekCounts,
+                backgroundColor: ['#1abc9c', '#9b59b6']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('blogMonthPie'), {
+        type: 'pie',
+        data: {
+            labels: chartMonthLabels,
+            datasets: [{
+                label: 'Monthly',
+                data: chartMonthCounts,
+                backgroundColor: ['#f1c40f', '#e67e22']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('blogMonthChart'), {
+        type: 'bar',
+        data: {
+            labels: chartMonthlyLabels,
+            datasets: [{
+                label: 'Monthly',
+                data: chartMonthlyCounts,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+
+    function toggleChart(chartId) {
+        document.querySelectorAll('.chart-container').forEach(el => el.style.display = 'none');
+        document.getElementById(chartId).style.display = 'block';
+    }
+
+    // Mặc định hiển thị biểu đồ 7 ngày
+    toggleChart('chart7Days');
+
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+
+</script>

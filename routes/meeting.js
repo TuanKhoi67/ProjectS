@@ -4,7 +4,21 @@ const router = express.Router();
 const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
-const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+//const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+
+router.get('/', async (req, res) => {
+  try {
+      const meetings = await MeetingModel.find()
+          .populate('student') // Lấy thông tin sinh viên
+          .populate('tutor');  // Lấy thông tin giáo viên
+
+      res.render("meeting/index", { meetings });
+  } catch (error) {
+      console.error("Lỗi khi lấy danh sách cuộc họp:", error);
+      res.status(500).json({ error: "Không thể lấy danh sách cuộc họp" });
+  }
+});
+
 
 // Route GET: Render form tạo meeting
 router.get("/create", async (req, res) => {
@@ -103,27 +117,6 @@ router.post("/create", async (req, res) => {
         res.status(500).json({ error: "Lỗi khi tạo lịch họp", details: error.message });
     }
   });
-  
-
-
-
-
-// router.post("/create", async (req, res) => {
-//   try {
-//       const { title, location, note, students, tutors } = req.body;
-//       const attendees = [...students, ...tutors];
-
-//       const meeting = await createGoogleMeet({ title, location, note, attendees });
-
-//       const emailMessage = `Cuộc họp của bạn đã được lên lịch.\nTham gia tại: ${meeting.hangoutLink}`;
-
-//       sendEmail(attendees, "Lịch Họp Google Meet", emailMessage);
-
-//       res.json({ message: "Lịch họp đã được tạo!", meetLink: meeting.hangoutLink });
-//   } catch (error) {
-//       res.status(500).json({ error: "Lỗi khi tạo lịch họp" });
-//   }
-// });
 
 
 module.exports = router;

@@ -12,12 +12,13 @@ router.get('/', async (req, res) => {
 
         console.log("Classes:", classes); // Debug dữ liệu
 
-        res.render('class/class_index', { classes }); 
+        res.render('class/index', { classes }); 
     } catch (error) {
         console.error("Error fetching class data:", error);
         res.status(500).send("Internal Server Error");
     }
 }),
+
 
 // Hiển thị trang tạo lớp học với bộ lọc
 router.get('/create', async (req, res) => {
@@ -50,7 +51,12 @@ router.post('/create', async (req, res) => {
     try {
         console.log("Request body:", JSON.stringify(req.body, null, 2));
 
-        const { classname, studentIds, tutorId } = req.body;
+        let { classname, studentIds, tutorId } = req.body;
+
+        // Ép kiểu nếu chỉ có 1 sinh viên
+        if (!Array.isArray(studentIds)) {
+            studentIds = [studentIds];
+        }
 
         if (!classname || !studentIds || !tutorId) {
             return res.status(400).send("Thiếu dữ liệu đầu vào");
@@ -75,14 +81,6 @@ router.post('/create', async (req, res) => {
 
         await newClass.save();
 
-        // Cập nhật tất cả sinh viên để thêm tutorId vào field "tutor"
-        const updatedStudents = await StudentModel.updateMany(
-            { _id: { $in: studentIds } }, 
-            { tutor: tutorId }
-        );
-
-        console.log("Updated students:", updatedStudents);
-
         res.redirect('/class'); // Điều hướng sau khi tạo lớp thành công
     } catch (error) {
         console.error("Lỗi khi tạo lớp học:", error);  // In lỗi chi tiết
@@ -90,18 +88,19 @@ router.post('/create', async (req, res) => {
     }
 });
 
+
 router.get('/search-student', async (req, res) => {
     try {
         const { email } = req.query;
 
         if (!email) {
-            return res.render('class/add_class', { error: "Vui lòng nhập email sinh viên!", studentResult: null, classes: [] });
+            return res.render('class/add', { error: "Vui lòng nhập email sinh viên!", studentResult: null, classes: [] });
         }
 
         const student = await StudentModel.findOne({ email });
 
         if (!student) {
-            return res.render('class/add_class', { error: "Không tìm thấy sinh viên!", studentResult: null, classes: [] });
+            return res.render('class/add', { error: "Không tìm thấy sinh viên!", studentResult: null, classes: [] });
         }
 
         // Lấy danh sách giáo viên có department trùng với subject của sinh viên
@@ -111,10 +110,10 @@ router.get('/search-student', async (req, res) => {
         const classes = await ClassModel.find().populate('student');
         const availableClasses = classes.filter(c => c.student.length < 10);
 
-        res.render('class/add_class', { studentResult: student, classes: availableClasses, tutors, error: null });
+        res.render('class/add', { studentResult: student, classes: availableClasses, tutors, error: null });
     } catch (error) {
         console.error("Lỗi khi tìm kiếm sinh viên:", error);
-        res.render('staff/add_class', { error: 'Lỗi khi tìm kiếm sinh viên', studentResult: null, classes: [] });
+        res.render('class/add', { error: 'Lỗi khi tìm kiếm sinh viên', studentResult: null, classes: [] });
     }
 });
 
@@ -130,6 +129,15 @@ router.post('/assign-student', async (req, res) => {
 
         if (selectedClass.student.length >= 10) {
             return res.status(400).send("Lớp đã đủ 10 sinh viên, không thể thêm.");
+        }
+
+        // Kiểm tra nếu sinh viên đã tồn tại trong lớp
+        const isAlreadyInClass = selectedClass.student.some(
+            (s) => s._id.toString() === studentId
+        );
+
+        if (isAlreadyInClass) {
+            return res.redirect(`/class/search-student?error=exists&studentId=${studentId}`);
         }
 
         await ClassModel.findByIdAndUpdate(classId, { $push: { student: studentId } });
@@ -164,7 +172,53 @@ router.post('/create-class', async (req, res) => {
     }
 });
 
+router.get('/edit/:id', async (req, res) => {
+    try {
+        const classData = await ClassModel.findById(req.params.id).populate('student').populate('tutor');
+        const students = await StudentModel.find(); // To choose students
+        const tutors = await TutorModel.find();     // To choose tutor
 
+        if (!classData) {
+            return res.status(404).send("Lớp học không tồn tại.");
+        }
 
+        res.render('class/edit', {
+            classData,
+            students,
+            tutors
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi khi lấy thông tin lớp học.");
+    }
+});
+
+router.post('/edit/:id', async (req, res) => {
+    try {
+        const { classname, student, tutor } = req.body;
+
+        await ClassModel.findByIdAndUpdate(req.params.id, {
+            classname,
+            student: Array.isArray(student) ? student : [student], // Nếu chỉ chọn 1 SV
+            tutor
+        });
+
+        res.redirect('/class'); // hoặc trang chi tiết lớp
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi khi cập nhật lớp học.");
+    }
+});
+
+// Xóa document theo ID
+router.get('/delete/:id', async (req, res) => {
+    try {
+        await ClassModel.findByIdAndDelete(req.params.id);
+        res.redirect('/class'); // hoặc route hiển thị danh sách lớp học
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi khi xóa lớp học.");
+    }
+});
 
 module.exports = router;

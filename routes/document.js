@@ -31,7 +31,7 @@ const upload = multer({
 router.get('/', async (req, res) => {
   try {
     const documents = await Document.find().populate('author', 'fullname');
-    res.render('document/index', { title: 'Quản lý tài liệu', documents });
+    res.render('document/index', { documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách tài liệu');
@@ -46,7 +46,7 @@ router.get('/add', (req, res) => {
 // Xử lý thêm tài liệu
 router.post('/add', upload.single('documentFile'), async (req, res) => {
   const { title, author, content } = req.body;
-  const documentFile = req.file ? '/uploads/documents/' + req.file.filename : '';
+  const documentFile = req.file ? '/uploads/' + req.file.filename : '';
 
   const newDocument = new Document({ 
       title, 
@@ -62,9 +62,16 @@ router.post('/add', upload.single('documentFile'), async (req, res) => {
 
 // Xử lý tìm kiếm tài liệu
 router.get('/search', async (req, res) => {
-    const query = req.query.query;
-    const documents = await Document.find({ title: new RegExp(query, 'i') });
-    res.render('document/index', { documents });
+    const query = req.query.query || '';
+    try {
+        const documents = await Document.find({
+            title: { $regex: query, $options: 'i' } // Case-insensitive search
+        }).populate('author'); // Adjust based on your schema
+        res.json({ documents }); // Return JSON response
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Edit document route
@@ -134,7 +141,9 @@ const ensureAuthenticated = (req, res, next) => {
 // Hiển thị trang danh sách tài liệu với bình luận
 router.get('/mainDocument', async (req, res) => {
   try {
-      const documents = await Document.find().populate('comments.user', 'username'); // Lấy dữ liệu bình luận kèm tên user
+      const documents = await Document.find()
+          .populate('author', 'fullname') // Populate the author's fullname
+          .populate('comments.user', 'username'); // Populate the comment user's username
       res.render('document/mainDocument', { documents, user: req.user });
   } catch (error) {
       console.error('Lỗi lấy dữ liệu:', error);
@@ -167,9 +176,5 @@ router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
       res.status(500).send('Lỗi máy chủ ');
   }
 });
-
-
-
-
 
 module.exports = router;

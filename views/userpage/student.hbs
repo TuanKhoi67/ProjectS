@@ -3,162 +3,233 @@
 </head>
 
 <style>
-    .blog-card {
-        border-radius: 15px;
-        /* Rounded corners */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        /* Subtle shadow for depth */
-        transition: transform 0.3s ease-in-out;
-    }
+        .profile-img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 8px;
+        }
 
-    .blog-card:hover {
-        transform: scale(1.05);
-    }
+        .blog-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+            padding: 15px;
+        }
 
-    .card-text {
-        height: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-</style>
+        .blog-card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-text {
+            height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px 5px 0 0;
+            width: 100%;
+        }
+
+        .popup-btn {
+            background-color: #f0f2f5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-btn:hover {
+            background-color: #e0e4e8;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .icon {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .title {
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
 
 <body>
-    <div class="container">
-        <a href="/" class="navbar-brand"><i class="fas fa-home"></i> Student Portal</a>
-        <div class="d-flex align-items-center">
-            <a href="/document/mainDocument" class="btn btn-light me-2">Main Document</a>
-            <a href="/blog" class="btn btn-light me-2">Blog</a>
-            <a href="/dashboard/student_dashboard" class="btn btn-light me-2">Dashboard</a>
-
-            <!-- Biểu tượng tin nhắn -->
-            <a href="/message" class="btn btn-light me-2">
-                <i class="fas fa-envelope"></i> Messages
-            </a>
-
-            <a href="/auth/logout" class="btn btn-danger ms-2 logout-btn">Logout</a>
-        </div>
-    </div>
-    </nav>
-
     <div class="container mt-4">
-        <h1 class="text-center">Student User Page</h1>
-        <p class="text-center">Welcome, <strong>{{user.fullname}}</strong></p>
+        <h1 class="text-center">Student User Page</h1> 
+        <h3 class="text-right"> Your Dashboard 
+            <a href="/dashboard/student_dashboard" class="title">a</a>
+        </h2> 
 
-        <!-- Form đăng bài -->
-        <h2 class="text-center mt-4">Write a New Blog</h2>
-        <form action="/blog" method="post" enctype="multipart/form-data" class="shadow p-4 bg-white rounded">
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+
+        <!-- Form đăng blog -->
+        <h4 class="text-center mt-4">
+            <img class="profile-img"
+                src="{{#if user.profilePicture}}{{user.profilePicture}}{{else}}https://placehold.co/50x50{{/if}}"
+                alt="User profile picture">
+            <button id="openPopup" class="popup-btn">What’s Your Blog Inspiration Today, {{user.fullname}}?</button>
+        </h4>
+
+        <!-- Popup Modal -->
+        <div id="blogModal" class="modal" style="display: none;">
+            <div class="modal-content shadow p-4 bg-white rounded">
+                <span id="closePopup" class="close">&times;</span>
+                <h2 class="text-center">New Blog</h2>
+                <form action="/blog" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label>Ảnh bài viết</label>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="imageSource" id="uploadRadio"
+                                    value="upload" checked>
+                                <label class="form-check-label" for="uploadRadio">Tải ảnh lên</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="imageSource" id="urlRadio"
+                                    value="url">
+                                <label class="form-check-label" for="urlRadio">Dùng link ảnh</label>
+                            </div>
+                        </div>
+                        <div id="uploadSection">
+                            <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+                            <small class="text-muted">Chấp nhận ảnh JPEG, PNG (tối đa 5MB)</small>
+                        </div>
+                        <div id="urlSection" style="display: none;">
+                            <input type="url" class="form-control" id="imageUrl" name="imageUrl"
+                                placeholder="https://example.com/image.jpg">
+                        </div>
+                        <img id="imagePreview" class="image-preview mt-2" style="display: none;">
+                    </div>
+                    <input type="hidden" name="role" value="student">
+                    <button type="submit" class="btn btn-primary w-100">Đăng bài</button>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
-            </div>
-
-            <!-- Phần upload ảnh -->
-            <div class="mb-3">
-                <label class="form-label">Ảnh bài viết</label>
-
-                <div class="mb-3">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
-                </div>
-                <div class="mb-3">
-                    <label for="content">Content</label>
-                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
-                </div>
-                <input type="hidden" name="role" value="student">
-                <button type="submit" class="btn w-100">Submit</button>
-        </form>
+        </div>
 
         <!-- Hiển thị danh sách blog -->
-        <h2 class="text-center mt-4">Student Blogs</h2>
-        <div class="row">
+        <h2 class="text-center mt-5">Student Blogs</h2>
+        <div class="row mt-4">
             {{#each blogs}}
-            <div class="col-4 mb-4">
-                <div class="blog-card shadow-sm">
-                    <div class="content">
-                        <div class="icon">
-                            <a href="#"><i class="fa-regular fa-user"></i> By {{this.author.fullname}}
-                                ({{this.role}})</a>
-                        </div>
-                        <a href="#" class="title">{{this.title}}</a>
-                        <p class="card-text">{{this.content}}</p>
+            <div class="col-md-4 mb-4">
+                <div class="blog-card">
+                    {{#if this.image}}
+                    <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
+                    {{else}}
+                    <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
+                        style="height: 200px;">
+                        No Image
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="imageSource" id="uploadRadio" value="upload"
-                            checked>
-                        <label class="form-check-label" for="uploadRadio">
-                            Tải ảnh lên
-                        </label>
+                    {{/if}}
+
+                    <div class="icon">
+                        <i class="fa-regular fa-user"></i> {{this.author.fullname}} ({{this.role}})
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="imageSource" id="urlRadio" value="url">
-                        <label class="form-check-label" for="urlRadio">
-                            Dùng link ảnh
-                        </label>
+                    <a href="#" class="title">{{this.title}}</a>
+                    <p class="card-text">{{this.content}}</p>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fa-solid fa-heart"></i> {{this.likes}}</span>
+                        <span><i class="fa-solid fa-comment-dots"></i> {{this.comments.length}}</span>
                     </div>
                 </div>
-
-                <div id="uploadSection">
-                    <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
-                    <small class="text-muted">Chấp nhận ảnh JPEG, PNG (tối đa 5MB)</small>
-                </div>
-
-                <div id="urlSection" style="display: none;">
-                    <input type="url" class="form-control" id="imageUrl" name="imageUrl"
-                        placeholder="https://example.com/image.jpg">
-                </div>
-
-                <img id="imagePreview" class="image-preview mt-2" style="max-width: 300px; display: none;">
             </div>
             {{/each}}
         </div>
-        
-</body>
+    </div>
 
-<input type="hidden" name="role" value="student">
-<button type="submit" class="btn btn-primary w-100">Đăng bài</button>
-</form>
+    <!-- Script -->
+    <script>
+        const openPopupBtn = document.getElementById("openPopup");
+        const closePopupBtn = document.getElementById("closePopup");
+        const modal = document.getElementById("blogModal");
 
-<footer>
-    <p>&copy; 2025 Student Portal. All rights reserved.</p>
-</footer>
-</body>
-<script>
-    // Xử lý chuyển đổi giữa upload và URL
-    document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            const isUpload = document.getElementById('uploadRadio').checked;
-            document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
-            document.getElementById('urlSection').style.display = isUpload ? 'none' : 'block';
+        openPopupBtn.addEventListener("click", () => {
+            modal.style.display = "flex";
         });
-    });
 
-    // Xem trước ảnh khi chọn file
-    document.getElementById('imageFile').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('imagePreview').src = e.target.result;
-                document.getElementById('imagePreview').style.display = 'block';
+        closePopupBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        // Xử lý chuyển đổi giữa upload ảnh và URL
+        const uploadRadio = document.getElementById("uploadRadio");
+        const urlRadio = document.getElementById("urlRadio");
+        const uploadSection = document.getElementById("uploadSection");
+        const urlSection = document.getElementById("urlSection");
+        const imagePreview = document.getElementById("imagePreview");
+
+        uploadRadio.addEventListener("change", () => {
+            uploadSection.style.display = "block";
+            urlSection.style.display = "none";
+            imagePreview.style.display = "none";
+        });
+
+        urlRadio.addEventListener("change", () => {
+            uploadSection.style.display = "none";
+            urlSection.style.display = "block";
+            imagePreview.style.display = "none";
+        });
+
+        // Hiển thị ảnh preview khi nhập link
+        document.getElementById("imageUrl").addEventListener("input", (e) => {
+            const url = e.target.value;
+            if (url) {
+                imagePreview.src = url;
+                imagePreview.style.display = "block";
+            } else {
+                imagePreview.style.display = "none";
             }
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Xem trước ảnh khi nhập URL
-    document.getElementById('imageUrl').addEventListener('input', function (e) {
-        const url = e.target.value;
-        if (url) {
-            document.getElementById('imagePreview').src = url;
-            document.getElementById('imagePreview').style.display = 'block';
-        }
-    });
-</script>
+        });
+    </script>
+</body>
 
 </html>
