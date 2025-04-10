@@ -204,8 +204,8 @@ app.use((err, req, res, next) => {
 
 
 // 🚀 **Chạy server**
-httpServer.listen(3001, () => {
-  console.log('🚀 Server is running on port 3001');
+httpServer.listen(3000, () => {
+  console.log('🚀 Server is running on port 3000');
 });
 
 module.exports = app;
