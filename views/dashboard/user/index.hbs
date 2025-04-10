@@ -1,0 +1,92 @@
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+<h2>Danh sách {{#if (eq type "tutor")}}Tutor{{else}}Student{{/if}}</h2>
+
+
+{{#if students}}
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Điện thoại</th>
+        <th>Email</th>
+        <th>Môn học</th>
+        <th>Ngày nhập học</th>
+        <th>User liên kết</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each students}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td>{{this.telephone}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.subject}}</td>
+          <td>{{this.enrollmentDateFormatted}}</td>
+          <td>
+            {{#if this.user}}
+              {{this.user.fullname}} ({{this.user.role}})
+            {{else}}
+              <em>Không tìm thấy user</em>
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+
+{{#if tutors}}
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Điện thoại</th>
+        <th>Email</th>
+        <th>Phòng ban</th>
+        <th>Ngày nhập học</th>
+        <th>User liên kết</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each tutors}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td>{{this.telephone}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.department}}</td>
+          <td>{{this.enrollmentDateFormatted}}</td>
+          <td>
+            {{#if this.user}}
+              {{this.user.fullname}} ({{this.user.role}})
+            {{else}}
+              <em>Không tìm thấy user</em>
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>

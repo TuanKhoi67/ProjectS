@@ -10,6 +10,8 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs'); 
+const exphbs = require('express-handlebars');
+
 
 require('./config/database'); 
 require('./config/passport')(passport); 
@@ -17,6 +19,18 @@ require('./config/passport')(passport);
 // Register eq helper
 hbs.registerHelper('eq', function(a, b) {
     return a === b;
+});
+
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
+hbs.registerHelper('formatDate', function (date) {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
 });
 
 // Import các route
@@ -33,6 +47,17 @@ var userpageRoutes = require('./routes/userpage');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+
+// Cấu hình Handlebars với nhiều layout
+// app.engine('hbs', exphbs.engine({
+//   extname: 'hbs',
+//   //defaultLayout: 'main', // layout mặc định
+//   layoutsDir: __dirname + '/views/layouts/',
+//   partialsDir: __dirname + '/views/partials/'
+// }));
+// app.set('view engine', 'hbs');
+// app.set('views', './views');
+
 
 // Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
@@ -51,7 +76,6 @@ app.set('socketio', io);
 hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
-
 
 // Cấu hình session & Passport
 app.use(session({

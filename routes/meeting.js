@@ -11,7 +11,7 @@ router.get("/create", async (req, res) => {
   try {
       const students = await StudentModel.find().lean();
       const tutors = await TutorModel.find().lean();
-      res.render("meeting/add", { students, tutors, layout: 'authedLayout' });
+      res.render("meeting/add", { students, tutors });
   } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
       res.status(500).send("Lỗi server");
@@ -103,27 +103,6 @@ router.post("/create", async (req, res) => {
         res.status(500).json({ error: "Lỗi khi tạo lịch họp", details: error.message });
     }
   });
-  
-
-
-
-
-// router.post("/create", async (req, res) => {
-//   try {
-//       const { title, location, note, students, tutors } = req.body;
-//       const attendees = [...students, ...tutors];
-
-//       const meeting = await createGoogleMeet({ title, location, note, attendees });
-
-//       const emailMessage = `Cuộc họp của bạn đã được lên lịch.\nTham gia tại: ${meeting.hangoutLink}`;
-
-//       sendEmail(attendees, "Lịch Họp Google Meet", emailMessage);
-
-//       res.json({ message: "Lịch họp đã được tạo!", meetLink: meeting.hangoutLink });
-//   } catch (error) {
-//       res.status(500).json({ error: "Lỗi khi tạo lịch họp" });
-//   }
-// });
 
 
 module.exports = router;

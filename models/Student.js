@@ -14,9 +14,12 @@ var StudentSchema = mongoose.Schema({
    }
 });
 
-// Format lại ngày tháng năm trước khi trả về dữ liệu JSON
 StudentSchema.methods.formatEnrollmentDate = function () {
-   return this.enrollmentDate.toISOString().split('T')[0];
+   const date = this.enrollmentDate;
+   const day = String(date.getDate()).padStart(2, '0');
+   const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+   const year = date.getFullYear();
+   return `${day}/${month}/${year}`;
 };
 
 var StudentModel = mongoose.model('students', StudentSchema); 

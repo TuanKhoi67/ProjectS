@@ -48,10 +48,13 @@
             <tr>
                 <td>{{this.day}}</td>
                 <td>{{this.time}}</td>
-                <td>{{this.class.classname}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+
                 <td>
-                    <a href="/schedule/edit/{{this._id}}" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="/schedule/delete/{{this._id}}" class="btn btn-primary btn-sm">Delete</a>
+                    <a class="button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
+                    <a class="button-3" href="/schedule/edit/{{_id }}">Edit</a>
+                    <a class="button-3" href="/schedule/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this schedule ?');">Delete</a>
                 </td>
             </tr>
             {{/each}}

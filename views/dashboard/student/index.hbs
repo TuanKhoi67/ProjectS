@@ -1,0 +1,76 @@
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <h1>Students Information Management</h1>
+<h2>Add New Student</h2>
+<form action="/admin/dashboard/add-student" method="POST">
+    <label for="">Student Name</label>
+    <input type="text" id="" name="name" required>
+
+    <label for="">Telephone</label>
+    <input type="text" id="" name="telephone" required>
+
+    <label for="">Email</label>
+    <input type="tel" id="" name="email" required>
+
+    <label for="">Subject</label>
+    <input type="text" id="" name="subject" required>
+
+    <button class="btn btn-primary" type="submit">Add</button>
+</form>
+
+
+<h2>Student List</h2>
+<h3>Student Total: <span id="total">{{totalStudents}}</span></h3>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Student name</th>
+                <th>Telephone</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>Enrollment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each students }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ telephone }}</td>
+                <td>{{ email }}</td>
+                <td>{{ subject }}</td>
+                <td>{{ formatDate enrollmentDate }}</td>
+                <td>
+                    <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                    <a class="button-3" href="/admin/dashboard/student-delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this user ?');">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>
