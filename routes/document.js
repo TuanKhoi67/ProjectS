@@ -46,7 +46,7 @@ router.get('/add', (req, res) => {
 // Xử lý thêm tài liệu
 router.post('/add', upload.single('documentFile'), async (req, res) => {
   const { title, author, content } = req.body;
-  const documentFile = req.file ? '/uploads/documents/' + req.file.filename : '';
+  const documentFile = req.file ? '/uploads/' + req.file.filename : '';
 
   const newDocument = new Document({ 
       title, 

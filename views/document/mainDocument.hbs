@@ -86,20 +86,16 @@
         margin-right: 8px;
     }
 
-    .post .post-header div {
+    .post .post-header .author-info {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        /* Stack items vertically */
     }
 
-    .post .post-header div h2 {
+    .post .post-header .author-info h2 {
         margin: 0;
         font-size: 16px;
         font-weight: 700;
-    }
-
-    .post .post-header div p {
-        margin: 0;
-        color: #9ca3af;
     }
 
     .dots-btn {
@@ -217,13 +213,15 @@
             <div class="post">
                 <div class="post-header">
                     <img class="profile-img" src="https://placehold.co/40x40" alt="User profile picture">
-                    <div>
+                    <div class="author-info">
                         <h2>{{this.author.fullname}}</h2>
+                        <small class="post-time">{{formatDate this.createdAt}}</small>
                     </div>
                     {{!-- Add an icon to indicate a document is available --}}
                     {{#if this.documentFile}}
                     <div class="document-available">
-                        <i class="fa-solid fa-file"></i>Document available for download<i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-file"></i>Document available for download<i
+                            class="fa-solid fa-arrow-right"></i>
                     </div>
                     {{/if}}
                     <div class="dropdown ms-auto">
@@ -235,7 +233,7 @@
                             <li><a class="dropdown-item" href="/document/edit/{{this._id}}">Edit</a></li>
                             {{#if this.documentFile}}
                             <li>
-                                <a class="dropdown-item" href="{{this.documentFile}}" target="_blank">Download
+                                <a class="dropdown-item" href="{{absolutePath this.documentFile}}" target="_blank" download>Download
                                     Document</a>
                             </li>
                             {{/if}}
@@ -279,6 +277,8 @@
                     {{#each this.comments}}
                     <div class="comment">
                         <strong>{{this.username}}</strong>: {{this.text}}
+                        <br>
+                        <small class="text-muted">{{formatDate this.createdAt}}</small>
                     </div>
                     {{/each}}
                 </div>
