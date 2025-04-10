@@ -11,7 +11,6 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const hbs = require('hbs');
 const dotenv = require('dotenv');
-const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 require('./config/database');
