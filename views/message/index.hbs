@@ -1,7 +1,7 @@
 <head>
     <title>Messages</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <style>
     .chat-container {
@@ -188,9 +188,7 @@
     </div>
 
     <script>
-        const socket = io('https://your-render-app.onrender.com', {
-            transports: ['websocket']
-        });
+        var socket = io();
         var currentUser = "{{user._id}}";
         var currentReceiver = null;
 

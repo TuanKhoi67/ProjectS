@@ -12,7 +12,6 @@ const passport = require('passport');
 const hbs = require('hbs');
 const dotenv = require('dotenv');
 
-
 require('./config/database');
 require('./config/passport')(passport);
 require('./config/upload');
@@ -74,10 +73,6 @@ io.on('connection', (socket) => {
     }
   });
 });
-
-app.get("/test", (req, res) => {
-  res.send("✅ Backend is working!" ) ;
- });
 
 // 🔧 Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
@@ -175,40 +170,42 @@ const routes = {
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
+  attendance: require('./routes/attendance')
 };
 
-// 🚏 Sử dụng các route
+
+// 🛣 Định nghĩa Routes
 app.use('/', routes.index);
 app.use('/users', routes.users);
 app.use('/auth', routes.auth);
-app.use('/messages', routes.message);
-app.use('/meetings', routes.meeting);
-app.use('/documents', routes.document);
-app.use('/blogs', routes.blog);
-app.use('/admin_dashboard', routes.admin_dashboard);
-app.use('/student_dashboard', routes.studentDashboard);
-app.use('/tutor_dashboard', routes.tutorDashboard);
+app.use('/message', routes.message);
+app.use('/api/meeting', routes.meeting);
+app.use('/document', routes.document);
+app.use('/blog', routes.blog);
+app.use('/admin/dashboard', routes.admin_dashboard);
+app.use('/dashboard', routes.tutorDashboard);
+app.use('/dashboard', routes.studentDashboard);
 app.use('/userpage', routes.userpage);
-app.use('/classes', routes.class);
+app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
+app.use('/attendance', routes.attendance);
 
-// ⚠️ Xử lý 404
-app.use((req, res, next) => {
-  next(createError(404));
-});
 
-// 💥 Xử lý lỗi
+// ❌ Xử lý lỗi 404
+app.use((req, res, next) => next(createError(404)));
+
+// ❌ Xử lý lỗi chung
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.status || 500);
+  res.status(err.status || 400);
   res.render('error');
 });
 
-// 🚀 Khởi động server
-httpServer.listen(process.env.PORT || 3001, () => {
-  console.log("Server started...");
+
+// 🚀 **Chạy server**
+httpServer.listen(3001, () => {
+  console.log('🚀 Server is running on port 3001');
 });
 
 module.exports = app;
