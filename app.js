@@ -74,6 +74,10 @@ io.on('connection', (socket) => {
   });
 });
 
+app.get("/test", (req, res) => {
+  res.send("✅ Backend is working!" ) ;
+ });
+
 // 🔧 Middleware cơ bản
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -204,8 +208,9 @@ app.use((err, req, res, next) => {
 
 
 // 🚀 **Chạy server**
-httpServer.listen(3000, () => {
-  console.log('🚀 Server is running on port 3000');
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+  console.log('🚀 Server is running on port ${PORT}');
 });
 
 module.exports = app;
