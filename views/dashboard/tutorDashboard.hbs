@@ -2,7 +2,27 @@
 
 <p>Chào {{tutor.name}}!</p>
 
-<div style="margin-top: 20px;">
+<div class="mt-4">
   <p>📄 Số lượng tài liệu đã tạo: <strong>{{documentCount}}</strong></p>
   <p>💬 Tổng số comment vào bài viết: <strong>{{totalComments}}</strong></p>
 </div>
+
+<h4 class="mt-5">📚 Các lớp bạn đang quản lý</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Tên lớp</th>
+      <th>Môn học</th>
+      <th>Số sinh viên</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each classes}}
+      <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.subject}}</td>
+        <td>{{this.studentCount}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

@@ -154,240 +154,284 @@
             <canvas id="weeklyActivityChart"></canvas>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- === Blog Section Next === -->
-    <div class="dashboard-section mt-5">
-      <div class="dashboard-header">📝 Your Blog</div>
-      {{#if blogs.length}}
-      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-        {{#each blogs}}
-        <div class="col">
-          <div class="blog-card-dashboard d-flex flex-column">
-            {{#if this.image}}
-            <img src="{{absolutePath this.image}}" alt="Blog Image" class="blog-img-dashboard" />
-            {{else}}
-            <div class="bg-secondary text-white text-center py-4 rounded mb-2">No Image</div>
-            {{/if}}
-
-            <div class="blog-title-dashboard">{{this.title}}</div>
-            <div class="blog-meta-dashboard">
-              <i class="fa-solid fa-heart"> {{this.likes}}</i> |
-              <i class="fa-solid fa-comment-dots"> {{this.comments.length}}</i>
-            </div>
-            <div class="blog-content-dashboard">{{this.content}}</div>
-
-            <div class="blog-actions-dashboard">
-              <a href="/blog/edit/{{this._id}}" class="btn btn-sm"><i class="fa-regular fa-pen-to-square"></i> Edit</a>
-              <form action="/blog/delete/{{this._id}}" method="POST" onsubmit="return confirm('Delete blog?');">
-                <button type="submit" class="btn btn-sm"><i class="fa-regular fa-trash-can"></i> Delete</button>
-              </form>
-            </div>
-          </div>
-        </div>
-        {{/each}}
-      </div>
-      {{else}}
-      <p class="text-muted">You haven't posted any blogs yet.</p>
-      {{/if}}
-    </div>
-
-    <!-- === Messages (left), Meetings + Documents (right) === -->
-    <div class="dashboard-section mt-5">
-      <div class="row g-4">
-        <!-- Messages Left -->
-        <div class="col-12 col-lg-6">
-          <div class="message-card h-100">
-            <div class="dashboard-header">💬 Messages</div>
-            {{#if recentMessages.length}}
-            {{#each recentMessages}}
-            <div>
-              <strong>{{this.sender.fullname}}</strong>: {{this.content}}<br />
-              <small>{{this.createdAt}}</small>
-              <hr />
-            </div>
-            {{/each}}
-            {{else}}
-            <p class="text-muted">No messages.</p>
-            {{/if}}
-          </div>
-        </div>
-
-        <!-- Meetings + Documents Right -->
-        <div class="col-12 col-lg-6">
-          <div class="meeting-card mb-4">
-            <div class="dashboard-header">📅 Meetings</div>
-            {{#if meetings.length}}
-            {{#each meetings}}
-            <div>
-              <strong>{{this.title}}</strong> ({{this.status}})<br />
-              {{this.startTime}} – {{this.endTime}}<br />
-              <small>Note: {{this.note}}</small><br />
-              <small><b>Tutor:</b> {{this.tutor.[0].fullname}}</small>
-              <hr />
-            </div>
-            {{/each}}
-            {{else}}
-            <p class="text-muted">No meetings.</p>
-            {{/if}}
-          </div>
-
-          <div class="doc-card">
-            <div class="dashboard-header">📁 Documents</div>
-            {{#if documents.length}}
-            {{#each documents}}
-            <div>
-              <strong>{{this.title}}</strong><br />
-              <a href="{{this.imageUrl}}" target="_blank">View</a>
-              {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download</a>{{/if}}<br />
-              <small>{{this.content}}</small>
-              <hr />
-            </div>
-            {{/each}}
-            {{else}}
-            <p class="text-muted">No uploaded documents.</p>
-            {{/if}}
+        <!-- Row 3: Attendance (Full-width) -->
+        <div class="col-12">
+          <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
           </div>
         </div>
       </div>
+
+      <!-- === Blog Section Next === -->
+      <div class="dashboard-section mt-5">
+        <div class="dashboard-header">📝 Your Blog</div>
+        {{#if blogs.length}}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+          {{#each blogs}}
+          <div class="col">
+            <div class="blog-card-dashboard d-flex flex-column">
+              {{#if this.image}}
+              <img src="{{absolutePath this.image}}" alt="Blog Image" class="blog-img-dashboard" />
+              {{else}}
+              <div class="bg-secondary text-white text-center py-4 rounded mb-2">No Image</div>
+              {{/if}}
+
+              <div class="blog-title-dashboard">{{this.title}}</div>
+              <div class="blog-meta-dashboard">
+                <i class="fa-solid fa-heart"> {{this.likes}}</i> |
+                <i class="fa-solid fa-comment-dots"> {{this.comments.length}}</i>
+              </div>
+              <div class="blog-content-dashboard">{{this.content}}</div>
+
+              <div class="blog-actions-dashboard">
+                <a href="/blog/edit/{{this._id}}" class="btn btn-sm"><i class="fa-regular fa-pen-to-square"></i>
+                  Edit</a>
+                <form action="/blog/delete/{{this._id}}" method="POST" onsubmit="return confirm('Delete blog?');">
+                  <button type="submit" class="btn btn-sm"><i class="fa-regular fa-trash-can"></i> Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="text-muted">You haven't posted any blogs yet.</p>
+        {{/if}}
+      </div>
+
+      <!-- === Messages (left), Meetings + Documents (right) === -->
+      <div class="dashboard-section mt-5">
+        <div class="row g-4">
+          <!-- Messages Left -->
+          <div class="col-12 col-lg-6">
+            <div class="message-card h-100">
+              <div class="dashboard-header">💬 Messages</div>
+              {{#if recentMessages.length}}
+              {{#each recentMessages}}
+              <div>
+                <strong>{{this.sender.fullname}}</strong>: {{this.content}}<br />
+                <small>{{this.createdAt}}</small>
+                <hr />
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No messages.</p>
+              {{/if}}
+            </div>
+          </div>
+
+          <!-- Meetings + Documents Right -->
+          <div class="col-12 col-lg-6">
+            <div class="meeting-card mb-4">
+              <div class="dashboard-header">📅 Meetings</div>
+              {{#if meetings.length}}
+              {{#each meetings}}
+              <div>
+                <strong>{{this.title}}</strong> ({{this.status}})<br />
+                {{this.startTime}} – {{this.endTime}}<br />
+                <small>Note: {{this.note}}</small><br />
+                <small><b>Tutor:</b> {{this.tutor.[0].fullname}}</small>
+                <hr />
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No meetings.</p>
+              {{/if}}
+            </div>
+
+            <div class="doc-card">
+              <div class="dashboard-header">📁 Documents</div>
+              {{#if documents.length}}
+              {{#each documents}}
+              <div>
+                <strong>{{this.title}}</strong><br />
+                <a href="{{this.imageUrl}}" target="_blank">View</a>
+                {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download</a>{{/if}}<br />
+                <small>{{this.content}}</small>
+                <hr />
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No uploaded documents.</p>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const chartData = {{{ json chartData }}};
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const chartData = {{{ json chartData }}};
 
-    // === Weekly Activity Chart (Line) ===
-    const weeklyLabels = Object.keys(chartData.weeklyActivity);
-    const blogsData = weeklyLabels.map(d => chartData.weeklyActivity[d].blogs);
-    const messagesData = weeklyLabels.map(d => chartData.weeklyActivity[d].messages);
-    const commentsData = weeklyLabels.map(d => chartData.weeklyActivity[d].comments);
+      // === Weekly Activity Chart (Line) ===
+      const weeklyLabels = Object.keys(chartData.weeklyActivity);
+      const blogsData = weeklyLabels.map(d => chartData.weeklyActivity[d].blogs);
+      const messagesData = weeklyLabels.map(d => chartData.weeklyActivity[d].messages);
+      const commentsData = weeklyLabels.map(d => chartData.weeklyActivity[d].comments);
 
-    new Chart(document.getElementById('weeklyActivityChart').getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: weeklyLabels,
-        datasets: [
-          {
-            label: 'Blogs',
-            data: blogsData,
-            borderColor: '#0d6efd',
-            backgroundColor: 'rgba(13, 110, 253, 0.1)',
-            fill: true,
-            tension: 0.3
-          },
-          {
-            label: 'Messages',
-            data: messagesData,
-            borderColor: '#198754',
-            backgroundColor: 'rgba(25, 135, 84, 0.1)',
-            fill: true,
-            tension: 0.3
-          },
-          {
-            label: 'Comments',
-            data: commentsData,
-            borderColor: '#ffc107',
-            backgroundColor: 'rgba(255, 193, 7, 0.1)',
-            fill: true,
-            tension: 0.3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Weekly Interaction Timeline'
-          }
+      new Chart(document.getElementById('weeklyActivityChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: weeklyLabels,
+          datasets: [
+            {
+              label: 'Blogs',
+              data: blogsData,
+              borderColor: '#0d6efd',
+              backgroundColor: 'rgba(13, 110, 253, 0.1)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Messages',
+              data: messagesData,
+              borderColor: '#198754',
+              backgroundColor: 'rgba(25, 135, 84, 0.1)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Comments',
+              data: commentsData,
+              borderColor: '#ffc107',
+              backgroundColor: 'rgba(255, 193, 7, 0.1)',
+              fill: true,
+              tension: 0.3
+            }
+          ]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Weekly Interaction Timeline'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
             }
           }
         }
-      }
-    });
+      });
 
-    // === Document Types Chart (Doughnut for PDF & Word Only) ===
-    new Chart(document.getElementById('fileTypesChart').getContext('2d'), {
-      type: 'doughnut',
-      data: {
-        labels: ['PDF', 'Word'],
-        datasets: [{
-          data: [
-            chartData.fileTypes.pdf,
-            chartData.fileTypes.word
-          ],
-          backgroundColor: ['#6610f2', '#0dcaf0']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Document Types Uploaded'
-          }
-        }
-      }
-    });
-
-    // === Blog Summary Chart (Bar) ===
-    new Chart(document.getElementById('myBlogsChart').getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['Posts', 'Likes', 'Comments'],
-        datasets: [{
-          label: 'Your Blog Stats',
-          data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
-          backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
-          borderRadius: 8
-        }]
-      },
-      options: {
-        indexAxis: 'y', // Horizontal bars
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Blog Summary'
-          }
+      // === Document Types Chart (Doughnut for PDF & Word Only) ===
+      new Chart(document.getElementById('fileTypesChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['PDF', 'Word'],
+          datasets: [{
+            data: [
+              chartData.fileTypes.pdf,
+              chartData.fileTypes.word
+            ],
+            backgroundColor: ['#6610f2', '#0dcaf0']
+          }]
         },
-        scales: {
-          x: {
-            beginAtZero: true
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Document Types Uploaded'
+            }
           }
         }
-      }
-    });
+      });
 
-    // === Interactions with Others Chart (Doughnut) ===
-    new Chart(document.getElementById('interactionChart').getContext('2d'), {
-      type: 'polarArea',
-      data: {
-        labels: ['Liked Posts', 'Commented Posts'],
-        datasets: [{
-          data: [chartData.likedCount, chartData.commentedCount],
-          backgroundColor: ['#20c997', '#6f42c1']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Interactions with Others'
+      // === Blog Summary Chart (Bar) ===
+      new Chart(document.getElementById('myBlogsChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Posts', 'Likes', 'Comments'],
+          datasets: [{
+            label: 'Your Blog Stats',
+            data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          indexAxis: 'y', // Horizontal bars
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Blog Summary'
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true
+            }
           }
         }
-      }
-    });
-  </script>
+      });
+
+      // === Interactions with Others Chart (Doughnut) ===
+      new Chart(document.getElementById('interactionChart').getContext('2d'), {
+        type: 'polarArea',
+        data: {
+          labels: ['Liked Posts', 'Commented Posts'],
+          datasets: [{
+            data: [chartData.likedCount, chartData.commentedCount],
+            backgroundColor: ['#20c997', '#6f42c1']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Interactions with Others'
+            }
+          }
+        }
+      });
+
+      // === Attendance Chart (Bar) === CHƯA CÓ DỮ LIỆU
+      // Sample data for attendance chart (replace with actual data)
+      // This data should be fetched from your server or database
+      // and passed to the template as `attendanceData`.
+      const attendanceData = {
+        classes: ['Class A', 'Class B', 'Class C'],
+        presentCounts: [10, 15, 8],
+        absentCounts: [2, 3, 1]
+      };
+      new Chart(document.getElementById('attendanceChart'), {
+        type: 'bar',
+        data: {
+          labels: attendanceData.classes,
+          datasets: [
+            {
+              label: 'Có mặt',
+              data: attendanceData.presentCounts,
+              backgroundColor: '#198754'
+            },
+            {
+              label: 'Vắng mặt',
+              data: attendanceData.absentCounts,
+              backgroundColor: '#dc3545'
+            }
+          ]
+        },
+        options: {
+          plugins: {
+            title: { display: true, text: 'Tình trạng điểm danh theo lớp' }
+          },
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    </script>
 </body>
