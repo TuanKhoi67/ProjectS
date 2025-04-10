@@ -150,7 +150,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false },
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI
+    mongoUrl: process.env.uri
   })
 }));
 app.use(passport.initialize());
