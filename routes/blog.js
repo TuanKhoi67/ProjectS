@@ -49,24 +49,26 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
     }
 });
 
+// Route to display blogs created by the logged-in student
+router.get('/student', ensureAuthenticated, async (req, res) => {
+    try {
+        const blogs = await Blog.find({ 
+            role: 'student', 
+            author: req.user._id 
+        }).populate('author');
 
-// Route to display blogs for students
-router.get('/student', async (req, res) => {
-  try {
-      const blogs = await Blog.find({ role: 'student' }).populate('author');
-      res.render('userpage/student', { blogs });
-  } catch (error) {
-      console.error('Error fetching student blogs:', error);
-      res.status(500).send('Internal Server Error');
-  }
+        res.render('userpage/student', { blogs, user: req.user });
+    } catch (error) {
+        console.error('Error fetching student blogs:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-
-// Route to display blogs for tutors
+// Route to display blogs by the logged-in tutor
 router.get('/tutor', async (req, res) => {
     try {
-        const blogs = await Blog.find({ role: 'tutor' }).populate('author');
-        res.render('userpage/tutor', { blogs });
+        const blogs = await Blog.find({ role: 'tutor', author: req.user._id }).populate('author');
+        res.render('userpage/tutor', { blogs, user: req.user });
     } catch (error) {
         console.error('Error fetching tutor blogs:', error);
         res.status(500).send('Internal Server Error');
