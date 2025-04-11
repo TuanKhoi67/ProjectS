@@ -3,6 +3,7 @@ const router = express.Router();
 const Document = require('../models/Document');
 const multer = require('multer');
 const path = require('path');
+const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 // Cấu hình Multer để lưu file
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -28,7 +29,7 @@ const upload = multer({
 });
 
 // Hiển thị trang quản lý tài liệu
-router.get('/', async (req, res) => {
+router.get('/', checkAdmin ,async (req, res) => {
   try {
     const documents = await Document.find().populate('author', 'fullname');
     res.render('document/index', { documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu

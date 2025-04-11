@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
-const { ensureAuthenticated, checkRole } = require('../middleware/auth'); 
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
 const User = require('../models/Users'); // Adjust the path to your User model
 const upload = require('../config/upload');
 
 // Route to display all blogs
-router.get('/', ensureAuthenticated , async (req, res) => {
+router.get('/', ensureAuthenticated ,checkAdmin, async (req, res) => {
     try {
         const blogs = await Blog.find().populate('author', 'fullname role');
         res.render('blog/index', { blogs, user: req.user }); // Gửi user vào view
