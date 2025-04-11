@@ -1,8 +1,6 @@
 <head>
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/stylesheets/style2.css">
 </head>
-
 <style>
     .sidebar {
         min-height: 100vh;
@@ -38,7 +36,9 @@
             <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
             <li><a href="/admin/dashboard/user">User Dashboard</a></li>
             <li><a href="/userpage/admin">User Management</a></li>
-            <li><a href="/api/meeting/create">Meeting</a></li>
+            <li><a href="/blog/">Blog Management</a></li>
+            <li><a href="/document/">Student Management</a></li>
+            <li><a href="/api/meeting">Meeting</a></li>
             <li><a href="/class">Class</a></li>
             <li><a href="/schedule/schedule-view">Schedule</a></li>
         </ul>
@@ -54,16 +54,15 @@
         <div class="content w-100">
             <div class="container mt-4">
                 <h1 class="text-center">Account Management</h1>
-                <p class="text-center">Welcome, {{user.fullname}}</p>
-                <div class="row mt-4">
+                <div class="row mt-4 align-items-start">
                     <div class="col-md-6">
-                        <h2 class="text-primary">Danh sách Tutor</h2>
+                        <h2 class="text-primary">Tutor List</h2>
                         <table class="table table-hover table-bordered mt-3">
                             <thead class="table-primary">
                                 <tr>
-                                    <th>Tên</th>
+                                    <th>Name</th>
                                     <th>Email</th>
-                                    <th>Thao tác</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,7 +74,7 @@
                                         <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
                                         <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
                                             <button type="submit" class="btn"
-                                                onclick="return confirm('Bạn có chắc muốn xóa?');">Delete</button>
+                                                onclick="return confirm('Are you sure to delete?');">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -84,13 +83,13 @@
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <h2 class="text-primary">Danh sách Student</h2>
+                        <h2 class="text-primary">Student List</h2>
                         <table class="table table-hover table-bordered mt-3">
                             <thead class="table-primary">
                                 <tr>
-                                    <th>Tên</th>
+                                    <th>Name</th>
                                     <th>Email</th>
-                                    <th>Thao tác</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,7 +101,7 @@
                                         <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
                                         <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
                                             <button type="submit" class="btn"
-                                                onclick="return confirm('Bạn có chắc muốn xóa?');">Delete</button>
+                                                onclick="return confirm('Are you sure to delete?');">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

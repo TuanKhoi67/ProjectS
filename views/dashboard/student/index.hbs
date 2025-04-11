@@ -1,110 +1,82 @@
-<head>
+<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
 
-    <link rel="stylesheet" href="/stylesheets/style2.css">
-</head>
+<div class="main-content">
+    <h1>Students Information Management</h1>
+<h2>Add New Student</h2>
+<form action="/admin/dashboard/add-student" method="POST">
+    <label for="">Student Name</label>
+    <input class="form-control w-25" type="text" id="" name="name" required>
 
-<style>
-    .sidebar {
-        min-height: 100vh;
-        background-color: #343a40;
-        color: white;
-        padding: 20px;
-    }
+    <label for="">Telephone</label>
+    <input class="form-control w-25" type="text" id="" name="telephone" required>
 
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        display: block;
-        padding: 10px;
-    }
+    <label for="">Email</label>
+    <input class="form-control w-25" type="tel" id="" name="email" required>
 
-    .sidebar a:hover {
-        background-color: #495057;
-    }
-
-    .content {
-        padding: 20px;
-    }
-</style>
-
-<body>
-
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
-    <div class="sidebar" id="sidebar">
-        <h3>Dashboard</h3>
-        <hr>
-        <ul>
-            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-            <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-            <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-            <li><a href="/admin/dashboard/user">User Dashboard</a></li>
-            <li><a href="/userpage/admin">User Management</a></li>
-            <li><a href="/api/meeting/create">Meeting</a></li>
-            <li><a href="/class">Class</a></li>
-            <li><a href="/blog">Blog Management</a></li>
-            <li><a href="/document">Document Management</a></li>
-            <li><a href="/schedule/schedule-view">Schedule</a></li>
-        </ul>
+<div>
+    <label for="">Subject</label>
+    <br>
+    <select class="form-select w-25">
+    {{#each students}}
+        <option value="{{this._id}}">{{this.subject}}</option>
+    {{/each}}
+    </select>
     </div>
-
-    <div class="main-content">
-        <h1>Students Information Management</h1>
-        <h2>Add New Student</h2>
-        <form action="/admin/dashboard/add-student" method="POST">
-            <label for="">Student Name</label>
-            <input type="text" id="" name="name" required>
-
-            <label for="">Telephone</label>
-            <input type="text" id="" name="telephone" required>
-
-            <label for="">Email</label>
-            <input type="tel" id="" name="email" required>
-
-            <label for="">Subject</label>
-            <input type="text" id="" name="subject" required>
-
-            <button class="btn btn-primary" type="submit">Add</button>
-        </form>
+    <button class="btn btn-primary" type="submit">Add</button>
+</form>
 
 
-        <h2>Student List</h2>
-        <h3>Student Total: <span id="total">{{totalStudents}}</span></h3>
+<h2>Student List</h2>
+<h3>Student Total: <span id="total">{{totalStudents}}</span></h3>
 
-        <div class="table-wrapper">
-            <table class="fl-table">
-                <thead>
-                    <tr>
-                        <th>Student name</th>
-                        <th>Telephone</th>
-                        <th>Email</th>
-                        <th>Subject</th>
-                        <th>Enrollment Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each students }}
-                    <tr>
-                        <td>{{ name }}</td>
-                        <td>{{ telephone }}</td>
-                        <td>{{ email }}</td>
-                        <td>{{ subject }}</td>
-                        <td>{{ formatDate enrollmentDate }}</td>
-                        <td>
-                            <a class="button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
-                            <a class="button-3" href="/admin/dashboard/student-delete/{{ _id }}"
-                                onclick="return confirm('Are you sure to delete this user ?');">Delete</a>
-                        </td>
-                    </tr>
-                    {{/each}}
-                <tbody>
-            </table>
-        </div>
-    </div>
+<div class="table-wrapper">
+    <table class="table table-striped-columns table-primary w-30 ">
+        <thead>
+            <tr>
+                <th>Student name</th>
+                <th>Telephone</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>Enrollment Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each students }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ telephone }}</td>
+                <td>{{ email }}</td>
+                <td>{{ subject }}</td>
+                <td>{{ formatDate enrollmentDate }}</td>
+                <td>
+                    <a class="btn button-3" href="/admin/dashboard/student-edit/{{ _id }}">Edit</a>
+                    <a class="btn button-3" href="/admin/dashboard/student-delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this user ?');">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+</div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('hidden');
-        }
-    </script>
-</body>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>

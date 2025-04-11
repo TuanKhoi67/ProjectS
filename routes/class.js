@@ -1,35 +1,33 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var ClassModel = require('../models/Class');
-var TutorModel = require('../models/Tutor');
-var StudentModel = require('../models/Student');
+var ClassModel = require("../models/Class");
+var TutorModel = require("../models/Tutor");
+var StudentModel = require("../models/Student");
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const classes = await ClassModel.find({})
-            .populate('student')
-            .populate('tutor');  // Populate cả student và tutor trong một lần gọi
+            .populate("student")
+            .populate("tutor"); // Populate cả student và tutor trong một lần gọi
 
         console.log("Classes:", classes); // Debug dữ liệu
 
-        res.render('class/index', { classes }); 
+        res.render("class/index", { classes });
     } catch (error) {
         console.error("Error fetching class data:", error);
         res.status(500).send("Internal Server Error");
     }
 }),
+    // Hiển thị trang tạo lớp học với bộ lọc
+    router.get("/create", async (req, res) => {
+        try {
+            res.render("class/add"); // Giao diện để chọn môn học
+        } catch (error) {
+            res.status(500).send("Lỗi khi tải trang tạo lớp học");
+        }
+    });
 
-
-// Hiển thị trang tạo lớp học với bộ lọc
-router.get('/create', async (req, res) => {
-    try {
-        res.render('class/add'); // Giao diện để chọn môn học
-    } catch (error) {
-        res.status(500).send('Lỗi khi tải trang tạo lớp học');
-    }
-});
-
-router.post('/filter', async (req, res) => {
+router.post("/filter", async (req, res) => {
     try {
         const { subject } = req.body;
 
@@ -39,15 +37,14 @@ router.post('/filter', async (req, res) => {
         console.log("Students found:", students);
         console.log("Tutors found:", tutors);
 
-        res.render('class/add', { students, tutors, subject });
+        res.render("class/add", { students, tutors, subject });
     } catch (error) {
-        res.status(500).send('Lỗi khi lọc sinh viên và giáo viên');
+        res.status(500).send("Lỗi khi lọc sinh viên và giáo viên");
     }
 });
 
-
 // Xử lý tạo lớp học
-router.post('/create', async (req, res) => {
+router.post("/create", async (req, res) => {
     try {
         console.log("Request body:", JSON.stringify(req.body, null, 2));
 
@@ -65,7 +62,9 @@ router.post('/create', async (req, res) => {
         // Kiểm tra tên lớp đã tồn tại chưa
         const existingClass = await ClassModel.findOne({ classname });
         if (existingClass) {
-            return res.status(400).send("Tên lớp đã tồn tại. Vui lòng chọn tên khác.");
+            return res
+                .status(400)
+                .send("Tên lớp đã tồn tại. Vui lòng chọn tên khác.");
         }
 
         // Kiểm tra số lượng sinh viên không vượt quá 10
@@ -76,14 +75,14 @@ router.post('/create', async (req, res) => {
         const newClass = new ClassModel({
             classname,
             student: studentIds,
-            tutor: tutorId
+            tutor: tutorId,
         });
 
         await newClass.save();
 
         res.redirect('/class'); // Điều hướng sau khi tạo lớp thành công
     } catch (error) {
-        console.error("Lỗi khi tạo lớp học:", error);  // In lỗi chi tiết
+        console.error("Lỗi khi tạo lớp học:", error); // In lỗi chi tiết
         res.status(500).send(`Lỗi khi tạo lớp học: ${error.message}`);
     }
 });
@@ -107,8 +106,8 @@ router.get('/search-student', async (req, res) => {
         const tutors = await TutorModel.find({ department: student.subject });
 
         // Lấy danh sách lớp có ít hơn 10 sinh viên
-        const classes = await ClassModel.find().populate('student');
-        const availableClasses = classes.filter(c => c.student.length < 10);
+        const classes = await ClassModel.find().populate("student");
+        const availableClasses = classes.filter((c) => c.student.length < 10);
 
         res.render('class/add', { studentResult: student, classes: availableClasses, tutors, error: null });
     } catch (error) {
@@ -117,7 +116,7 @@ router.get('/search-student', async (req, res) => {
     }
 });
 
-router.post('/assign-student', async (req, res) => {
+router.post("/assign-student", async (req, res) => {
     try {
         const { studentId, classId } = req.body;
 
@@ -125,7 +124,9 @@ router.post('/assign-student', async (req, res) => {
             return res.status(400).send("Thiếu dữ liệu đầu vào");
         }
 
-        const selectedClass = await ClassModel.findById(classId).populate('student');
+        const selectedClass = await ClassModel.findById(classId).populate(
+            "student"
+        );
 
         if (selectedClass.student.length >= 10) {
             return res.status(400).send("Lớp đã đủ 10 sinh viên, không thể thêm.");
@@ -137,19 +138,21 @@ router.post('/assign-student', async (req, res) => {
         );
 
         if (isAlreadyInClass) {
-            return res.redirect(`/class/search-student?error=exists&studentId=${studentId}`);
+            return res.redirect(
+                `/class/search-student?error=exists&studentId=${studentId}`
+            );
         }
 
         await ClassModel.findByIdAndUpdate(classId, { $push: { student: studentId } });
 
-        res.redirect('/class');
+        res.redirect("/class");
     } catch (error) {
         console.error("Lỗi khi thêm sinh viên vào lớp:", error);
-        res.status(500).send('Lỗi khi thêm sinh viên vào lớp');
+        res.status(500).send("Lỗi khi thêm sinh viên vào lớp");
     }
 });
 
-router.post('/create-class', async (req, res) => {
+router.post("/create-class", async (req, res) => {
     try {
         const { classname, studentId, tutorId } = req.body;
 
@@ -160,15 +163,15 @@ router.post('/create-class', async (req, res) => {
         const newClass = new ClassModel({
             classname,
             student: [studentId], // Thêm sinh viên ngay khi tạo lớp
-            tutor: tutorId
+            tutor: tutorId,
         });
 
         await newClass.save();
 
-        res.redirect('/class'); 
+        res.redirect("/class");
     } catch (error) {
         console.error("Lỗi khi tạo lớp học:", error);
-        res.status(500).send('Lỗi khi tạo lớp học');
+        res.status(500).send("Lỗi khi tạo lớp học");
     }
 });
 

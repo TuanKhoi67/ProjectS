@@ -96,6 +96,7 @@ hbs.registerHelper("isSender", function (sender, userId) {
   return sender.toString() === userId.toString();
 });
 
+
 hbs.registerHelper('formatDate', function (date) {
   if (!date) return '';
   return new Date(date).toLocaleDateString('vi-VN', {

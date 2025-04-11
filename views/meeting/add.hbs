@@ -1,117 +1,51 @@
+
 <head>
-
-    <link rel="stylesheet" href="/stylesheets/style2.css">
+    <title>Create to Schedule</title>
 </head>
-
-<style>
-    .sidebar {
-        min-height: 100vh;
-        background-color: #343a40;
-        color: white;
-        padding: 20px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        display: block;
-        padding: 10px;
-    }
-
-    .sidebar a:hover {
-        background-color: #495057;
-    }
-
-    .content {
-        padding: 20px;
-    }
-</style>
-
 <body>
-
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
-    <div class="sidebar" id="sidebar">
-        <h3>Dashboard</h3>
-        <hr>
-        <ul>
-            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-            <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-            <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-            <li><a href="/admin/dashboard/user">User Dashboard</a></li>
-            <li><a href="/userpage/admin">User Management</a></li>
-            <li><a href="/api/meeting/create">Meeting</a></li>
-            <li><a href="/class">Class</a></li>
-            <li><a href="/schedule/schedule-view">Schedule</a></li>
-        </ul>
-    </div>
-
-    <div class="content">
-
-        <head>
-            <title>Create A Meeting</title>
-        </head>
-
-        <body>
-            <div class="container mt-5">
-                <h2 class="mb-4">Create A Meeting</h2>
-                <div class="container">
-                    <form action="/api/meeting/create" method="POST">
-                        <div class="mb-3">
-                            <label>Title</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Form</label>
-                            <input type="text" class="form-control" name="form" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Location</label>
-                            <input type="text" class="form-control" name="location" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Student</label>
-                            <select class="form-control" name="students[]" required>
-                                {{#each students}}
-                                <option value="{{this._id}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
-                            <select class="form-control" name="students[]" required>
-                                {{#each students}}
-                                <option value="{{this._id}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Tutor</label>
-                            <select class="form-control" name="tutors[]" required>
-                                {{#each tutors}}
-                                <option value="{{this._id}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Begin Time</label>
-                            <input type="dateTime-local" name="startTime" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>End Time</label>
-                            <input type="dateTime-local" name="endTime" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Note</label>
-                            <textarea class="form-control" name="note"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </form>
-                </div>
+    <div class="container mt-5">
+        <h2 class="mb-4">Create to Schedule</h2>
+        <form action="/api/meeting/create" method="POST">
+            <div class="mb-3">
+                <strong>Title</strong>
+                <input type="text" class="form-control w-25" name="title" required>
             </div>
-        </body>
+            <div class="mb-3">
+                <strong>Form</strong>
+                <input type="text" class="form-control w-25" name="form" required>
+            </div>
+            <div class="mb-3">
+                <strong>Location</strong>
+                <input type="text" class="form-control w-25" name="location" required>
+            </div>
+            <div class="mb-3">
+                <strong>Student</strong>
+                <br>
+                    {{#each students}}
+                        <input type="radio" value="{{this._id}}">{{this.name}}</input>
+                    {{/each}}
+            </div>
+            <div class="mb-3">
+                <strong>Tutor</strong>
+                <select class="form-select w-25" name="tutors[]" required>
+                    {{#each tutors}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+                        <div class="mb-3">
+                <strong>Begin Time</strong>
+                <input type="dateTime-local" name="startTime" required>
+            </div>
+            <div class="mb-3">
+                <strong>End Time</strong>
+                <input type="dateTime-local" name="endTime" required>
+            </div>
+            <div class="mb-3">
+                <strong>Note</strong>
+                <textarea class="form-control w-35" name="note"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
     </div>
-
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('hidden');
-        }
-    </script>
 </body>

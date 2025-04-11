@@ -1,7 +1,37 @@
-<head>
-    
-    <link rel="stylesheet" href="/stylesheets/style2.css">
-</head>
+<h1>Add Schedules</h1>
+
+<div class="container">
+    <form action="/schedule/add" method="POST">
+        <label for="day">Day:</label>
+        <select name="day" id="day">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+
+        <label for="time">Time:</label>
+        <select name="time" id="time">
+            <option value="Slot1">8:50 - 10:20</option>
+            <option value="Slot4">10:30 - 12:00</option>
+            <option value="Slot2">12:50 - 14:20</option>
+            <option value="Slot3">14:30 - 16:00</option>
+            <option value="Slot5">16:10 - 17:40</option>
+        </select>
+
+        <label for="class">Class:</label>
+        <select name="class" required>
+            {{#each classes}}
+            <option value="{{this._id}}">{{this.classname}}</option>
+            {{/each}}
+        </select>
+
+        <button type="submit" class="btn">Add Schedule</button>
+    </form>
+</div>
 
 <style>
     body {
@@ -51,55 +81,16 @@
     }
 </style>
 
-<body>
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get("error");
 
-    <h1>Add Schedules</h1>
-
-    <div class="container">
-        <form action="/schedule/add" method="POST">
-            <label for="day">Day:</label>
-            <select name="day" id="day">
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
-            </select>
-
-            <label for="time">Time:</label>
-            <select name="time" id="time">
-                <option value="Slot1">8:50 - 10:20</option>
-                <option value="Slot4">10:30 - 12:00</option>
-                <option value="Slot2">12:50 - 14:20</option>
-                <option value="Slot3">14:30 - 16:00</option>
-                <option value="Slot5">16:10 - 17:40</option>
-            </select>
-
-            <label for="class">Class:</label>
-            <select name="class" required>
-                {{#each classes}}
-                <option value="{{this._id}}">{{this.classname}}</option>
-                {{/each}}
-            </select>
-
-            <button type="submit" class="btn">Add Schedule</button>
-        </form>
-    </div>
-
-
-    <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const error = urlParams.get("error");
-
-            if (error === "exists") {
-                const confirmResult = confirm("Lịch học cho lớp này vào ngày và ca học đã tồn tại. Bạn có muốn tiếp tục không?");
-                if (!confirmResult) {
-                    window.location.href = "/schedule/schedule-view"; // hoặc quay lại trang trước
-                }
+        if (error === "exists") {
+            const confirmResult = confirm("Lịch học cho lớp này vào ngày và ca học đã tồn tại. Bạn có muốn tiếp tục không?");
+            if (!confirmResult) {
+                window.location.href = "/schedule/schedule-view"; // hoặc quay lại trang trước
             }
-        });
-    </script>
-</body>
+        }
+    });
+</script>
