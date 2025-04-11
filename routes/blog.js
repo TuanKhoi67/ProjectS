@@ -146,8 +146,7 @@ router.get('/search', async (req, res) => {
         const query = req.query.q;
         const blogs = await Blog.find({
             $or: [
-                { title: { $regex: query, $options: 'i' } },
-                { content: { $regex: query, $options: 'i' } }
+                { title: { $regex: query, $options: 'i' } }
             ]
         }).populate('author');
 
