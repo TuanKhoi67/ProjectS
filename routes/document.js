@@ -132,12 +132,6 @@ router.delete('/delete/:id', async (req, res) => {
   }
 });
 
-const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-      return next();
-  }
-  res.redirect('/auth/login'); // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
-};
 
 // Hiển thị trang danh sách tài liệu với bình luận
 router.get('/mainDocument', async (req, res) => {

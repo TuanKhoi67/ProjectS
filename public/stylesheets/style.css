@@ -1,5 +1,4 @@
-*{
-
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -235,70 +234,8 @@ a {
     transition: 0.3s;
 }
 
-
-th {
-    background-color: #2a2a91 !important;
-    color: white !important;
-}
-
-.chart-container {
-    display: none;
-    margin: 30px 0;
-}
-
-.btn-toggle {
-    margin: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-.btn-toggle:hover {
-    background: #2980b9;
-}
-
-.dashboard-header {
-    margin-right: 150px;
-    margin-left: 320px;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    background-color: #2a2a91;
-    color: white;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 20px;
-    transition: transform 0.3s ease;
-    z-index: 1000;
-}
-
-.sidebar.hidden {
-    transform: translateX(-100%);
-}
-
-/* Toggle Button */
-.toggle-sidebar-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1100;
-    background-color: #2a2a91;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.toggle-sidebar-btn:hover {
-    background-color: #1c1c7a;
+.toggle:hover {
+    color: #8371fd;
 }
 
 /* Blogs */
@@ -317,6 +254,45 @@ th {
 }
 
 .content .icon a {
+    font-size: 24px;
+    color: #000000;
+}
+
+.content .icon a i {
+    padding-right: 12px;
+    color: #0056b3;
+}
+
+.content .icon a:hover {
+    color: #0056b3;
+}
+
+.content img {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    object-fit: cover;
+    /* Ensures the image is cropped proportionally */
+}
+
+.content .title {
+    font-size: 40px;
+    color: #000000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    width: 100%;
+}
+
+.content .title:hover {
+    color: #0056b3;
+}
+
+.content p {
+    padding: 16px 0;
+    line-height: 2;
     font-size: 24px;
     color: #000000;
 }
@@ -370,6 +346,7 @@ ul {
     text-align: center;
 }
 
+/* sidebar */
 .sidebar {
     width: 250px;
     background-color: #2a2a91;
@@ -436,34 +413,24 @@ ul {
     color: white;
 }
 
-/* Main content */
-.main-content {
-    margin-left: 240px;
-    padding: 20px;
-    flex-grow: 1;
+/* Toggle Button */
+.toggle-sidebar-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background-color: #2a2a91;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
-/* Responsive Charts */
-canvas {
-    max-width: 100%;
-    height: auto;
+.toggle-sidebar-btn:hover {
+    background-color: #1c1c7a;
 }
 
 .sidebar.hidden {
     transform: translateX(-100%);
-}
-
-.chart-wrapper {
-    max-width: 500px;
-    margin-bottom: 40px;
-}
-
-.chart-wrapper-wide {
-    max-width: 800px;
-    margin-bottom: 40px;
-}
-
-canvas {
-    width: 80% !important;
-    height: auto !important;
 }

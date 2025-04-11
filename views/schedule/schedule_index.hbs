@@ -1,0 +1,31 @@
+<h2>Lịch Học Tuần {{week}}</h2>
+<p>Thời gian: {{weekRange}} </p>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Thứ</th>
+            <th>Ca Học</th>
+            <th>Lớp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each schedules}}
+        <tr>
+            <td>{{this.day}}</td>
+            <td>{{this.time}}</td>
+            <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+            
+            <td>
+                <a class="button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
+                <a class="button-3" href="/schedule/edit/{{_id }}">Edit</a>
+                <a class="button-3" href="/schedule/delete/{{ _id }}"
+                    onclick="return confirm('Are you sure to delete this product ?');">Delete</a>
+             </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<a href="/schedule/schedule-view/{{prevWeek}}">Tuần trước</a> |
+<a href="/schedule/schedule-view/{{nextWeek}}">Tuần sau</a>
