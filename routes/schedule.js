@@ -19,7 +19,7 @@ router.get('/schedule-view/:weekOffset?', async (req, res) => {
     const schedules = await ScheduleModel.find().populate({ path: 'class', select: 'classname' }).lean();
 
 
-    res.render('schedule/schedule_index', { 
+    res.render('schedule/index', { 
         title: 'Lịch Học', 
         schedules, 
         week: weekOffset, 
@@ -33,7 +33,7 @@ router.get('/schedule-view/:weekOffset?', async (req, res) => {
 router.get('/add', async (req, res) => {
     try {
         const classes = await ClassModel.find(); // Lấy danh sách tất cả lớp học
-        res.render('schedule/add_schedule', { 
+        res.render('schedule/add', { 
             title: 'Thêm Lịch Học',
             classes // Truyền danh sách lớp học vào giao diện
         });
@@ -84,7 +84,7 @@ router.post('/add', async (req, res) => {
 
         // Gửi email thông báo
         const subject = "Thông báo lịch học mới";
-        const message = `Lịch học mới đã được tạo:\nNgày: ${day}\nCa học: ${time}\n Các bạn chú ý kiểm tra lịch học mới`;
+        const message = `Đã có lịch học mới vào Ngày: ${day} - Ca học: ${time}\n Các bạn chú ý kiểm tra lịch học mới`;
         await sendEmail(emailList, subject, message);
         
         res.redirect('/schedule/schedule-view/');
@@ -150,7 +150,7 @@ router.post('/edit/:id', async (req, res) => {
 
         // Gửi email thông báo cập nhật lịch học
         const emails = [...students.map(s => s.email), ...tutors.map(t => t.email)];
-        const subject = "Cập nhật lịch học mới";
+        const subject = "Đã có sự thay đổi lịch học";
         const message = `Lịch học mới của lớp ${classObj.name} vào ngày ${day}, ca ${time}.`;
 
         await sendEmail(emails, subject, message);

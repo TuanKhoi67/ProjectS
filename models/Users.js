@@ -37,11 +37,9 @@ userSchema.statics.createDefaultAdmin = async function() {
   }
 };
 
-//const User = mongoose.model('User', userSchema);
-
-const UserModel = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
 // Call this after model initialization
-UserModel.createDefaultAdmin();
+User.createDefaultAdmin();
 
-module.exports = UserModel;
+module.exports = User;

@@ -8,9 +8,8 @@
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
     </ul>
@@ -20,14 +19,14 @@
 
     <!-- Bar Chart: Lớp -->
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <h2>Classes by Month</h2>
             <div class="chart-wrapper">
                 <canvas id="classChart"></canvas>
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <h2>Students by Month</h2>
             <div class="chart-wrapper">
                 <canvas id="studentChart"></canvas>
@@ -284,10 +283,10 @@
 
     <h1>Blog Dashboard</h1>
 
-    <button class="btn-toggle" onclick="toggleChart('chart7Days')">Weekly</button>
-    <button class="btn-toggle" onclick="toggleChart('chartWeek')">Week Comparison</button>
-    <button class="btn-toggle" onclick="toggleChart('chartMonth')">Month Comparsion</button>
-    <button class="btn-toggle" onclick="toggleChart('chartAllMonths')">Months</button>
+    <button class="btn btn-toggle" onclick="toggleChart('chart7Days')">Weekly</button>
+    <button class="btn btn-toggle" onclick="toggleChart('chartWeek')">Week Comparison</button>
+    <button class="btn btn-toggle" onclick="toggleChart('chartMonth')">Month Comparsion</button>
+    <button class="btn btn-toggle" onclick="toggleChart('chartAllMonths')">Months</button>
 
     <div class="row">
         <div id="chart7Days" class="col-md-4 chart-wrapper">
@@ -385,3 +384,30 @@
     }
 
 </script>
+
+<style>
+    /* Responsive Charts */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.chart-wrapper {
+    max-width: 500px;
+    margin-bottom: 40px;
+}
+
+.chart-wrapper-wide {
+    max-width: 800px;
+    margin-bottom: 40px;
+}
+
+canvas {
+    width: 80% !important;
+    height: auto !important;
+}
+</style>

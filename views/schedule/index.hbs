@@ -49,7 +49,7 @@
 </script>
 
 <div class="card-header text-center">
-    <h3>{{title}}</h3>
+    <h3>Schedule</h3>
     <p>Week: {{weekRange}}</p>
 </div>
 <div class="card-body">
@@ -70,7 +70,7 @@
             <tr>
                 <td>{{this.day}}</td>
                 <td>{{this.time}}</td>
-                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} No class exist {{/if}}</td>
 
                 <td>
                     <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
