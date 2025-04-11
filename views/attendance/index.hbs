@@ -1,14 +1,14 @@
-<h1>Danh sách Sinh viên - Điểm danh</h1>
+<h1 class="title">Attendance</h1>
 
-<h2>Các Sinh viên Có Mặt</h2>
+<h2 class="section-title">Present Student</h2>
 {{#if presentStudents.length}}
-  <table border="1">
+  <table class="styled-table">
     <thead>
       <tr>
-        <th>STT</th>
-        <th>Sinh viên</th>
-        <th>Ngày</th>
-        <th>Trạng thái</th>
+        <th>No.</th>
+        <th>Student</th>
+        <th>Day</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
@@ -17,24 +17,24 @@
           <td>{{@index}}</td>
           <td>{{this.student_id.name}}</td>
           <td>{{this.date}}</td>
-          <td>{{this.status}}</td>
+          <td class="status present">Present</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 {{else}}
-  <p>Không có sinh viên nào có mặt.</p>
+  <p>No present student.</p>
 {{/if}}
 
-<h2>Các Sinh viên Vắng Mặt</h2>
+<h2 class="section-title">Absent</h2>
 {{#if absentStudents.length}}
-  <table border="1">
+  <table class="styled-table">
     <thead>
       <tr>
-        <th>STT</th>
-        <th>Sinh viên</th>
-        <th>Ngày</th>
-        <th>Trạng thái</th>
+        <th>No.</th>
+        <th>Student</th>
+        <th>Day</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
@@ -43,11 +43,67 @@
           <td>{{@index}}</td>
           <td>{{this.student_id.name}}</td>
           <td>{{this.date}}</td>
-          <td>{{this.status}}</td>
+          <td class="status absent">Absent</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 {{else}}
-  <p>Không có sinh viên nào vắng mặt.</p>
+  <p>No absent student.</p>
 {{/if}}
+
+<style>
+  .title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2a2a91;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.styled-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-size: 16px;
+  width: 95%;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.styled-table thead tr {
+  background-color: #2a2a91;
+  color: #ffffff;
+  text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #eef;
+}
+
+.status.present {
+  color: green;
+  font-weight: bold;
+}
+
+.status.absent {
+  color: red;
+  font-weight: bold;
+}
+
+</style>

@@ -1,31 +1,122 @@
-<h2>Lịch Học Tuần {{week}}</h2>
-<p>Thời gian: {{weekRange}} </p>
+<head>
 
-<table border="1">
+  <link rel="stylesheet" href="/stylesheets/style2.css">
+</head>
+
+<style>
+  .sidebar {
+    min-height: 100vh;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+  }
+
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+  }
+
+  .sidebar a:hover {
+    background-color: #495057;
+  }
+
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .schedule-table th,
+  .schedule-table td {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+
+  .schedule-table th {
+    background-color: #2a2a91;
+    color: white;
+  }
+
+  .schedule-table .actions a.btn {
+    margin-right: 6px;
+    padding: 6px 10px;
+    text-decoration: none;
+    background-color: #2a2a91;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .schedule-table .actions a.btn-danger {
+    background-color: #d9534f;
+  }
+
+  .week-nav {
+    margin-top: 15px;
+    font-weight: bold;
+  }
+</style>
+
+<body>
+  <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar" id="sidebar">
+    <h3>Dashboard</h3>
+    <hr>
+    <ul>
+      <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+      <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+      <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+      <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+      <li><a href="/userpage/admin">User Management</a></li>
+      <li><a href="/api/meeting/create">Meeting</a></li>
+      <li><a href="/class">Class</a></li>
+      <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+  </div>
+
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('hidden');
+    }
+  </script>
+
+  <h2>Schedule Week {{week}}</h2>
+  <p>Time: {{weekRange}}</p>
+
+  <table class="schedule-table">
     <thead>
-        <tr>
-            <th>Thứ</th>
-            <th>Ca Học</th>
-            <th>Lớp</th>
-        </tr>
+      <tr>
+        <th>Day</th>
+        <th>Slot</th>
+        <th>Class</th>
+        <th>Action</th>
+      </tr>
     </thead>
     <tbody>
-        {{#each schedules}}
-        <tr>
-            <td>{{this.day}}</td>
-            <td>{{this.time}}</td>
-            <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
-            
-            <td>
-                <a class="button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
-                <a class="button-3" href="/schedule/edit/{{_id }}">Edit</a>
-                <a class="button-3" href="/schedule/delete/{{ _id }}"
-                    onclick="return confirm('Are you sure to delete this product ?');">Delete</a>
-             </td>
-        </tr>
-        {{/each}}
+      {{#each schedules}}
+      <tr>
+        <td>{{this.day}}</td>
+        <td>{{this.time}}</td>
+        <td>{{#if this.class}} {{this.class.classname}} {{else}} No class exist {{/if}}</td>
+        <td class="actions">
+          <a class="btn" href="/attendance/take-attendance/{{_id}}">Attendance</a>
+          <a class="btn" href="/schedule/edit/{{_id}}">Edit</a>
+          <a class="btn btn-danger" href="/schedule/delete/{{_id}}"
+            onclick="return confirm('Are you sure to delete this schedule?');">Delete</a>
+        </td>
+      </tr>
+      {{/each}}
     </tbody>
-</table>
+  </table>
 
-<a href="/schedule/schedule-view/{{prevWeek}}">Tuần trước</a> |
-<a href="/schedule/schedule-view/{{nextWeek}}">Tuần sau</a>
+  <div class="week-nav">
+    <a href="/schedule/schedule-view/{{prevWeek}}">Previous Week</a> |
+    <a href="/schedule/schedule-view/{{nextWeek}}">Next Week</a>
+  </div>
+</body>

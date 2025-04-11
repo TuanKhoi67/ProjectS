@@ -1,64 +1,90 @@
-<div class="sidebar" id="sidebar">
-    <h3>Dashboard</h3>
-    <hr>
-    <ul>
-        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
-        <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
-        <li><a href="/class">Class</a></li>
-        <li><a href="/schedule/schedule-view">Schedule</a></li>
-    </ul>
-</div>
-
 <head>
     <title>Meeting List</title>
+    <link rel="stylesheet" href="/stylesheets/style2.css">
 </head>
+<style>
+    .sidebar {
+        min-height: 100vh;
+        background-color: #343a40;
+        color: white;
+        padding: 20px;
+    }
+
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+    }
+
+    .sidebar a:hover {
+        background-color: #495057;
+    }
+
+    .content {
+        padding: 20px;
+    }
+</style>
+
 <body>
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar" id="sidebar">
+        <h3>Dashboard</h3>
+        <hr>
+        <ul>
+            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+            <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+            <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+            <li><a href="/admin/dashboard/user">User Dashboard</a></li>
+            <li><a href="/userpage/admin">User Management</a></li>
+            <li><a href="/api/meeting/create">Meeting</a></li>
+            <li><a href="/class">Class</a></li>
+            <li><a href="/schedule/schedule-view">Schedule</a></li>
+        </ul>
+    </div>
+
     <div class="container mt-5">
         <h2 class="mb-4">Meeting List</h2>
         {{#if meetings.length}}
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Form</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Student</th>
-                        <th>Tutor</th>
-                        <th>Note</th>
-                        <th>Begin Time</th>
-                        <th>End Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each meetings}}
-                        <tr>
-                            <td>{{this.title}}</td>
-                            <td>{{this.form}}</td>
-                            <td>{{this.location}}</td>
-                            <td>{{this.status}}</td>
-                            <td>{{this.student.name}}</td>
-                            <td>{{this.tutor.name}}</td>
-                            <td>{{this.note}}</td>
-                            <td>{{this.startTime}}</td>
-                            <td>{{this.endTime}}</td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Form</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Student</th>
+                    <th>Tutor</th>
+                    <th>Note</th>
+                    <th>Begin Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each meetings}}
+                <tr>
+                    <td>{{this.title}}</td>
+                    <td>{{this.form}}</td>
+                    <td>{{this.location}}</td>
+                    <td>{{this.status}}</td>
+                    <td>{{this.student.name}}</td>
+                    <td>{{this.tutor.name}}</td>
+                    <td>{{this.note}}</td>
+                    <td>{{this.startTime}}</td>
+                    <td>{{this.endTime}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
         {{else}}
-            <div class="alert alert-warning">No meeting exist.</div>
+        <div class="alert alert-warning">No meeting exist.</div>
         {{/if}}
     </div>
-</body>
 
-<script>
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('hidden');
-    }
-</script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+    </script>
+</body>

@@ -345,3 +345,92 @@ ul {
 .copyright {
     text-align: center;
 }
+
+/* sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2a2a91;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.sidebar .logo {
+    font-size: 22px;
+    margin-left: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar ul li {
+    margin: 12px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.sidebar.closed {
+    transform: translateX(-100%);
+}
+
+
+/* Adjust main content margin */
+.main-content {
+    margin-left: 240px;
+    padding: 20px;
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.hidden+.main-content {
+    margin-left: 20px;
+}
+
+.sidebar a:hover {
+    text-decoration: none;
+    color: white;
+}
+
+/* Toggle Button */
+.toggle-sidebar-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background-color: #2a2a91;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.toggle-sidebar-btn:hover {
+    background-color: #1c1c7a;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
