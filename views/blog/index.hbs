@@ -25,22 +25,26 @@
         margin-bottom: 16px;
     }
 
+    .back-btn,
     .search-btn {
         background-color: black;
         color: white;
         border: none;
         display: inline-block;
-        margin-left: 10px;
+        margin: 0 10px;
         padding: 10px 10px;
         border-radius: 30px;
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
 
-    .search-btn:hover {
+    .back-btn:hover {
         background-color: #0056b3;
     }
 
+    .search-btn:hover {
+        background-color: #0056b3;
+    }
 
     .blog-card {
         border-radius: 15px;
@@ -73,9 +77,8 @@
     <div class="container">
         <h2 class="text-center mb-4">📖 All Blogs</h2>
         <div class="search-container text-center">
-            <a href="/blog/{{this._id}}" class="btn"><i class="fa-regular fa-pen-to-square"></i>
-                            Back</a>
             <form action="/blog/search" method="get">
+                <a href="/blog" class="back-btn"><i class="fa-solid fa-rotate-left"></i> Back</a>
                 <input type="text" class="search-bar" name="q" placeholder="Search for blog..." required>
                 <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
             </form>

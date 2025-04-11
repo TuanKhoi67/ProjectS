@@ -80,11 +80,13 @@
         <h4 class="text-center mt-4">
             <button id="openPopup" class="popup-btn">What’s Your Blog Inspiration Today, {{user.fullname}}?</button>
         </h4>
+        <a href="/dashboard/tutor_dashboard">Check your dashboard</a>
         <!-- Popup Modal -->
         <div id="blogModal" class="modal" style="display: none;">
             <div class="modal-content shadow p-4 bg-white rounded">
                 <span id="closePopup" class="close">&times;</span>
                 <h2 class="text-center">New Blog</h2>
+                
                 <form action="/blog" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="title">Title</label>
