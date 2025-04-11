@@ -3,10 +3,8 @@ var router = express.Router();
 var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
-const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
 
-
-router.get('/', ensureAuthenticated, checkAdmin , async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const classes = await ClassModel.find({})
             .populate('student')
@@ -25,7 +23,7 @@ router.get('/', ensureAuthenticated, checkAdmin , async (req, res) => {
 // Hiển thị trang tạo lớp học với bộ lọc
 router.get('/create', async (req, res) => {
     try {
-        res.render('class/add_class'); // Giao diện để chọn môn học
+        res.render('class/add'); // Giao diện để chọn môn học
     } catch (error) {
         res.status(500).send('Lỗi khi tải trang tạo lớp học');
     }
@@ -41,7 +39,7 @@ router.post('/filter', async (req, res) => {
         console.log("Students found:", students);
         console.log("Tutors found:", tutors);
 
-        res.render('class/add_class', { students, tutors, subject });
+        res.render('class/add', { students, tutors, subject });
     } catch (error) {
         res.status(500).send('Lỗi khi lọc sinh viên và giáo viên');
     }
@@ -171,44 +169,6 @@ router.post('/create-class', async (req, res) => {
     } catch (error) {
         console.error("Lỗi khi tạo lớp học:", error);
         res.status(500).send('Lỗi khi tạo lớp học');
-    }
-});
-
-router.get('/edit/:id', async (req, res) => {
-    try {
-        const classData = await ClassModel.findById(req.params.id).populate('student').populate('tutor');
-        const students = await StudentModel.find(); // To choose students
-        const tutors = await TutorModel.find();     // To choose tutor
-
-        if (!classData) {
-            return res.status(404).send("Lớp học không tồn tại.");
-        }
-
-        res.render('class/edit', {
-            classData,
-            students,
-            tutors
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Lỗi khi lấy thông tin lớp học.");
-    }
-});
-
-router.post('/edit/:id', async (req, res) => {
-    try {
-        const { classname, student, tutor } = req.body;
-
-        await ClassModel.findByIdAndUpdate(req.params.id, {
-            classname,
-            student: Array.isArray(student) ? student : [student], // Nếu chỉ chọn 1 SV
-            tutor
-        });
-
-        res.redirect('/class'); // hoặc trang chi tiết lớp
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Lỗi khi cập nhật lớp học.");
     }
 });
 

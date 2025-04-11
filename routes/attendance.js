@@ -4,34 +4,44 @@ const mongoose = require('mongoose');
 const ScheduleModel = require('../models/Schedule');
 const StudentModel = require('../models/Student');
 const AttendanceModel = require('../models/Attendance');
+const ClassModel = require('../models/Class'); // đảm bảo bạn import đúng model clas
 
-// Phương thức GET để lấy tất cả điểm danh
-router.get('/', async (req, res) => {
-    try {
-      // Lấy tất cả điểm danh từ database và populate thông tin sinh viên
-      const attendances = await AttendanceModel.find()
-        .populate('student_id')  // Lấy thông tin sinh viên từ bảng Student
-        .sort({ date: -1 });  // Sắp xếp theo ngày gần nhất (tùy chọn)
 
-        console.log(attendances); 
-  
-      // Phân loại sinh viên theo trạng thái có mặt và vắng mặt
-      const presentStudents = attendances.filter(att => att.status === 'present');
-      const absentStudents = attendances.filter(att => att.status === 'absent');
+router.get('/all', async (req, res) => {
+  try {
+    // Lấy tất cả điểm danh và populate student_id
+    const attendances = await AttendanceModel.find()
+      .populate({ path: 'student_id' })
+      .lean();
 
-      console.log('Sinh viên có mặt:', presentStudents);
-        console.log('Sinh viên vắng mặt:', absentStudents);
-  
-      // Render dữ liệu vào view attendance/status.hbs
-      res.render('attendance/index', {
-        presentStudents: presentStudents,
-        absentStudents: absentStudents
-      });
-    } catch (error) {
-      console.error('Lỗi khi lấy dữ liệu điểm danh:', error);
-      res.status(500).send('Lỗi khi lấy dữ liệu điểm danh.');
+    // Lấy tất cả lớp học để tìm lớp của từng sinh viên
+    const classes = await ClassModel.find().lean();
+
+    // Gán tên lớp cho từng bản ghi điểm danh
+    for (const att of attendances) {
+      const studentId = att.student_id?._id?.toString();
+
+      if (!studentId) {
+        att.className = 'Không xác định';
+        continue;
+      }
+
+      const foundClass = classes.find(c =>
+        Array.isArray(c.student) &&
+        c.student.some(s => s.toString() === studentId)
+      );
+
+      att.className = foundClass ? foundClass.classname : 'Không xác định';
     }
-  });
+
+    res.render('attendance/index', { attendances });
+
+  } catch (err) {
+    console.error('Lỗi khi truy vấn dữ liệu điểm danh:', err);
+    res.status(500).send('Lỗi khi truy vấn dữ liệu điểm danh.');
+  }
+});
+
   
 
 // Route hiển thị danh sách sinh viên dựa trên lịch học
@@ -98,3 +108,4 @@ router.post('/take-attendance/:scheduleId', async (req, res) => {
 });
 
 module.exports = router;
+

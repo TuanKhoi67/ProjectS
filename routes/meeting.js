@@ -4,21 +4,22 @@ const router = express.Router();
 const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
-const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+//const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+
 
 router.get('/', async (req, res) => {
   try {
       const meetings = await MeetingModel.find()
-          .populate('student') // Lấy thông tin sinh viên
-          .populate('tutor');  // Lấy thông tin giáo viên
+          .populate('student')
+          .populate('tutor')
+          .lean(); // .lean() để dữ liệu tương thích với Handlebars
 
-      res.render("meeting/index", { meetings });
-  } catch (error) {
-      console.error("Lỗi khi lấy danh sách cuộc họp:", error);
-      res.status(500).json({ error: "Không thể lấy danh sách cuộc họp" });
+      res.render('meeting/index', { meetings });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Server Error');
   }
 });
-
 
 // Route GET: Render form tạo meeting
 router.get("/create", async (req, res) => {
@@ -35,7 +36,7 @@ router.get("/create", async (req, res) => {
 
 router.post("/create", async (req, res) => {
     try {
-      const { title, location, note, startTime, endTime, students = [], tutors = [] } = req.body;
+      const { title, form, location, note, startTime, endTime, students = [], tutors = [] } = req.body;
   
       // Kiểm tra xem students và tutors có phải là mảng không
       if (!Array.isArray(students)) {
@@ -62,6 +63,7 @@ router.post("/create", async (req, res) => {
      // Tạo Meeting
     const meetingData = {
         title,
+        form,
         location,
         note,
         startTime: startDateTime,
@@ -101,7 +103,7 @@ router.post("/create", async (req, res) => {
       }
   
       // Tạo Google Meet thông qua API
-      const meeting = await createGoogleMeet({ title, location, note, startTime: startDateTime, endTime: endDateTime, attendees });
+      const meeting = await createGoogleMeet({ title, form, location, note, startTime: startDateTime, endTime: endDateTime, attendees });
       console.log("Meeting created:", meeting);
   
       // Soạn nội dung email
