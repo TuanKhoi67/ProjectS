@@ -6,19 +6,14 @@ const Student = require("../models/Student");
 const Tutor = require("../models/Tutor");
 const mongoose = require("mongoose");
 const Blog = require("../models/Blog");
+const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 
 // Add authentication middleware
-const isAuthenticated = (req, res, next) => {
-    if (!req.session.user) {
-        return res.redirect('/auth/login');
-    }
-    req.user = req.session.user;
-    res.render('dashboard', { user: req.user });
-};
+
 
 
 // Apply middleware to dashboard routes
-router.get('/', isAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated , (req, res) => {
     if (req.user.role === 'student') {
         res.render('dashboard/student', { user: req.user });
     } else if (req.user.role === 'tutor') {
@@ -99,7 +94,7 @@ router.get('/tutor/:id', async (req, res) => {
 
 // Admin Dashboard
 
-router.get('/admin', async (req, res) => {
+router.get('/admin', checkAdmin, async (req, res) => {
     try {
         // Get all users with their roles
         const users = await User.find();

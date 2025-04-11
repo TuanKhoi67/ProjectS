@@ -7,10 +7,11 @@ var DocumentModel = require('../models/Document');
 var BlogModel = require('../models/Blog');
 var StudentModel = require('../models/Student');
 var TutorModel = require('../models/Tutor');
-var UserModel = require('../models/Users')
+var UserModel = require('../models/Users');
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth');
 
 /* ------------------------ Phần hiển thị biểu đồ------------------------ */
-router.get('/', async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
   try {
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
@@ -297,12 +298,12 @@ router.get('/', async (req, res) => {
 
 /* ------------------------ Phần của sinh viên ------------------------ */
 
-router.get('/student', async (req, res) => {
+router.get('/student', ensureAuthenticated, checkAdmin, async (req, res) => {
   var students = await StudentModel.find({});
   res.render('dashboard/student/index', { students });
 });
 
-router.post('/add-student', async (req, res) => {
+router.post('/add-student', ensureAuthenticated, checkAdmin, async (req, res) => {
    const { name, telephone, email, subject } = req.body;
 
    const newStudent = new StudentModel({
@@ -317,14 +318,14 @@ router.post('/add-student', async (req, res) => {
    res.redirect('/admin/dashboard/student');
 });
 
-router.get('/student-edit/:id', async (req, res) => {
+router.get('/student-edit/:id', ensureAuthenticated, checkAdmin, async (req, res) => {
     var id = req.params.id;
     var student = await StudentModel.findById(id);
     console.log(student);
     res.render('dashboard/student/edit', { student });
  })
  
- router.post('/student-edit/:id', async (req, res) => {
+ router.post('/student-edit/:id', ensureAuthenticated, checkAdmin,async (req, res) => {
     var id = req.params.id;
     var student = req.body;
     try {
@@ -337,7 +338,7 @@ router.get('/student-edit/:id', async (req, res) => {
     res.redirect('/admin/dashboard/student');
  });
 
-router.get('/student-delete/:id', async (req, res) => {
+router.get('/student-delete/:id', ensureAuthenticated, checkAdmin,async (req, res) => {
     await StudentModel.findByIdAndDelete(req.params.id);
     res.redirect('/admin/dashboard/student');
 });
