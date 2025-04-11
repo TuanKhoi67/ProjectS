@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { ensureAuthenticated, checkRole } = require('../middleware/auth');
+const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 const User = require('../models/Users');
 
 // Hiển thị trang đăng ký
@@ -55,17 +55,17 @@ router.get('/logout', (req, res, next) => {
 });
 
 // Route trang cá nhân cho Admin
-router.get('/admin', ensureAuthenticated, checkRole(['admin']), (req, res) => {
+router.get('/admin', ensureAuthenticated, checkAdmin, (req, res) => {
     res.render('userpage/admin', { user: req.user });
 });
 
 // Route trang cá nhân cho Tutor
-router.get('/tutor', ensureAuthenticated, checkRole(['tutor']), (req, res) => {
+router.get('/tutor', ensureAuthenticated, checkTutor, (req, res) => {
     res.render('userpage/tutor', { user: req.user });
 });
 
 // Route trang cá nhân cho Student
-router.get('/student', ensureAuthenticated, checkRole(['student']), (req, res) => {
+router.get('/student', ensureAuthenticated, checkStudent, (req, res) => {
     res.render('userpage/student', { user: req.user });
 });
 

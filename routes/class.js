@@ -3,8 +3,10 @@ var router = express.Router();
 var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
 
-router.get('/', async (req, res) => {
+
+router.get('/', ensureAuthenticated, checkAdmin , async (req, res) => {
     try {
         const classes = await ClassModel.find({})
             .populate('student')
