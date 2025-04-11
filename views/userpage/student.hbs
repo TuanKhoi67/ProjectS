@@ -3,105 +3,103 @@
 </head>
 
 <style>
-        .profile-img {
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            margin-right: 8px;
-        }
+    .profile-img {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-right: 8px;
+    }
 
-        .blog-card {
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease-in-out;
-            padding: 15px;
-        }
+    .blog-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+        padding: 15px;
+    }
 
-        .blog-card:hover {
-            transform: scale(1.05);
-        }
+    .blog-card:hover {
+        transform: scale(1.05);
+    }
 
-        .card-text {
-            height: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+    .card-text {
+        height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-            border-radius: 5px 5px 0 0;
-            width: 100%;
-        }
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px 5px 0 0;
+        width: 100%;
+    }
 
-        .popup-btn {
-            background-color: #f0f2f5;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .popup-btn {
+        background-color: #f0f2f5;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        .popup-btn:hover {
-            background-color: #e0e4e8;
-        }
+    .popup-btn:hover {
+        background-color: #e0e4e8;
+    }
 
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
 
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+    }
 
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            cursor: pointer;
-        }
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
 
-        .image-preview {
-            max-height: 200px;
-            object-fit: contain;
-        }
+    .image-preview {
+        max-height: 200px;
+        object-fit: contain;
+    }
 
-        .icon {
-            margin: 8px 0;
-            color: #555;
-        }
+    .icon {
+        margin: 8px 0;
+        color: #555;
+    }
 
-        .title {
-            font-weight: bold;
-            text-decoration: none;
-            color: #333;
-        }
-    </style>
+    .title {
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+    }
+</style>
 </head>
 
 <body>
     <div class="container mt-4">
-        <h1 class="text-center">Student User Page</h1> 
-        <h3 class="text-right"> Your Dashboard 
-            <a href="/dashboard/student_dashboard" class="title">a</a>
-        </h2> 
+        <h1 class="text-center">Student User Page</h1>
+
 
 
         <!-- Form đăng blog -->
@@ -155,35 +153,37 @@
                 </form>
             </div>
         </div>
+        <h3 class="text-center mt-4">
+            <a href="/dashboard/student_dashboard" class="btn btn-danger">Your Dashboard </a>
+            </h2>
+            <!-- Hiển thị danh sách blog -->
+            <h2 class="text-center mt-5">Student Blogs</h2>
+            <div class="row mt-4">
+                {{#each blogs}}
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        {{#if this.image}}
+                        <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
+                        {{else}}
+                        <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
+                            style="height: 200px;">
+                            No Image
+                        </div>
+                        {{/if}}
 
-        <!-- Hiển thị danh sách blog -->
-        <h2 class="text-center mt-5">Student Blogs</h2>
-        <div class="row mt-4">
-            {{#each blogs}}
-            <div class="col-md-4 mb-4">
-                <div class="blog-card">
-                    {{#if this.image}}
-                    <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
-                    {{else}}
-                    <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
-                        style="height: 200px;">
-                        No Image
-                    </div>
-                    {{/if}}
-
-                    <div class="icon">
-                        <i class="fa-regular fa-user"></i> {{this.author.fullname}} ({{this.role}})
-                    </div>
-                    <a href="#" class="title">{{this.title}}</a>
-                    <p class="card-text">{{this.content}}</p>
-                    <div class="d-flex justify-content-between">
-                        <span><i class="fa-solid fa-heart"></i> {{this.likes}}</span>
-                        <span><i class="fa-solid fa-comment-dots"></i> {{this.comments.length}}</span>
+                        <div class="icon">
+                            <i class="fa-regular fa-user"></i> {{this.author.fullname}} ({{this.role}})
+                        </div>
+                        <a href="#" class="title">{{this.title}}</a>
+                        <p class="card-text">{{this.content}}</p>
+                        <div class="d-flex justify-content-between">
+                            <span><i class="fa-solid fa-heart"></i> {{this.likes}}</span>
+                            <span><i class="fa-solid fa-comment-dots"></i> {{this.comments.length}}</span>
+                        </div>
                     </div>
                 </div>
+                {{/each}}
             </div>
-            {{/each}}
-        </div>
     </div>
 
     <!-- Script -->
