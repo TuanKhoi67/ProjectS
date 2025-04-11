@@ -1,53 +1,22 @@
-<h1>Danh sách Sinh viên - Điểm danh</h1>
-
-<h2>Các Sinh viên Có Mặt</h2>
-{{#if presentStudents.length}}
-  <table border="1">
-    <thead>
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Tên sinh viên</th>
+      <th>Email</th>
+      <th>Trạng thái</th>
+      <th>Ngày</th>
+      <th>Lớp</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each attendances}}
       <tr>
-        <th>STT</th>
-        <th>Sinh viên</th>
-        <th>Ngày</th>
-        <th>Trạng thái</th>
+        <td>{{this.student_id.name}}</td>
+        <td>{{this.student_id.email}}</td>
+        <td>{{this.status}}</td>
+        <td>{{formatDate this.date}}</td>
+        <td>{{this.className}}</td>
       </tr>
-    </thead>
-    <tbody>
-      {{#each presentStudents}}
-        <tr>
-          <td>{{@index}}</td>
-          <td>{{this.student_id.name}}</td>
-          <td>{{this.date}}</td>
-          <td>{{this.status}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-{{else}}
-  <p>Không có sinh viên nào có mặt.</p>
-{{/if}}
-
-<h2>Các Sinh viên Vắng Mặt</h2>
-{{#if absentStudents.length}}
-  <table border="1">
-    <thead>
-      <tr>
-        <th>STT</th>
-        <th>Sinh viên</th>
-        <th>Ngày</th>
-        <th>Trạng thái</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each absentStudents}}
-        <tr>
-          <td>{{@index}}</td>
-          <td>{{this.student_id.name}}</td>
-          <td>{{this.date}}</td>
-          <td>{{this.status}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-{{else}}
-  <p>Không có sinh viên nào vắng mặt.</p>
-{{/if}}
+    {{/each}}
+  </tbody>
+</table>

@@ -1,14 +1,42 @@
-<h2>Điểm danh lớp: {{schedule.class.classname}} - Ngày: {{schedule.day}}, Giờ: {{schedule.time}}</h2>
+<h2>Class: {{schedule.class.classname}} - Day: {{schedule.day}}, Time: {{schedule.time}}</h2>
 
 <form action="/attendance/take-attendance/{{schedule._id}}" method="POST">
   {{#each students}}
-    <div>
-      <label>{{this.name}}</label>
-      <select name="attendance[{{this._id}}]">
-        <option value="present">Có mặt</option>
-        <option value="absent">Vắng mặt</option>
-      </select>
-    </div>
+    <div class="attendance-input">
+  <label>{{this.name}}</label>
+  <div class="radio-group">
+    <label>
+      <input type="radio" name="attendance[{{this._id}}]" value="present" required>
+      Present
+    </label>
+    <label>
+      <input type="radio" name="attendance[{{this._id}}]" value="absent">
+      Absent
+    </label>
+  </div>
+</div>
+
   {{/each}}
-  <button type="submit">Lưu điểm danh</button>
+  <button class="btn btn-toggle" type="submit">Save</button>
 </form>
+
+<style>
+  .attendance-input {
+  margin-bottom: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.attendance-input label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.radio-group label {
+  margin-right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+</style>

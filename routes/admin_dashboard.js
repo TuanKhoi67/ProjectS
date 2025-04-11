@@ -285,6 +285,7 @@ router.get('/', async (req, res) => {
 
           blogMonthlyLabels: JSON.stringify(monthlyLabels),
           blogMonthlyCounts: JSON.stringify(monthlyCounts),
+          layout: 'admin'
       });
 
   } catch (err) {
@@ -340,7 +341,7 @@ router.get('/student-edit/:id', async (req, res) => {
 router.get('/student-delete/:id', async (req, res) => {
     await StudentModel.findByIdAndDelete(req.params.id);
     res.redirect('/admin/dashboard/student');
-});
+ });
 
  /* ------------------------ Hết phần của sinh viên ------------------------ */
 

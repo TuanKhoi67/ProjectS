@@ -172,4 +172,15 @@ router.post('/create-class', async (req, res) => {
     }
 });
 
+// Xóa document theo ID
+router.get('/delete/:id', async (req, res) => {
+    try {
+        await ClassModel.findByIdAndDelete(req.params.id);
+        res.redirect('/class'); // hoặc route hiển thị danh sách lớp học
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi khi xóa lớp học.");
+    }
+});
+
 module.exports = router;

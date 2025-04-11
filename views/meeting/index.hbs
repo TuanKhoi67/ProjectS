@@ -1,0 +1,42 @@
+<h1>Danh sách lịch họp</h1>
+
+<table border="1" cellspacing="0" cellpadding="10">
+  <thead>
+    <tr>
+      <th>Tiêu đề</th>
+      <th>Hình thức</th>
+      <th>Địa điểm</th>
+      <th>Trạng thái</th>
+      <th>Thời gian bắt đầu</th>
+      <th>Thời gian kết thúc</th>
+      <th>Gia sư</th>
+      <th>Học viên</th>
+      <th>Ghi chú</th>
+      <th>Ngày tạo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each meetings}}
+      <tr>
+        <td>{{title}}</td>
+        <td>{{form}}</td>
+        <td>{{location}}</td>
+        <td>{{status}}</td>
+        <td>{{formatDate startTime}}</td>
+        <td>{{formatDate endTime}}</td>
+        <td>
+          {{#each tutor}}
+            <div>{{this.name}}</div>
+          {{/each}}
+        </td>
+        <td>
+          {{#each student}}
+            <div>{{this.name}}</div>
+          {{/each}}
+        </td>
+        <td>{{note}}</td>
+        <td>{{formatDate createDate}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
