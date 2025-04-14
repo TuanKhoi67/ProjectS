@@ -1,3 +1,30 @@
+<style>
+    .btn-primary {
+        background-color: #2a2a91;
+        border-color: #2a2a91;
+    }
+
+    .btn-primary:hover {
+        background-color: #1f1f6e;
+        border-color: #1f1f6e;
+    }
+
+    th,
+    td {
+        text-align: center;
+    }
+</style>
+
+<body>
+    <div class="container mt-4">
+        {{{body}}}
+    </div>
+</body>
+
+</html>
+
+{{!-- schedule_index.hbs --}}
+
 <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar" id="sidebar">
     <h3>Dashboard</h3>
@@ -14,66 +41,49 @@
     </ul>
 </div>
 
-<div class="content">
-
-    <head>
-        <title>Create A Meeting</title>
-    </head>
-
-    <body>
-        <div class="container mt-5">
-            <h2 class="mb-4">Create A Meeting</h2>
-            <div class="container">
-                <form action="/api/meeting/create" method="POST">
-                    <div class="mb-3">
-                        <label>Title</label>
-                        <input type="text" class="form-control" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Form</label>
-                        <input type="text" class="form-control" name="form" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Location</label>
-                        <input type="text" class="form-control" name="location" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Student</label>
-                        <br>
-                            {{#each students}}
-                            <input class="form-check-input" type="radio" value="{{this._id}}">{{this.name}}</input>
-                            {{/each}}
-                    </div>
-                    <div class="mb-3">
-                        <label>Tutor</label>
-                        <select class="form-control" name="tutors[]" required>
-                            {{#each tutors}}
-                            <option value="{{this._id}}">{{this.name}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Begin Time</label>
-                        <input type="dateTime-local" name="startTime" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>End Time</label>
-                        <input type="dateTime-local" name="endTime" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Note</label>
-                        <textarea class="form-control" name="note"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Create</button>
-                </form>
-            </div>
-        </div>
-    </body>
-</div>
-
 <script>
     function toggleSidebar() {
         const sidebar = document.querySelector('.sidebar');
         sidebar.classList.toggle('hidden');
     }
 </script>
+
+<div class="card-header text-center">
+    <h3>{{title}}</h3>
+    <p>Week: {{weekRange}}</p>
+</div>
+<div class="card-body">
+    <div class="col-6 col-md-4">
+        <a href="/schedule/add" class="btn btn-primary" style="margin-left: 100px;">Add Schedule</a>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Slot</th>
+                <th>Class</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each schedules}}
+            <tr>
+                <td>{{this.day}}</td>
+                <td>{{this.time}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+
+                <td>
+                    <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
+                    <a class="btn button-3" href="/schedule/edit/{{_id }}">Edit</a>
+                    <a class="btn button-3" href="/schedule/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this schedule ?');">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/schedule/schedule-view/{{prevWeek}}" class="btn btn-light" style="margin-left: 20px;">Previous Week</a>
+    <a href="/schedule/schedule-view/{{nextWeek}}" class="btn btn-light" style="margin-left: 80%;">Next Week</a>
+
+</div>
