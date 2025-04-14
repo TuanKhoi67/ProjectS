@@ -170,12 +170,12 @@
             background: #f8f9fa;
         }
 
-        .document-preview {
+        /*.document-preview {
         margin-top: 16px;
         border: 1px solid #ddd;
         border-radius: 8px;
         overflow: hidden;
-        }
+        }*/
 
         .document-available {
             position: absolute;
@@ -327,7 +327,7 @@
                 <img class="post-img" src="{{this.imageUrl}}" alt="Post image">
                 {{/if}}
 
-                <!-- Hiển thị link tài liệu nếu có -->
+                {{!-- <!-- Hiển thị link tài liệu nếu có -->
                 {{#if this.documentFile}}
                 <div class="document-preview">
                     {{#if (this.documentFile.indexOf ".pdf")}}
@@ -345,7 +345,7 @@
                             class="btn">Download the document</a>.</p>
                     {{/if}}
                 </div>
-                {{/if}}
+                {{/if}} --}}
                 <div class="post-footer">
                     <div class="comments">
                         <i class="fas fa-comment"></i>
