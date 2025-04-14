@@ -7,7 +7,7 @@
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
     </ul>
@@ -21,58 +21,41 @@
 </script>
 
 <h1 class="title">Attendance</h1>
-
-<h2 class="section-title">Present Student</h2>
-{{#if presentStudents.length}}
-  <table class="styled-table">
+<hr>
+<br>
+<div class="container">
+  <table class="table table-bordered table-primary" border="1" cellpadding="8" cellspacing="0">
     <thead>
       <tr>
-        <th>No.</th>
-        <th>Student</th>
-        <th>Day</th>
+        <th>Student Name</th>
+        <th>Email</th>
         <th>Status</th>
+        <th>Date</th>
+        <th>Class</th>
       </tr>
     </thead>
     <tbody>
-      {{#each presentStudents}}
+      {{#each attendances}}
         <tr>
-          <td>{{@index}}</td>
           <td>{{this.student_id.name}}</td>
-          <td>{{this.date}}</td>
-          <td class="status present">Present</td>
+          <td>{{this.student_id.email}}</td>
+          <td>
+            {{#if (eq this.status "present")}}
+              <span style="color: green; font-weight: bold;">{{this.status}}</span>
+            {{else if (eq this.status "absent")}}
+              <span style="color: red; font-weight: bold;">{{this.status}}</span>
+            {{else}}
+              {{this.status}}
+            {{/if}}
+          </td>
+          <td>{{formatDate this.date}}</td>
+          <td>{{this.className}}</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
-{{else}}
-  <p>No present student.</p>
-{{/if}}
+</div>
 
-<h2 class="section-title">Absent</h2>
-{{#if absentStudents.length}}
-  <table class="styled-table">
-    <thead>
-      <tr>
-        <th>No.</th>
-        <th>Student</th>
-        <th>Day</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each absentStudents}}
-        <tr>
-          <td>{{@index}}</td>
-          <td>{{this.student_id.name}}</td>
-          <td>{{this.date}}</td>
-          <td class="status absent">Absent</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-{{else}}
-  <p>No absent student.</p>
-{{/if}}
 
 <style>
   .title {
@@ -80,6 +63,7 @@
   font-weight: bold;
   margin-bottom: 10px;
   color: #2a2a91;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .section-title {

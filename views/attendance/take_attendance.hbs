@@ -1,42 +1,30 @@
-<h2>Class: {{schedule.class.classname}} - Day: {{schedule.day}}, Time: {{schedule.time}}</h2>
+<h2 class="mb-4 text-center">
+  Class: {{schedule.class.classname}} – Day: {{schedule.day}}, Time: {{schedule.time}}
+</h2>
 
-<form action="/attendance/take-attendance/{{schedule._id}}" method="POST">
-  {{#each students}}
-    <div class="attendance-input">
-  <label>{{this.name}}</label>
-  <div class="radio-group">
-    <label>
-      <input type="radio" name="attendance[{{this._id}}]" value="present" required>
-      Present
-    </label>
-    <label>
-      <input type="radio" name="attendance[{{this._id}}]" value="absent">
-      Absent
-    </label>
+<form action="/attendance/take-attendance/{{schedule._id}}" method="POST" class="container">
+  <div class="row container">
+    {{#each students}}
+      <div class="col-12 mb-4">
+        <div class="form-control shadow-sm p-3 d-flex flex-row align-items-center">
+          <img src="https://ui-avatars.com/api/?name={{this.name}}" alt="Avatar" class="rounded-circle me-3" width="60" height="60">
+          
+          <div class="flex-grow-1">
+            <h5 class="mb-2">{{this.name}}</h5>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="attendance[{{this._id}}]" value="present" required>
+              <label class="form-check-label text-success fw-semibold">Present</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="attendance[{{this._id}}]" value="absent">
+              <label class="form-check-label text-danger fw-semibold">Absent</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
   </div>
-</div>
-
-  {{/each}}
-  <button class="btn btn-toggle" type="submit">Save</button>
+  <div class="text-center mt-4">
+    <button class="btn btn-primary px-4" type="submit">Save Attendance</button>
+  </div>
 </form>
-
-<style>
-  .attendance-input {
-  margin-bottom: 15px;
-  font-family: Arial, sans-serif;
-}
-
-.attendance-input label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.radio-group label {
-  margin-right: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-</style>

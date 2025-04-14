@@ -22,12 +22,14 @@
     }
 </script>
 
+<div class="container">
 <a href="/api/meeting/create" class="btn">Create A Meeting</a>
-<table class="table table-bordered" border="1" cellspacing="0" cellpadding="10">
+<table class="table table-bordered table-primary" border="1" cellspacing="0" cellpadding="10">
   <thead>
     <tr>
       <th>Title</th>
-      <th>Form</th>
+      <th>Form 
+        <br>(Online - Offline)</th>
       <th>Location</th>
       <th>Status</th>
       <th>Begin Time</th>
@@ -63,3 +65,10 @@
     {{/each}}
   </tbody>
 </table>
+</div>
+
+<style>
+  th{
+    text-align: center;
+  }
+</style>
