@@ -1,30 +1,3 @@
-<style>
-    .btn-primary {
-        background-color: #2a2a91;
-        border-color: #2a2a91;
-    }
-
-    .btn-primary:hover {
-        background-color: #1f1f6e;
-        border-color: #1f1f6e;
-    }
-
-    th,
-    td {
-        text-align: center;
-    }
-</style>
-
-<body>
-    <div class="container mt-4">
-        {{{body}}}
-    </div>
-</body>
-
-</html>
-
-{{!-- schedule_index.hbs --}}
-
 <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar" id="sidebar">
     <h3>Dashboard</h3>
@@ -41,49 +14,107 @@
     </ul>
 </div>
 
+<h1>Add Schedules</h1>
+
+<div class="container">
+    <form action="/schedule/add" method="POST">
+        <label for="day">Day:</label>
+        <select class="form-select" name="day" id="day">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+
+        <label for="time">Time:</label>
+        <select class="form-select" name="time" id="time">
+            <option value="Slot1">8:50 - 10:20</option>
+            <option value="Slot4">10:30 - 12:00</option>
+            <option value="Slot2">12:50 - 14:20</option>
+            <option value="Slot3">14:30 - 16:00</option>
+            <option value="Slot5">16:10 - 17:40</option>
+        </select>
+
+        <label for="class">Class:</label>
+        <select class="form-select" name="class" required>
+            {{#each classes}}
+            <option value="{{this._id}}">{{this.classname}}</option>
+            {{/each}}
+        </select>
+
+        <button type="submit" class="btn">Add Schedule</button>
+    </form>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    form {
+        width: 300px;
+    }
+
+    label {
+        font-size: 18px;
+        font-weight: normal;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #000;
+        border-radius: 4px;
+    }
+
+    select {
+        width: 100%;
+        /* Hoặc một giá trị cụ thể như 300px */
+        padding: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 16px;
+        border: 1px solid #000;
+        background-color: #f8f8f8;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get("error");
+
+        if (error === "exists") {
+            const confirmResult = confirm("Lịch học cho lớp này vào ngày và ca học đã tồn tại. Bạn có muốn tiếp tục không?");
+            if (!confirmResult) {
+                window.location.href = "/schedule/schedule-view"; // hoặc quay lại trang trước
+            }
+        }
+    });
+</script>
+
+
 <script>
     function toggleSidebar() {
         const sidebar = document.querySelector('.sidebar');
         sidebar.classList.toggle('hidden');
     }
 </script>
-
-<div class="card-header text-center">
-    <h3>{{title}}</h3>
-    <p>Week: {{weekRange}}</p>
-</div>
-<div class="card-body">
-    <div class="col-6 col-md-4">
-        <a href="/schedule/add" class="btn btn-primary" style="margin-left: 100px;">Add Schedule</a>
-    </div>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Slot</th>
-                <th>Class</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each schedules}}
-            <tr>
-                <td>{{this.day}}</td>
-                <td>{{this.time}}</td>
-                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
-
-                <td>
-                    <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
-                    <a class="btn button-3" href="/schedule/edit/{{_id }}">Edit</a>
-                    <a class="btn button-3" href="/schedule/delete/{{ _id }}"
-                        onclick="return confirm('Are you sure to delete this schedule ?');">Delete</a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-
-    <a href="/schedule/schedule-view/{{prevWeek}}" class="btn btn-light" style="margin-left: 20px;">Previous Week</a>
-    <a href="/schedule/schedule-view/{{nextWeek}}" class="btn btn-light" style="margin-left: 80%;">Next Week</a>
-
-</div>
