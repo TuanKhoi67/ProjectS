@@ -29,15 +29,12 @@
         <label for="">Email</label>
         <input class="form-control w-25" type="tel" id="" name="email" required>
 
-        <div>
-            <label for="">Department</label>
-            <br>
-            <select class="form-select w-25">
-            {{#each tutors}}
-            <option type="radio" value="{{this._id}}">{{this.department}}</option>
-            {{/each}}
-            </select>
-        </div>
+        <select id="" name="department" required>
+        <option value="">-- Select Department --</option>
+        <option value="mathematics">Mathematics</option>
+        <option value="physics">Physics</option>
+        </select>
+        
         <button class="btn btn-primary" type="submit">Add</button>
     </form>
 
