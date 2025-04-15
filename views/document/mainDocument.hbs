@@ -15,9 +15,7 @@
     .main-content {
         flex: 1;
         width: 100%;
-        /* Full width for responsiveness */
         max-width: 800px;
-        /* Max width for the card */
         position: relative;
         margin-left: auto;
         margin-right: auto;
@@ -89,7 +87,6 @@
     .post .post-header .author-info {
         display: flex;
         flex-direction: column;
-        /* Stack items vertically */
     }
 
     .post .post-header .author-info h2 {
@@ -180,7 +177,7 @@
         border: 1px solid #ddd;
         border-radius: 8px;
         overflow: hidden;
-    }*/
+        }*/
 
     .document-available {
         position: absolute;
@@ -194,7 +191,51 @@
     .document-available i {
         margin-right: 5px;
         margin-left: 5px;
-        /* Add spacing between the icon and the text */
+    }
+
+    /* Modal Styles */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    /* Button Styles */
+    .popup-btn {
+        background-color: #f0f2f5;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .popup-btn:hover {
+        background-color: #e0e4e8;
     }
 </style>
 
@@ -202,12 +243,55 @@
     <div class="document-container">
         <!-- Main Content -->
         <div class="main-content">
-            {{!-- <div class="search-container">
-                <form action="/document/search" method="get">
-                    <input type="text" name="query" class="search-bar" placeholder="🔍 Tìm kiếm tài liệu" required>
-                    <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
-                </form>
-            </div> --}}
+            <!-- Add a button to open the popup modal -->
+            {{#if user}}
+            <h4 class="text-center mb-4">
+                <img style="border-radius: 50%; width: 50px; height: 50px; margin-right: 8px;"
+                    src="{{#if this.author.profilePicture}}{{this.author.profilePicture}}{{else}}https://placehold.co/50x50{{/if}}"
+                    alt="User profile picture">
+                <button id="openDocumentPopup" class="popup-btn">What’s Your Document Inspiration Today,
+                    {{user.fullname}}?</button>
+            </h4>
+            {{else}}
+            <h4 class="text-center">
+                <button type="button" class="popup-btn" disabled><a href="/auth/login">Log in</a> to create a new
+                    document</button>
+            </h4>
+            {{/if}}
+
+            <!-- Popup Modal -->
+            <div id="documentModal" class="modal" style="display: none;">
+                <div class="modal-content shadow p-4 bg-white rounded">
+                    <span id="closeDocumentPopup" class="close">&times;</span>
+                    <h2 class="text-center">New Document</h2>
+                    <form action="/document/add" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content">Content</label>
+                            <textarea class="form-control" name="content" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imageUrl">Image URL</label>
+                            <input type="text" class="form-control" name="imageUrl" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="documentFile">Upload Document (Word/PDF)</label>
+                            <input type="file" class="form-control" name="documentFile" accept=".pdf, .doc, .docx"
+                                required>
+                            <small class="text-muted">Accepted formats: PDF, DOC, DOCX (Max size: 5MB)</small>
+                        </div>
+                        {{#if user}}
+                        <button type="submit" class="btn w-100">Create Document</button>
+                        {{else}}
+                        <button type="button" class="btn w-100" disabled>You must log in to create a document</button>
+                        {{/if}}
+                    </form>
+                </div>
+            </div>
+
             <h2 class="text-center mb-3">All Documents</h2>
             {{#each documents}}
             <div class="post">
@@ -217,7 +301,6 @@
                         <h2>{{this.author.fullname}}</h2>
                         <small class="post-time">{{formatDate this.createdAt}}</small>
                     </div>
-                    {{!-- Add an icon to indicate a document is available --}}
                     {{#if this.documentFile}}
                     <div class="document-available">
                         <i class="fa-solid fa-file"></i>Document available for download<i
@@ -233,11 +316,11 @@
                             <li><a class="dropdown-item" href="/document/edit/{{this._id}}">Edit</a></li>
                             {{#if this.documentFile}}
                             <li>
-                                <a class="dropdown-item" href="{{absolutePath this.documentFile}}" target="_blank" download>Download
+                                <a class="dropdown-item" href="{{absolutePath this.documentFile}}" target="_blank"
+                                    download>Download
                                     Document</a>
                             </li>
                             {{/if}}
-                            <li><a class="dropdown-item" href="/document">Manage Document</a></li>
                         </ul>
                     </div>
                 </div>
@@ -297,5 +380,25 @@
             {{/each}}
         </div>
     </div>
+    <script>
+        // Handle popup modal for creating a new document
+        const openDocumentPopup = document.getElementById('openDocumentPopup');
+        const closeDocumentPopup = document.getElementById('closeDocumentPopup');
+        const documentModal = document.getElementById('documentModal');
+
+        openDocumentPopup.addEventListener('click', () => {
+            documentModal.style.display = 'flex';
+        });
+
+        closeDocumentPopup.addEventListener('click', () => {
+            documentModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === documentModal) {
+                documentModal.style.display = 'none';
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
