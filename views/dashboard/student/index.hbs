@@ -18,7 +18,7 @@
 <div class="main-content">
     <h1>Students Information Management</h1>
 <h2>Add New Student</h2>
-<form action="/admin/dashboard/add-student" method="POST">
+<form action="/admin/dashboard/add-student" method="POST" enctype="multipart/form-data">
     <label for="">Student Name</label>
     <input class="form-control w-25" type="text" id="" name="name" required>
 
@@ -27,6 +27,9 @@
 
     <label for="">Email</label>
     <input class="form-control w-25" type="tel" id="" name="email" required>
+
+    <label for="">User Image</label>
+    <input class="form-control w-25" type="file" id="" name="image" required>
 
 <div>
     <label for="">Subject</label>

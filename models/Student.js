@@ -4,6 +4,7 @@ var StudentSchema = mongoose.Schema({
    telephone: String,
    email: String,
    subject: String,
+   imageStudent: String || 'default.jpg',
    enrollmentDate: {
       type: Date,
       default: Date.now

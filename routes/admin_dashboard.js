@@ -8,6 +8,7 @@ var BlogModel = require('../models/Blog');
 var StudentModel = require('../models/Student');
 var TutorModel = require('../models/Tutor');
 var UserModel = require('../models/Users')
+const upload = require('../config/upload');
 
 /* ------------------------ Phần hiển thị biểu đồ------------------------ */
 router.get('/', async (req, res) => {
@@ -304,13 +305,14 @@ router.get("/student", async (req, res) => {
     res.render("dashboard/student/index", { students });
 });
 
-router.post('/add-student', async (req, res) => {
+router.post('/add-student', upload.single('image'), async (req, res) => {
    const { name, telephone, email, subject } = req.body;
 
    const newStudent = new StudentModel({
        name,
        telephone,
        email,
+       imageStudent: req.file ? '/uploads/' + req.file.filename : 'default.jpg',
        subject,
        enrollmentDate: new Date() // Set ngày, tháng, năm hiện tại
    });
@@ -367,20 +369,22 @@ router.get("/tutor", async (req, res) => {
     res.render("dashboard/tutor/index", { tutors });
 });
 
-router.post("/add-tutor", async (req, res) => {
+router.post("/add-tutor", upload.single('image'), async (req, res) => {
     const { name, email, telephone, department } = req.body;
 
     const newTeacher = new TutorModel({ 
-         name,
-         email,
-         telephone,
-         department,
-         enrollmentDate: new Date() // Set ngày, tháng, năm hiện tại
-     });
-    await newTeacher.save();
+        name,
+        email,
+        telephone,
+        department,
+        imageTutor: req.file ? '/uploads/' + req.file.filename : 'default.jpg',
+        enrollmentDate: new Date()
+    });
 
+    await newTeacher.save();
     res.redirect("/admin/dashboard/tutor");
 });
+
 
 router.get("/tutor-edit/:id", async (req, res) => {
     var id = req.params.id;

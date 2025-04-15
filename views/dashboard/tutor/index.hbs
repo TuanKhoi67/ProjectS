@@ -19,7 +19,7 @@
     <h1>Tutor Informations Management</h1>
 
     <h2>Add New Tutor</h2>
-    <form action="/admin/dashboard/add-tutor" method="POST">
+    <form action="/admin/dashboard/add-tutor" method="POST" enctype="multipart/form-data">
         <label for="">Tutor Name</label>
         <input class="form-control w-25" type="text" id="" name="name" required>
 
@@ -28,6 +28,9 @@
 
         <label for="">Email</label>
         <input class="form-control w-25" type="tel" id="" name="email" required>
+
+        <label for="">User Image</label>
+        <input class="form-control w-25" type="file" id="" name="image" required>
 
         <div>
             <label for="">Department</label>
