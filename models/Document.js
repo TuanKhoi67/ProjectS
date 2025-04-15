@@ -29,6 +29,7 @@ const documentSchema = new mongoose.Schema({
   comments: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      username: String, 
       text: String,
       createdAt: { type: Date, default: Date.now }
     }

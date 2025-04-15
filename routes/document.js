@@ -58,7 +58,7 @@ router.post('/add', upload.single('documentFile'), async (req, res) => {
   });
 
   await newDocument.save();
-  res.redirect('/document');
+  res.redirect('/document/mainDocument');
 });
 
 // Xử lý tìm kiếm tài liệu
