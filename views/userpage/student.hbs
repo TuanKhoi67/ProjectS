@@ -134,6 +134,10 @@
             </div>
         </div>
 
+        <div class="text-center">
+            <a href="/dashboard/student_dashboard" class="btn">Your Dashboard</a>
+        </div>
+
         <!-- Hiển thị danh sách blog -->
         <h2 class="text-center mt-4">Student Blogs</h2>
         <div class="row mt-4">
@@ -177,56 +181,55 @@
             {{/each}}
         </div>
     </div>
-</body>
-<script>
-    // Xử lý chuyển đổi giữa upload và URL
-    document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            const isUpload = document.getElementById('uploadRadio').checked;
-            document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
-            document.getElementById('urlSection').style.display = isUpload ? 'none' : 'block';
-        });
-    });
 
-    // Xem trước ảnh khi chọn file
-    document.getElementById('imageFile').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('imagePreview').src = e.target.result;
+    <script>
+        // Xử lý chuyển đổi giữa upload và URL
+        document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const isUpload = document.getElementById('uploadRadio').checked;
+                document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
+                document.getElementById('urlSection').style.display = isUpload ? 'none' : 'block';
+            });
+        });
+
+        // Xem trước ảnh khi chọn file
+        document.getElementById('imageFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Xem trước ảnh khi nhập URL
+        document.getElementById('imageUrl').addEventListener('input', function (e) {
+            const url = e.target.value;
+            if (url) {
+                document.getElementById('imagePreview').src = url;
                 document.getElementById('imagePreview').style.display = 'block';
             }
-            reader.readAsDataURL(file);
-        }
-    });
+        });
 
-    // Xem trước ảnh khi nhập URL
-    document.getElementById('imageUrl').addEventListener('input', function (e) {
-        const url = e.target.value;
-        if (url) {
-            document.getElementById('imagePreview').src = url;
-            document.getElementById('imagePreview').style.display = 'block';
-        }
-    });
+        const openPopup = document.getElementById('openPopup');
+        const closePopup = document.getElementById('closePopup');
+        const blogModal = document.getElementById('blogModal');
 
-    const openPopup = document.getElementById('openPopup');
-    const closePopup = document.getElementById('closePopup');
-    const blogModal = document.getElementById('blogModal');
+        openPopup.addEventListener('click', () => {
+            blogModal.style.display = 'flex';
+        });
 
-    openPopup.addEventListener('click', () => {
-        blogModal.style.display = 'flex';
-    });
-
-    closePopup.addEventListener('click', () => {
-        blogModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-        if (e.target === blogModal) {
+        closePopup.addEventListener('click', () => {
             blogModal.style.display = 'none';
-        }
-    });
-</script>
+        });
 
-</html>
+        window.addEventListener('click', (e) => {
+            if (e.target === blogModal) {
+                blogModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
