@@ -1,29 +1,18 @@
+<h2>Trang cá nhân ({{role}})</h2>
 
-<div class="profile-container">
-        <div class="profile-header">
-            <h1>Profile</h1>
-        </div>
-        <div class="p-3">
-            <p><strong>Full Name:</strong> {{user.fullname}}</p>
-            <p><strong>Email:</strong> {{user.email}}</p>
-            <p><strong>Role:</strong> {{user.role}}</p>
+<p><strong>Họ và tên đăng ký:</strong> {{user.user.fullname}}</p>
+<p><strong>Email:</strong> {{user.email}}</p>
+<p><strong>Số điện thoại:</strong> {{user.telephone}}</p>
 
-            {{#if profileData}}
-                {{#ifEquals user.role "student"}}
-                    <p><strong>Enrollment Date:</strong> {{profileData.enrollment}}</p>
-                    <p><strong>Date of Birth:</strong> {{profileData.dob}}</p>
-                    <p><strong>Phone Number:</strong> {{profileData.phone}}</p>
-                {{/ifEquals}}
-                
-                {{#ifEquals user.role "tutor"}}
-                    <p><strong>Department:</strong> {{profileData.department}}</p>
-                    <p><strong>Date of Birth:</strong> {{profileData.dob}}</p>
-                    <p><strong>Phone Number:</strong> {{profileData.phone}}</p>
-                {{/ifEquals}}
-            {{/if}}
-            
-            <a href="/profile/edit" class="btn btn-primary w-100 mt-3">Edit Profile</a>
-        </div>
-    </div>
+{{#if (eq role "tutor")}}
+  <p><strong>Khoa:</strong> {{user.department}}</p>
+{{else}}
+  <p><strong>Môn học:</strong> {{user.subject}}</p>
+{{/if}}
 
-<a href="/profile/edit">Edit</a>
+<p><strong>Ngày nhập học:</strong> {{user.enrollmentDate}}</p>
+<p><strong>Vai trò:</strong> {{user.user.role}}</p>
+
+<img src="/uploads/{{user.imageTutor}}{{user.imageStudent}}" width="150">
+
+<a href="/profile/edit">Chỉnh sửa</a>

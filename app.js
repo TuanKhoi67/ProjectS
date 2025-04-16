@@ -171,7 +171,8 @@ const routes = {
   userpage: require('./routes/userpage'),
   class: require('./routes/class'),
   schedule: require('./routes/schedule'),
-  attendance: require('./routes/attendance')
+  attendance: require('./routes/attendance'),
+  profile: require('./routes/profile')
 };
 
 
@@ -190,6 +191,7 @@ app.use('/userpage', routes.userpage);
 app.use('/class', routes.class);
 app.use('/schedule', routes.schedule);
 app.use('/attendance', routes.attendance);
+app.use('/profile', routes.profile);
 
 
 // ❌ Xử lý lỗi 404
