@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
             .populate("student")
             .populate("tutor"); // Populate cả student và tutor trong một lần gọi
 
-        console.log("Classes:", classes); // Debug dữ liệu
+        console.log("Classes:", classes); 
 
         res.render("class/index", { classes });
     } catch (error) {
