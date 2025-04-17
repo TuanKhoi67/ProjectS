@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
         console.error("Error fetching class data:", error);
         res.status(500).send("Internal Server Error");
     }
-}),
+});
 
 
 // Hiển thị trang tạo lớp học với bộ lọc
