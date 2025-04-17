@@ -1,18 +1,75 @@
 <h2>Trang cá nhân ({{role}})</h2>
 
-<p><strong>Họ và tên đăng ký:</strong> {{user.user.fullname}}</p>
-<p><strong>Email:</strong> {{user.email}}</p>
-<p><strong>Số điện thoại:</strong> {{user.telephone}}</p>
+<div class="profile-container">
+  <div class="profile-info">
+    <p><strong>Họ và tên:</strong> {{user.fullname}}</p>
+    <p><strong>Email:</strong> {{user.email}}</p>
+    <p><strong>Vai trò:</strong> {{user.role}}</p>
 
-{{#if (eq role "tutor")}}
-  <p><strong>Khoa:</strong> {{user.department}}</p>
-{{else}}
-  <p><strong>Môn học:</strong> {{user.subject}}</p>
-{{/if}}
+    {{#if (eq role "tutor")}}
+      {{#if tutor}}
+        <p><strong>Khoa:</strong> {{tutor.department}}</p>
+        <p><strong>Số điện thoại:</strong> {{tutor.telephone}}</p>
+        <p><strong>Ngày nhập học:</strong> {{formatDate tutor.enrollmentDate}}</p>
+      {{else}}
+        <div class="alert alert-info">
+          Bạn cần cập nhật thông tin cá nhân. <a href="/profile/edit">Nhấn vào đây</a>
+        </div>
+      {{/if}}
+    {{else if (eq role "student")}}
+      {{#if student}}
+        <p><strong>Môn học:</strong> {{student.subject}}</p>
+        <p><strong>Số điện thoại:</strong> {{student.telephone}}</p>
+        <p><strong>Ngày nhập học:</strong> {{formatDate student.enrollmentDate}}</p>
+      {{else}}
+        <div class="alert alert-info">
+          Bạn cần cập nhật thông tin cá nhân. <a href="/profile/edit">Nhấn vào đây</a>
+        </div>
+      {{/if}}
+    {{/if}}
+  </div>
 
-<p><strong>Ngày nhập học:</strong> {{user.enrollmentDate}}</p>
-<p><strong>Vai trò:</strong> {{user.user.role}}</p>
+  <div class="profile-image">
+    {{#if (eq role "tutor")}}
+      {{#if tutor}}
+        <img src="{{tutor.imageTutor}}" alt="Ảnh đại diện" onerror="this.src='/images/default.jpg'">
+      {{/if}}
+    {{else if (eq role "student")}}
+      {{#if student}}
+        <img src="{{student.imageStudent}}" alt="Ảnh đại diện" onerror="this.src='/images/default.jpg'">
+      {{/if}}
+    {{/if}}
+  </div>
+</div>
 
-<img src="/uploads/{{user.imageTutor}}{{user.imageStudent}}" width="150">
+<a href="/profile/edit" class="btn btn-primary">Chỉnh sửa</a>
 
-<a href="/profile/edit">Chỉnh sửa</a>
+<style>
+  .profile-container {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-image {
+    width: 200px;
+  }
+  
+  .profile-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .alert {
+    padding: 10px;
+    background-color: #e7f3fe;
+    border-left: 6px solid #2196F3;
+    margin: 10px 0;
+  }
+</style>

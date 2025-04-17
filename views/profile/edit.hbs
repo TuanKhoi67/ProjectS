@@ -1,20 +1,58 @@
-<form action="/profile/edit" method="POST">
-  <label>Họ và tên:</label>
-  <input type="text" name="fullname" value="{{user.user.fullname}}" required>
+<h2>Chỉnh sửa thông tin cá nhân</h2>
 
-  <label>Email:</label>
-  <input type="email" name="email" value="{{user.email}}" required>
-
-  <label>Số điện thoại:</label>
-  <input type="text" name="telephone" value="{{user.telephone}}" required>
-
+<form action="/profile/edit" method="POST" enctype="multipart/form-data">
+  <!-- Các trường thông tin cơ bản -->
+  <div class="form-group">
+    <label>Họ và tên</label>
+    <input type="text" class="form-control" value="{{user.fullname}}" required>
+  </div>
+  
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" class="form-control" value="{{user.email}}" required>
+  </div>
+  
+  <div class="form-group">
+    <label>Số điện thoại</label>
+    <input type="text" name="telephone" class="form-control" value="{{profileData.telephone}}" required>
+  </div>
+  
   {{#if (eq role "tutor")}}
-    <label>Khoa:</label>
-    <input type="text" name="department" value="{{user.department}}">
-  {{else}}
-    <label>Môn học:</label>
-    <input type="text" name="subject" value="{{user.subject}}">
+    <div class="form-group">
+      <label>Khoa</label>
+      <input type="text" name="department" class="form-control" value="{{profileData.department}}" required>
+    </div>
+  {{else if (eq role "student")}}
+    <div class="form-group">
+      <label>Môn học</label>
+      <input type="text" name="subject" class="form-control" value="{{profileData.subject}}" required>
+    </div>
   {{/if}}
-
-  <button type="submit">Lưu thay đổi</button>
+  
+  <!-- Phần upload ảnh -->
+  <div class="form-group">
+    <label>Ảnh đại diện</label>
+    {{#if (eq role "tutor")}}
+      {{#if profileData.imageTutor}}
+        <div class="mb-2">
+          <img src="{{profileData.imageTutor}}" width="150" class="img-thumbnail">
+        </div>
+      {{/if}}
+    {{else if (eq role "student")}}
+      {{#if profileData.imageStudent}}
+        <div class="mb-2">
+          <img src="{{profileData.imageStudent}}" width="150" class="img-thumbnail">
+        </div>
+      {{/if}}
+    {{/if}}
+    <input type="file" name="avatar" class="form-control-file" accept="image/jpeg, image/png">
+    <small class="form-text text-muted">Chỉ chấp nhận ảnh JPEG hoặc PNG (tối đa 5MB)</small>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+  <a href="/profile" class="btn btn-secondary">Hủy</a>
 </form>
+
+{{#if error}}
+  <div class="alert alert-danger mt-3">{{error}}</div>
+{{/if}}

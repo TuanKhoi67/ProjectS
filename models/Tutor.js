@@ -1,20 +1,23 @@
 var mongoose = require('mongoose');
-var TutorSchema = mongoose.Schema(
-{
-      name: String,
-      email: String,
-      telephone: String,
-      department: String,
-      imageTutor: String || 'default.jpg',
-      enrollmentDate: {
-              type: Date,
-              default: Date.now
+var TutorSchema = mongoose.Schema({
+  name: String,
+  email: String,
+  telephone: String,
+  department: String,
+  imageTutor: { 
+        type: String, 
+        default: '/images/default.jpg' // Đường dẫn mặc định
       },
-
-      user: {  // Thêm mối quan hệ 1-1 với bảng Users
-              type: mongoose.Schema.Types.ObjectId,
-              ref: 'users',
-      }
+  enrollmentDate: {
+    type: Date,
+    default: Date.now
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  }
 });
-var TutorModel = mongoose.model('tutors', TutorSchema);
-module.exports = TutorModel;
+
+module.exports = mongoose.model('Tutor', TutorSchema);

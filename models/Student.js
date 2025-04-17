@@ -4,21 +4,24 @@ var StudentSchema = mongoose.Schema({
    telephone: String,
    email: String,
    subject: String,
-   imageStudent: String || 'default.jpg',
+   imageStudent: {
+      type: String,
+      default: '/images/default.jpg' // Đường dẫn mặc định
+   },
    enrollmentDate: {
       type: Date,
       default: Date.now
-  },
-   user: {  // Thêm mối quan hệ 1-1 với bảng Users
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+   },
+   user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      unique: true
    }
 });
 
-// Format lại ngày tháng năm trước khi trả về dữ liệu JSON
 StudentSchema.methods.formatEnrollmentDate = function () {
    return this.enrollmentDate.toISOString().split('T')[0];
 };
 
-var StudentModel = mongoose.model('students', StudentSchema); 
-module.exports = StudentModel;
+module.exports = mongoose.model('Student', StudentSchema);
