@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
-const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
+const { ensureAuthenticated, checkRole } = require('../middleware/auth');
 const User = require('../models/Users'); // Adjust the path to your User model
 const upload = require('../config/upload');
+const Student = require('../models/Student');
+const Tutor = require('../models/Tutor');
 
 // Route to display all blogs
-router.get('/', ensureAuthenticated ,checkAdmin, async (req, res) => {
+router.get('/', ensureAuthenticated, async (req, res) => {
     try {
         const blogs = await Blog.find().populate('author', 'fullname role');
         res.render('blog/index', { blogs, user: req.user }); // Gửi user vào view
@@ -53,12 +55,13 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
 // Route to display blogs created by the logged-in student
 router.get('/student', ensureAuthenticated, async (req, res) => {
     try {
-        const blogs = await Blog.find({ 
-            role: 'student', 
-            author: req.user._id 
+        const blogs = await Blog.find({
+            role: 'student',
+            author: req.user._id
         }).populate('author');
 
-        res.render('userpage/student', { blogs, user: req.user });
+        const student = await Student.findOne({ user: req.user._id });
+        res.render('userpage/student', { blogs, user: req.user, student });
     } catch (error) {
         console.error('Error fetching student blogs:', error);
         res.status(500).send('Internal Server Error');
@@ -69,7 +72,9 @@ router.get('/student', ensureAuthenticated, async (req, res) => {
 router.get('/tutor', async (req, res) => {
     try {
         const blogs = await Blog.find({ role: 'tutor', author: req.user._id }).populate('author');
-        res.render('userpage/tutor', { blogs, user: req.user });
+
+        const tutor = await Tutor.findOne({ user: req.user._id });
+        res.render('userpage/tutor', { blogs, user: req.user, tutor });
     } catch (error) {
         console.error('Error fetching tutor blogs:', error);
         res.status(500).send('Internal Server Error');
@@ -100,16 +105,16 @@ router.post('/edit/:id', upload.single('imageFile'), async (req, res) => {
     try {
         const blogId = req.params.id;
         const { title, content, imageUrl } = req.body;
-        
+
         let imagePath = '';
-        
+
         // Xử lý ảnh
         if (req.file) {
             imagePath = '/uploads/' + req.file.filename;
         } else if (imageUrl) {
             imagePath = imageUrl;
         }
-        
+
         // Giữ nguyên ảnh cũ nếu không có thay đổi
         const currentBlog = await Blog.findById(blogId);
         if (!imagePath && currentBlog.image) {
@@ -150,9 +155,9 @@ router.get('/search', async (req, res) => {
             ]
         }).populate('author');
 
-        
+
         res.render('blog/index', { blogs });
-        
+
     } catch (error) {
         console.error('Error searching blogs:', error);
         res.status(500).send('Internal Server Error');
@@ -202,7 +207,7 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
         }
 
         await blog.save();
-        res.json({ 
+        res.json({
             success: true,
             likes: blog.likes,
             isLiked: index === -1 // Correctly calculate the new liked state
@@ -216,33 +221,33 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
 router.post('/reel/comment/:id', ensureAuthenticated, async (req, res) => {
     try {
         console.log(req.user); // Kiểm tra user đăng nhập
-  
+
         const blogId = req.params.id;
-        const user = req.user; 
-        const { content } = req.body; 
-  
+        const user = req.user;
+        const { content } = req.body;
+
         if (!user) {
             return res.status(401).send('Bạn cần đăng nhập để bình luận!');
         }
-  
+
         const blog = await Blog.findById(blogId);
         if (!blog) {
             return res.status(404).send('Bài viết không tồn tại!');
         }
-  
+
         const comment = {
             user: user._id, // Lưu ID của user
             content
         };
-  
+
         blog.comments.push(comment);
         await blog.save();
-  
+
         res.redirect('/blog/reel');
     } catch (error) {
         console.error('Lỗi khi bình luận:', error);
         res.status(500).send('Lỗi máy chủ!');
     }
-  });
+});
 
 module.exports = router;
