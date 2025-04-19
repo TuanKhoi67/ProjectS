@@ -6,7 +6,7 @@ var TutorSchema = mongoose.Schema({
   department: String,
   imageTutor: { 
         type: String, 
-        default: '/images/default.jpg' // Đường dẫn mặc định
+        default: 'https://placehold.co/200x200' // Đường dẫn mặc định
       },
   enrollmentDate: {
     type: Date,
