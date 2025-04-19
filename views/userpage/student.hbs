@@ -4,10 +4,11 @@
 
 <style>
     .profile-img {
-        border-radius: 50%;
         width: 50px;
         height: 50px;
-        margin-right: 8px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ccc;
     }
 
     .blog-card {
@@ -94,18 +95,14 @@
         color: #333;
     }
 </style>
-</head>
 
 <body>
     <div class="container mt-4">
         <h1 class="text-center">Student User Page</h1>
-        <a href="/profile">Profile</a>
-
-
         <!-- Form đăng blog -->
         <h4 class="text-center mt-4">
             <img class="profile-img"
-                src="{{#if user.profilePicture}}{{user.profilePicture}}{{else}}https://placehold.co/50x50{{/if}}"
+                src="{{#if student.imageStudent}}{{absolutePath student.imageStudent}}{{else}}https://placehold.co/50x50{{/if}}"
                 alt="User profile picture">
             <button id="openPopup" class="popup-btn">What’s Your Blog Inspiration Today, {{user.fullname}}?</button>
         </h4>
@@ -153,39 +150,40 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="text-center">
             <a href="/dashboard/student_dashboard" class="btn">Your Dashboard</a>
+            <a href="/profile" class="btn">Your Profile</a>
         </div>
 
-            <!-- Hiển thị danh sách blog -->
-            <h2 class="text-center mt-5">Student Blogs</h2>
-            <div class="row mt-4">
-                {{#each blogs}}
-                <div class="col-md-4 mb-4">
-                    <div class="blog-card">
-                        {{#if this.image}}
-                        <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
-                        {{else}}
-                        <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
-                            style="height: 200px;">
-                            No Image
-                        </div>
-                        {{/if}}
+        <!-- Hiển thị danh sách blog -->
+        <h2 class="text-center mt-5">Student Blogs</h2>
+        <div class="row mt-4">
+            {{#each blogs}}
+            <div class="col-md-4 mb-4">
+                <div class="blog-card">
+                    {{#if this.image}}
+                    <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
+                    {{else}}
+                    <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
+                        style="height: 200px;">
+                        No Image
+                    </div>
+                    {{/if}}
 
-                        <div class="icon">
-                            <i class="fa-regular fa-user"></i> {{this.author.fullname}} ({{this.role}})
-                        </div>
-                        <a href="#" class="title">{{this.title}}</a>
-                        <p class="card-text">{{this.content}}</p>
-                        <div class="d-flex justify-content-between">
-                            <span><i class="fa-solid fa-heart"></i> {{this.likes}}</span>
-                            <span><i class="fa-solid fa-comment-dots"></i> {{this.comments.length}}</span>
-                        </div>
+                    <div class="icon">
+                        <i class="fa-regular fa-user"></i> {{this.author.fullname}} ({{this.role}})
+                    </div>
+                    <a href="#" class="title">{{this.title}}</a>
+                    <p class="card-text">{{this.content}}</p>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="fa-solid fa-heart"></i> {{this.likes}}</span>
+                        <span><i class="fa-solid fa-comment-dots"></i> {{this.comments.length}}</span>
                     </div>
                 </div>
-                {{/each}}
             </div>
+            {{/each}}
+        </div>
     </div>
 
     <!-- Script -->

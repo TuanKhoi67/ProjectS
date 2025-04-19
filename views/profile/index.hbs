@@ -1,75 +1,172 @@
-<h2>Trang cá nhân ({{role}})</h2>
-
-<div class="profile-container">
-  <div class="profile-info">
-    <p><strong>Họ và tên:</strong> {{user.fullname}}</p>
-    <p><strong>Email:</strong> {{user.email}}</p>
-    <p><strong>Vai trò:</strong> {{user.role}}</p>
-
-    {{#if (eq role "tutor")}}
-      {{#if tutor}}
-        <p><strong>Khoa:</strong> {{tutor.department}}</p>
-        <p><strong>Số điện thoại:</strong> {{tutor.telephone}}</p>
-        <p><strong>Ngày nhập học:</strong> {{formatDate tutor.enrollmentDate}}</p>
-      {{else}}
-        <div class="alert alert-info">
-          Bạn cần cập nhật thông tin cá nhân. <a href="/profile/edit">Nhấn vào đây</a>
-        </div>
-      {{/if}}
-    {{else if (eq role "student")}}
-      {{#if student}}
-        <p><strong>Môn học:</strong> {{student.subject}}</p>
-        <p><strong>Số điện thoại:</strong> {{student.telephone}}</p>
-        <p><strong>Ngày nhập học:</strong> {{formatDate student.enrollmentDate}}</p>
-      {{else}}
-        <div class="alert alert-info">
-          Bạn cần cập nhật thông tin cá nhân. <a href="/profile/edit">Nhấn vào đây</a>
-        </div>
-      {{/if}}
-    {{/if}}
-  </div>
-
-  <div class="profile-image">
-    {{#if (eq role "tutor")}}
-      {{#if tutor}}
-        <img src="{{tutor.imageTutor}}" alt="Ảnh đại diện" onerror="this.src='/images/default.jpg'">
-      {{/if}}
-    {{else if (eq role "student")}}
-      {{#if student}}
-        <img src="{{student.imageStudent}}" alt="Ảnh đại diện" onerror="this.src='/images/default.jpg'">
-      {{/if}}
-    {{/if}}
-  </div>
-</div>
-
-<a href="/profile/edit" class="btn btn-primary">Chỉnh sửa</a>
+<head>
+    <title>User Profile</title>
+</head>
 
 <style>
-  .profile-container {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 20px;
-  }
-  
-  .profile-info {
-    flex: 1;
-  }
-  
-  .profile-image {
-    width: 200px;
-  }
-  
-  .profile-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-  }
-  
-  .alert {
-    padding: 10px;
-    background-color: #e7f3fe;
-    border-left: 6px solid #2196F3;
-    margin: 10px 0;
-  }
+    .profile-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .profile-title {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 35px;
+        text-align: center;
+        color: #2c3e50;
+    }
+
+    .profile-card {
+        display: flex;
+        flex-direction: row;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        border-radius: 20px;
+        border: 1px solid #e0e6f0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 35px;
+        gap: 30px;
+        transition: box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .profile-card:hover {
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-image {
+        flex: 1 1 200px;
+        max-width: 250px;
+        text-align: center;
+    }
+
+    .profile-image img {
+        width: 100%;
+        max-width: 200px;
+        border-radius: 14px;
+        border: 2px solid #ddd;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-image img:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-info {
+        flex: 2 1 300px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .profile-info p {
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+
+    .profile-alert {
+        background-color: #eaf6ff;
+        border-left: 4px solid #1e90ff;
+        padding: 12px;
+        margin-top: 15px;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .edit-btn {
+        margin-top: 20px;
+        border: none;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.3s ease;
+    }
+
+    /* 🔁 Responsive layout */
+    @media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px;
+        }
+
+        .profile-image {
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            width: 100%;
+            text-align: center;
+        }
+
+        .edit-btn {
+            width: 100%;
+        }
+    }
 </style>
+
+<body>
+    <div class="container">
+        <div class="profile-wrapper">
+            <h2 class="profile-title">User Profile ({{role}})</h2>
+
+            <div class="profile-card">
+                {{!-- Only show image section if an image exists (not "default.jpg") --}}
+                {{#if (eq role "tutor")}}
+                {{#if tutor}}
+                {{#unless (eq tutor.imageTutor "default.jpg")}}
+                <div class="profile-image">
+                    <img src="{{absolutePath tutor.imageTutor}}" alt="Avatar" onerror="this.src='/images/default.jpg'">
+                </div>
+                {{/unless}}
+                {{/if}}
+                {{else if (eq role "student")}}
+                {{#if student}}
+                {{#unless (eq student.imageStudent "default.jpg")}}
+                <div class="profile-image">
+                    <img src="{{absolutePath student.imageStudent}}" alt="Avatar"
+                        onerror="this.src='/images/default.jpg'">
+                </div>
+                {{/unless}}
+                {{/if}}
+                {{/if}}
+
+                <div class="profile-info">
+                    <p><strong>Full Name:</strong> {{user.fullname}}</p>
+                    <p><strong>Email:</strong> {{user.email}}</p>
+                    <p><strong>Role:</strong> {{user.role}}</p>
+
+                    {{#if (eq role "tutor")}}
+                    {{#if tutor}}
+                    <p><strong>Department:</strong> {{tutor.department}}</p>
+                    <p><strong>Phone Number:</strong> {{tutor.telephone}}</p>
+                    <p><strong>Enrollment Date:</strong> {{formatDate tutor.enrollmentDate}}</p>
+                    <a href="/profile/edit" class="btn w-100 edit-btn">Edit</a>
+                    {{else}}
+                    <div class="profile-alert">
+                        You need to update your personal information to complete your enrollment. <a
+                            href="/profile/edit">Click here!</a>
+                    </div>
+                    {{/if}}
+                    {{else if (eq role "student")}}
+                    {{#if student}}
+                    <p><strong>Subject:</strong> {{student.subject}}</p>
+                    <p><strong>Phone Number:</strong> {{student.telephone}}</p>
+                    <p><strong>Enrollment Date:</strong> {{formatDate student.enrollmentDate}}</p>
+                    <a href="/profile/edit" class="btn w-100 edit-btn">Edit</a>
+                    {{else}}
+                    <div class="profile-alert">
+                        You need to update your personal information to complete your enrollment. <a
+                            href="/profile/edit">Click here!</a>
+                    </div>
+                    {{/if}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
