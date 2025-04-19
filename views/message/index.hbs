@@ -33,11 +33,38 @@
         color: white;
     }
 
-    .user-profile img {
+    .avatar-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .avatar-wrapper img {
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border: 2px solid #ccc;
+    }
+
+    .status-indicator {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        /* Border to separate from avatar */
+    }
+
+    .status-indicator.online {
+        background-color: #4caf50;
+        /* Green for online */
+    }
+
+    .status-indicator.offline {
+        background-color: #f44336;
+        /* Red for offline */
     }
 
     .search-box {
@@ -162,17 +189,23 @@
     <div class="chat-container">
         <div class="chat-sidebar">
             <div class="user-profile">
-                <img src="{{currentUser.avatar}}" alt="User Avatar">
-                <span>{{user.fullname}}</span>
+                <div class="avatar-wrapper">
+                    <img src="{{currentUser.avatar}}" alt="User Avatar">
+                    <span class="status-indicator {{#if currentUser.isOnline}}online{{else}}offline{{/if}}"></span>
+                </div>
+                <span class="ms-2">{{user.fullname}}</span>
             </div>
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="Search for conversation...">
             </div>
             <div class="chat-list" id="chat-list">
                 {{#each users}}
-                <div class="chat-item" data-fullname="{{this.fullname}}"
+                <div class="chat-item" data-fullname="{{this.fullname}}" data-user-id="{{this._id}}"
                     onclick="selectUser('{{this._id}}', '{{this.fullname}}')">
-                    <img src="{{this.avatar}}" class="rounded-circle" width="40" height="40">
+                    <div class="avatar-wrapper">
+                        <img src="{{this.avatar}}" alt="User Avatar">
+                        <span class="status-indicator {{#if this.isOnline}}online{{else}}offline{{/if}}"></span>
+                    </div>
                     <span class="ms-2">{{this.fullname}}</span>
                 </div>
                 {{/each}}
@@ -317,5 +350,30 @@
         function removeDiacritics(str) {
             return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
+
+        // Listen for user status changes
+        socket.on('userStatusChange', (data) => {
+            const { userId, isOnline } = data;
+
+            // Find the user's status indicator in the chat list
+            const userStatusIndicator = document.querySelector(
+                `.chat-item[data-fullname][data-user-id="${userId}"] .status-indicator`
+            );
+
+            if (userStatusIndicator) {
+                // Update the status indicator's class
+                userStatusIndicator.classList.toggle('online', isOnline);
+                userStatusIndicator.classList.toggle('offline', !isOnline);
+            }
+
+            // Update the current user's profile status if applicable
+            if (userId === currentUser) {
+                const profileStatusIndicator = document.querySelector('.user-profile .status-indicator');
+                if (profileStatusIndicator) {
+                    profileStatusIndicator.classList.toggle('online', isOnline);
+                    profileStatusIndicator.classList.toggle('offline', !isOnline);
+                }
+            }
+        });
     </script>
 </body>
