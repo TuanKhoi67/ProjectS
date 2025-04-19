@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Document = require('../models/Document');
+const User = require('../models/Users');
+const Tutor = require('../models/Tutor');
+const Student = require('../models/Student');
 const multer = require('multer');
 const path = require('path');
 const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
@@ -137,12 +140,39 @@ router.delete('/delete/:id', async (req, res) => {
 router.get('/mainDocument', async (req, res) => {
   try {
       const documents = await Document.find()
-          .populate('author', 'fullname') // Populate the author's fullname
-          .populate('comments.user', 'username'); // Populate the comment user's username
-      res.render('document/mainDocument', { documents, user: req.user });
+          .populate({
+              path: 'author',
+              select: 'fullname role', // cần role để xác định là tutor/student
+          })
+          .populate({
+              path: 'comments.user',
+              select: 'fullname role',
+          })
+          .lean(); // Dễ xử lý dữ liệu thêm
+
+      // Lặp qua documents để gắn avatar từ student/tutor
+      for (let doc of documents) {
+          doc.avatar = await getUserAvatar(doc.author);
+
+          for (let comment of doc.comments) {
+              comment.avatar = await getUserAvatar(comment.user);
+          }
+      }
+
+      // Gắn avatar cho người dùng hiện tại nếu đã đăng nhập
+      let currentUserAvatar = null;
+      if (req.user) {
+          currentUserAvatar = await getUserAvatar(req.user);
+      }
+
+      res.render('document/mainDocument', {
+          documents,
+          user: req.user,
+          userAvatar: currentUserAvatar,
+      });
   } catch (error) {
       console.error('Lỗi lấy dữ liệu:', error);
-      res.status(500).send('Lỗi máy chủ ha ');
+      res.status(500).send('Lỗi máy chủ');
   }
 });
 
@@ -171,5 +201,24 @@ router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
       res.status(500).send('Lỗi máy chủ ');
   }
 });
+
+async function getUserAvatar(user) {
+  if (!user || !user._id) return '/images/default.jpg';
+
+  try {
+      if (user.role === 'student') {
+          const student = await Student.findOne({ user: user._id });
+          return student?.imageStudent || '/images/default.jpg';
+      } else if (user.role === 'tutor') {
+          const tutor = await Tutor.findOne({ user: user._id });
+          return tutor?.imageTutor || '/images/default.jpg';
+      } else {
+          return '/images/default.jpg';
+      }
+  } catch (err) {
+      console.error('Lỗi lấy avatar:', err);
+      return '/images/default.jpg';
+  }
+}
 
 module.exports = router;

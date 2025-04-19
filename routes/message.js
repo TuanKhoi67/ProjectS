@@ -4,19 +4,53 @@ module.exports = (io) => {
     const mongoose = require('mongoose');
     const { ensureAuthenticated } = require('../middleware/auth');
     const User = require('../models/Users');
+    const Student = require('../models/Student');
+    const Tutor = require('../models/Tutor');
     const Message = require('../models/Message');
 
-    
+
     // 📨 Lấy danh sách người dùng và hiển thị trang chat
     router.get('/', ensureAuthenticated, async (req, res) => {
         try {
-            const users = await User.find({ _id: { $ne: req.user._id } }).lean();
-            res.render('message/index', { users, currentUser: req.user });
+            const allUsers = await User.find({ _id: { $ne: req.user._id } }).lean();
+
+            const enrichedUsers = await Promise.all(allUsers.map(async user => {
+                let avatar = '/images/default.jpg';
+
+                if (user.role === 'tutor') {
+                    const tutor = await Tutor.findOne({ user: user._id }).lean();
+                    if (tutor && tutor.imageTutor) avatar = tutor.imageTutor;
+                } else if (user.role === 'student') {
+                    const student = await Student.findOne({ user: user._id }).lean();
+                    if (student && student.imageStudent) avatar = student.imageStudent;
+                }
+
+                return { ...user, avatar };
+            }));
+
+            // Avatar của người đang đăng nhập
+            let currentUserAvatar = '/images/default.jpg';
+            if (req.user.role === 'tutor') {
+                const tutor = await Tutor.findOne({ user: req.user._id }).lean();
+                if (tutor && tutor.imageTutor) currentUserAvatar = tutor.imageTutor;
+            } else if (req.user.role === 'student') {
+                const student = await Student.findOne({ user: req.user._id }).lean();
+                if (student && student.imageStudent) currentUserAvatar = student.imageStudent;
+            }
+
+            res.render('message/index', {
+                users: enrichedUsers,
+                currentUser: {
+                    ...req.user,
+                    avatar: currentUserAvatar
+                }
+            });
         } catch (err) {
             console.error(err);
             res.redirect('/dashboard');
         }
     });
+
 
     // 📨 API lấy lịch sử chat giữa hai người
     router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
@@ -82,5 +116,5 @@ module.exports = (io) => {
     });
 
     return router;
-    
+
 };

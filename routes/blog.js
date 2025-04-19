@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
 const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
-const User = require('../models/Users'); // Adjust the path to your User model
+const User = require('../models/Users'); 
+const Student = require('../models/Student');
+const Tutor = require('../models/Tutor');
 const upload = require('../config/upload');
 
 // Route to display all blogs
@@ -162,17 +164,38 @@ router.get('/search', async (req, res) => {
 router.get('/reel', async (req, res) => {
     try {
         const blogs = await Blog.find()
-            .populate('author', 'fullname profilePicture')
+            .populate('author', 'fullname role')
             .populate({
                 path: 'comments.user',
                 select: 'fullname profilePicture'
             });
 
-        // Add `isLiked` property for each blog
         const userId = req.user ? req.user._id.toString() : null;
-        blogs.forEach(blog => {
+
+        for (let blog of blogs) {
+            if (blog.author.role === 'student') {
+                const student = await Student.findOne({ user: blog.author._id });
+                blog.avatar = student?.imageStudent || '/images/default.jpg';
+            } else if (blog.author.role === 'tutor') {
+                const tutor = await Tutor.findOne({ user: blog.author._id });
+                blog.avatar = tutor?.imageTutor || '/images/default.jpg';
+            } else {
+                blog.avatar = '/images/default.jpg';
+            }
+
             blog.isLiked = userId && blog.likedBy.some(id => id.toString() === userId);
-        });
+            for (let comment of blog.comments) {
+                if (comment.user && comment.user.role === 'student') {
+                    const student = await Student.findOne({ user: comment.user._id });
+                    comment.avatar = student?.imageStudent || '/images/default.jpg';
+                } else if (comment.user && comment.user.role === 'tutor') {
+                    const tutor = await Tutor.findOne({ user: comment.user._id });
+                    comment.avatar = tutor?.imageTutor || '/images/default.jpg';
+                } else {
+                    comment.avatar = '/images/default.jpg';
+                }
+            }
+        }
 
         res.render('blog/reel', { blogs, user: req.user });
     } catch (error) {
@@ -180,6 +203,7 @@ router.get('/reel', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 router.post('/like/:id', ensureAuthenticated, async (req, res) => {

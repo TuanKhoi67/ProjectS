@@ -9,7 +9,7 @@ const upload = require('../config/upload');
 // Xem profile
 router.get('/', async (req, res) => {
     try {
-        const user = req.user; // Giả sử bạn đã có middleware xác thực
+        const user = req.user; 
 
         let tutor, student;
         if (user.role === 'tutor') {

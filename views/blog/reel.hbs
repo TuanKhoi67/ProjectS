@@ -163,6 +163,14 @@
         border-radius: 5px;
         background: #f8f9fa;
     }
+
+    .comment img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+    }
 </style>
 
 <body>
@@ -173,9 +181,7 @@
             {{#each blogs}}
             <div class="post">
                 <div class="post-header">
-                    <img class="profile-img"
-                        src="{{#if this.author.profilePicture}}{{this.author.profilePicture}}{{else}}https://placehold.co/40x40{{/if}}"
-                        alt="User profile picture">
+                    <img src="{{this.avatar}}" alt="Avatar" class="rounded-circle" width="50" height="50">
                     <div>
                         <h2>{{this.author.fullname}}</h2>
                         <small class="post-time">{{formatDate this.createdAt}}</small>
@@ -225,18 +231,21 @@
                 <div>
                     <h6>All Comments</h6>
                     {{#each this.comments}}
-                    <div class="comment">
-                        <strong>{{this.user.fullname}}</strong>: {{this.content}}
-                        <br>
-                        <small class="text-muted">{{formatDate this.createdAt}}</small>
+                    <div class="comment d-flex align-items-start mt-2">
+                        
+                        <div>
+                            <strong>{{this.user.fullname}}</strong>
+                            <p class="mb-1">{{this.content}}</p>
+                        </div>
                     </div>
                     {{/each}}
+
                 </div>
                 {{!-- <button class="btn" onclick="toggleComment(this)">Comment</button> --}}
                 {{#if ../user}}
                 <form action="/blog/reel/comment/{{this._id}}" method="POST" class="comment-form">
                     <div class="comment-input">
-                        <img alt="User avatar" src="https://placehold.co/40x40" />
+                        <img src="{{this.avatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
                         <input type="text" name="content" placeholder="Write a comment..." required>
                         <button type="submit" class="btn">Post</button>
                     </div>
