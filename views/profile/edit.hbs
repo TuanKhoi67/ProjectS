@@ -1,58 +1,187 @@
-<h2>Chỉnh sửa thông tin cá nhân</h2>
+<head>
+    <title>Edit Profile</title>
+</head>
 
-<form action="/profile/edit" method="POST" enctype="multipart/form-data">
-  <!-- Các trường thông tin cơ bản -->
-  <div class="form-group">
-    <label>Họ và tên</label>
-    <input type="text" class="form-control" value="{{user.fullname}}" readonly>
-  </div>
-  
-  <div class="form-group">
-    <label>Email</label>
-    <input type="email" class="form-control" value="{{user.email}}" readonly>
-  </div>
-  
-  <div class="form-group">
-    <label>Số điện thoại</label>
-    <input type="text" name="telephone" class="form-control" value="{{profileData.telephone}}" required>
-  </div>
-  
-  {{#if (eq role "tutor")}}
-    <div class="form-group">
-      <label>Khoa</label>
-      <input type="text" name="department" class="form-control" value="{{profileData.department}}" required>
-    </div>
-  {{else if (eq role "student")}}
-    <div class="form-group">
-      <label>Môn học</label>
-      <input type="text" name="subject" class="form-control" value="{{profileData.subject}}" required>
-    </div>
-  {{/if}}
-  
-  <!-- Phần upload ảnh -->
-  <div class="form-group">
-    <label>Ảnh đại diện</label>
-    {{#if (eq role "tutor")}}
-      {{#if profileData.imageTutor}}
-        <div class="mb-2">
-          <img src="{{profileData.imageTutor}}" width="150" class="img-thumbnail">
-        </div>
-      {{/if}}
-    {{else if (eq role "student")}}
-      {{#if profileData.imageStudent}}
-        <div class="mb-2">
-          <img src="{{profileData.imageStudent}}" width="150" class="img-thumbnail">
-        </div>
-      {{/if}}
-    {{/if}}
-    <input type="file" name="avatar" class="form-control-file" accept="image/jpeg, image/png">
-    <small class="form-text text-muted">Chỉ chấp nhận ảnh JPEG hoặc PNG (tối đa 5MB)</small>
-  </div>
-  
-  <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-  <a href="/profile" class="btn btn-secondary">Hủy</a>
-</form>
+<style>
+    .edit-profile-container {
+        max-width: 720px;
+        margin: 50px auto;
+        padding: 35px;
+        background: linear-gradient(to top left, #ffffff, #f5f9ff);
+        border-radius: 20px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+        transition: box-shadow 0.3s ease;
+        border: 1px solid #d0dbe9;
+    }
 
-{{#if error}}
-  <div class="alert alert-danger mt-3">{{error}}</div>
-{{/if}}
+    .edit-profile-container:hover {
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .edit-profile-container h2 {
+        font-size: 30px;
+        font-weight: 700;
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 35px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #3a3a3a;
+    }
+
+    .form-control,
+    .form-control-file {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-control:focus,
+    .form-control-file:focus {
+        border-color: #007bff;
+        outline: none;
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    }
+
+    .img-thumbnail {
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .form-text {
+        font-size: 14px;
+        color: #777;
+        margin-top: 5px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .save-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        margin-right: 10px;
+    }
+
+    .save-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .cancel-btn {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .cancel-btn:hover {
+        background-color: #5a6268;
+    }
+
+    .alert {
+        padding: 15px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 8px;
+        margin-top: 20px;
+        border: 1px solid #f5c6cb;
+    }
+
+    @media (max-width: 600px) {
+        .edit-profile-container {
+            padding: 20px;
+        }
+
+        .form-control {
+            font-size: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<body>
+    <div class="edit-profile-container">
+        <h2>Edit Profile</h2>
+
+        <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" value="{{user.fullname}}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" value="{{user.email}}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="telephone" class="form-control" value="{{profileData.telephone}}" required>
+            </div>
+
+            {{#if (eq role "tutor")}}
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" class="form-control" value="{{profileData.department}}" required>
+            </div>
+            {{else if (eq role "student")}}
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" name="subject" class="form-control" value="{{profileData.subject}}" required>
+            </div>
+            {{/if}}
+
+            <div class="form-group">
+                <label>Avatar</label>
+                {{#if (eq role "tutor")}}
+                {{#if profileData.imageTutor}}
+                <div class="mb-2">
+                    <img src="{{profileData.imageTutor}}" width="150" class="img-thumbnail">
+                </div>
+                {{/if}}
+                {{else if (eq role "student")}}
+                {{#if profileData.imageStudent}}
+                <div class="mb-2">
+                    <img src="{{profileData.imageStudent}}" width="150" class="img-thumbnail">
+                </div>
+                {{/if}}
+                {{/if}}
+
+                <input type="file" name="avatar" class="form-control-file" accept="image/jpeg, image/png">
+                <small class="form-text">Accepted formats: JPEG, PNG (Max size: 5MB)</small>
+            </div>
+
+            <button type="submit" class="btn save-btn">Save Changes</button>
+            <a href="/profile" class="btn cancel-btn">Cancel</a>
+        </form>
+
+        {{#if error}}
+        <div class="alert">{{error}}</div>
+        {{/if}}
+    </div>
+</body>
