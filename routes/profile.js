@@ -65,10 +65,10 @@ router.post('/edit', upload.single('avatar'),async (req, res) => {
             imagePath = '/images/' + req.file.filename; // Lưu đường dẫn tương đối
 
             // Xóa ảnh cũ nếu có
-            if (user.role === 'tutor' && user.tutor?.imageTutor && user.tutor.imageTutor !== 'default.jpg') {
+            if (user.role === 'tutor' && user.tutor?.imageTutor && user.tutor.imageTutor !== 'https://placehold.co/200x200') {
                 const oldImagePath = path.join(__dirname, '../public', user.tutor.imageTutor);
                 if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
-            } else if (user.role === 'student' && user.student?.imageStudent && user.student.imageStudent !== 'default.jpg') {
+            } else if (user.role === 'student' && user.student?.imageStudent && user.student.imageStudent !== 'https://placehold.co/200x200') {
                 const oldImagePath = path.join(__dirname, '../public', user.student.imageStudent);
                 if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
             }
