@@ -21,15 +21,18 @@ dotenv.config();
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer, {
-  cors: { 
-    origin: "*", 
+  cors: {
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true
-   }
+  }
 });
 
 // 🟢 Danh sách người dùng online
 const onlineUsers = {};
+
+// Export onlineUsers so it can be shared
+module.exports.onlineUsers = onlineUsers;
 
 // 📡 Xử lý kết nối socket.io
 io.on('connection', (socket) => {
@@ -40,6 +43,9 @@ io.on('connection', (socket) => {
     socket.join(userId); // Tham gia vào room riêng theo userId
     onlineUsers[userId] = socket.id;
     console.log(`✅ User ${userId} đã vào phòng (${socket.id})`);
+
+    // Notify all clients about the updated online status
+    io.emit('userStatusChange', { userId, isOnline: true });
   });
 
   // 📩 Khi người dùng gửi tin nhắn
@@ -70,6 +76,9 @@ io.on('connection', (socket) => {
     if (disconnectedUser) {
       delete onlineUsers[disconnectedUser];
       console.log(`❌ User ${disconnectedUser} (${socket.id}) đã ngắt kết nối`);
+
+      // Notify all clients about the updated online status
+      io.emit('userStatusChange', { userId: disconnectedUser, isOnline: false });
     }
   });
 });
