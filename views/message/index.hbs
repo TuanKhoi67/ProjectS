@@ -194,6 +194,37 @@
     .input-box button:hover {
         background: #000070;
     }
+
+    @media (max-width: 576px) {
+        .chat-container {
+            margin: auto;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .chat-sidebar {
+            width: 35%;
+        }
+
+        .chat-box {
+            width: 65%;
+        }
+
+        .chat-item {
+            padding: 10px 5px;
+        }
+
+        .chat-item span {
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .message .time {
+            font-size: 11px;
+        }
+    }
 </style>
 
 <body>
