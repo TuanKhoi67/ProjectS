@@ -247,21 +247,18 @@
                 <div>
                     <h6>All Comments</h6>
                     {{#each this.comments}}
-                    <div class="comment d-flex align-items-start mt-2">
-
-                        <div>
-                            <strong>{{this.user.fullname}}</strong>
-                            <p class="mb-1">{{this.content}}</p>
-                        </div>
+                    <div class="comment">
+                        <strong>{{this.user.fullname}}</strong>: {{this.content}}
+                        <br>
+                        <small class="text-muted">{{formatDate this.createdAt}}</small>
                     </div>
                     {{/each}}
-
                 </div>
                 {{!-- <button class="btn" onclick="toggleComment(this)">Comment</button> --}}
                 {{#if ../user}}
                 <form action="/blog/reel/comment/{{this._id}}" method="POST" class="comment-form">
                     <div class="comment-input">
-                        <img src="{{../userAvatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
+                        <img src="{{this.avatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
                         <input type="text" name="content" placeholder="Write a comment..." required>
                         <button type="submit" class="btn">Post</button>
                     </div>
@@ -269,7 +266,6 @@
                 {{else}}
                 <p class="text-muted">Bạn cần <a href="/auth/login">đăng nhập</a> để bình luận.</p>
                 {{/if}}
-
             </div>
             {{/each}}
         </div>
