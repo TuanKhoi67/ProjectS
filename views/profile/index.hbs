@@ -115,23 +115,26 @@
             <h2 class="profile-title">User Profile ({{role}})</h2>
 
             <div class="profile-card">
-                {{!-- Only show image section if an image exists (not "default.jpg") --}}
+
                 {{#if (eq role "tutor")}}
                 {{#if tutor}}
-                {{#unless (eq tutor.imageTutor "default.jpg")}}
                 <div class="profile-image">
-                    <img src="{{absolutePath tutor.imageTutor}}" alt="Avatar" onerror="this.src='/images/default.jpg'">
+                    {{#if (eq tutor.imageTutor "https://placehold.co/200x200")}}
+                    <img src="https://placehold.co/200x200" alt="Default Avatar">
+                    {{else}}
+                    <img src="{{absolutePath tutor.imageTutor}}" alt="Avatar">
+                    {{/if}}
                 </div>
-                {{/unless}}
                 {{/if}}
                 {{else if (eq role "student")}}
                 {{#if student}}
-                {{#unless (eq student.imageStudent "default.jpg")}}
                 <div class="profile-image">
-                    <img src="{{absolutePath student.imageStudent}}" alt="Avatar"
-                        onerror="this.src='/images/default.jpg'">
+                    {{#if (eq student.imageStudent "https://placehold.co/200x200")}}
+                    <img src="https://placehold.co/200x200" alt="Default Avatar">
+                    {{else}}
+                    <img src="{{absolutePath student.imageStudent}}" alt="Avatar">
+                    {{/if}}
                 </div>
-                {{/unless}}
                 {{/if}}
                 {{/if}}
 

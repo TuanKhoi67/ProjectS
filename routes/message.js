@@ -7,6 +7,7 @@ module.exports = (io) => {
     const Student = require('../models/Student');
     const Tutor = require('../models/Tutor');
     const Message = require('../models/Message');
+    const { onlineUsers } = require('../app'); // Import onlineUsers
 
 
     // 📨 Lấy danh sách người dùng và hiển thị trang chat
@@ -15,7 +16,7 @@ module.exports = (io) => {
             const allUsers = await User.find({ _id: { $ne: req.user._id } }).lean();
 
             const enrichedUsers = await Promise.all(allUsers.map(async user => {
-                let avatar = '/images/default.jpg';
+                let avatar = 'https://placehold.co/45x45';
 
                 if (user.role === 'tutor') {
                     const tutor = await Tutor.findOne({ user: user._id }).lean();
@@ -25,11 +26,14 @@ module.exports = (io) => {
                     if (student && student.imageStudent) avatar = student.imageStudent;
                 }
 
-                return { ...user, avatar };
+                return {
+                    ...user,
+                    avatar,
+                    isOnline: !!onlineUsers[user._id] // Check if user is online
+                };
             }));
 
-            // Avatar của người đang đăng nhập
-            let currentUserAvatar = '/images/default.jpg';
+            let currentUserAvatar = 'https://placehold.co/45x45';
             if (req.user.role === 'tutor') {
                 const tutor = await Tutor.findOne({ user: req.user._id }).lean();
                 if (tutor && tutor.imageTutor) currentUserAvatar = tutor.imageTutor;
@@ -42,7 +46,8 @@ module.exports = (io) => {
                 users: enrichedUsers,
                 currentUser: {
                     ...req.user,
-                    avatar: currentUserAvatar
+                    avatar: currentUserAvatar,
+                    isOnline: !!onlineUsers[req.user._id] // Check if current user is online
                 }
             });
         } catch (err) {
