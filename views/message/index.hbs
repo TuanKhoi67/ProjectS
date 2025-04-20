@@ -68,12 +68,23 @@
     }
 
     .search-box {
+        position: relative;
         padding: 10px;
+    }
+
+    .search-box .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 25px;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 16px;
     }
 
     .search-box input {
         width: 100%;
-        padding: 8px;
+        padding: 8px 8px 8px 40px;
+        /* Add padding to the left for the icon */
         border: 1px solid #ccc;
         border-radius: 20px;
     }
@@ -196,6 +207,7 @@
                 <span class="ms-2">{{user.fullname}}</span>
             </div>
             <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" id="search-input" placeholder="Search for conversation...">
             </div>
             <div class="chat-list" id="chat-list">
