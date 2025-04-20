@@ -17,35 +17,7 @@
 
 <div class="main-content">
     <h1>Tutor Informations Management</h1>
-
-    <h2>Add New Tutor</h2>
-    <form action="/admin/dashboard/add-tutor" method="POST" enctype="multipart/form-data">
-        <label for="">Tutor Name</label>
-        <input class="form-control w-25" type="text" id="" name="name" required>
-
-        <label for="">Telephone</label>
-        <input class="form-control w-25" type="text" id="" name="telephone" required>
-
-        <label for="">Email</label>
-        <input class="form-control w-25" type="tel" id="" name="email" required>
-
-        <label for="">User Image</label>
-        <input class="form-control w-25" type="file" id="" name="image" required>
-
-        <div>
-            <label for="">Department</label>
-            <br>
-            <select class="form-select w-25">
-            {{#each tutors}}
-            <option type="radio" value="{{this._id}}">{{this.department}}</option>
-            {{/each}}
-            </select>
-        </div>
-        <button class="btn btn-primary" type="submit">Add</button>
-    </form>
-
-    <h2>Tutor List</h2>
-    <h3>Tutor Total: <span id="total">{{totalTutors}}</span></h3>
+    <h3>Tutor List: <span id="total">{{totalTutors}}</span></h3>
 
     <div class="table-wrapper">
         <table class="table table-striped-columns table-primary">

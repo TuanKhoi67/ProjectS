@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
-const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
-const User = require('../models/Users'); 
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth');
+const User = require('../models/Users');
 const Student = require('../models/Student');
 const Tutor = require('../models/Tutor');
 const upload = require('../config/upload');
-const Student = require('../models/Student');
-const Tutor = require('../models/Tutor');
+
 
 // Route to display all blogs
-router.get('/', ensureAuthenticated, checkAdmin ,async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const blogs = await Blog.find().populate('author', 'fullname role');
         res.render('blog/index', { blogs, user: req.user }); // Gửi user vào view
@@ -172,11 +171,25 @@ router.get('/reel', async (req, res) => {
             .populate('author', 'fullname role')
             .populate({
                 path: 'comments.user',
-                select: 'fullname profilePicture'
+                select: 'fullname role'
             });
 
         const userId = req.user ? req.user._id.toString() : null;
 
+        // Gắn avatar cho user hiện tại và truyền riêng userAvatar
+        let userAvatar = '/images/default.jpg';
+
+        if (req.user) {
+            if (req.user.role === 'student') {
+                const student = await Student.findOne({ user: req.user._id });
+                userAvatar = student?.imageStudent || '/images/default.jpg';
+            } else if (req.user.role === 'tutor') {
+                const tutor = await Tutor.findOne({ user: req.user._id });
+                userAvatar = tutor?.imageTutor || '/images/default.jpg';
+            }
+        }
+
+        // Xử lý avatar cho các blog và comment
         for (let blog of blogs) {
             if (blog.author.role === 'student') {
                 const student = await Student.findOne({ user: blog.author._id });
@@ -189,6 +202,7 @@ router.get('/reel', async (req, res) => {
             }
 
             blog.isLiked = userId && blog.likedBy.some(id => id.toString() === userId);
+
             for (let comment of blog.comments) {
                 if (comment.user && comment.user.role === 'student') {
                     const student = await Student.findOne({ user: comment.user._id });
@@ -202,12 +216,14 @@ router.get('/reel', async (req, res) => {
             }
         }
 
-        res.render('blog/reel', { blogs, user: req.user });
+        res.render('blog/reel', { blogs, user: req.user, userAvatar }); // ✅ Truyền userAvatar riêng
     } catch (error) {
         console.error('Error fetching blogs:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 
 

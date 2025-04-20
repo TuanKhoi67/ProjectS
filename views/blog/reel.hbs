@@ -232,7 +232,7 @@
                     <h6>All Comments</h6>
                     {{#each this.comments}}
                     <div class="comment d-flex align-items-start mt-2">
-                        
+
                         <div>
                             <strong>{{this.user.fullname}}</strong>
                             <p class="mb-1">{{this.content}}</p>
@@ -245,7 +245,7 @@
                 {{#if ../user}}
                 <form action="/blog/reel/comment/{{this._id}}" method="POST" class="comment-form">
                     <div class="comment-input">
-                        <img src="{{this.avatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
+                        <img src="{{../userAvatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
                         <input type="text" name="content" placeholder="Write a comment..." required>
                         <button type="submit" class="btn">Post</button>
                     </div>
@@ -253,6 +253,7 @@
                 {{else}}
                 <p class="text-muted">Bạn cần <a href="/auth/login">đăng nhập</a> để bình luận.</p>
                 {{/if}}
+
             </div>
             {{/each}}
         </div>
