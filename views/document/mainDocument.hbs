@@ -1,242 +1,224 @@
 <head>
     <title>All Documents</title>
-    <style>
-        .document-container {
-            max-width: 1300px;
-            margin: auto;
-            padding-left: 25px;
-            padding-right: 25px;
-            display: flex;
-            flex: 1;
-        }
+</head>
 
-        .main-content {
-            flex: 1;
-            width: 100%;
-            max-width: 800px;
-            position: relative;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 16px;
-        }
+<style>
+    .document-container {
+        max-width: 1300px;
+        margin: auto;
+        padding-left: 25px;
+        padding-right: 25px;
+        display: flex;
+        flex: 1;
+    }
 
-        .search-container {
-            margin-bottom: 20px;
-            align-items: center;
-        }
+    .main-content {
+        flex: 1;
+        width: 100%;
+        max-width: 800px;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 16px;
+    }
 
-        .search-btn {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            margin-left: 10px;
-            padding: 10px 10px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
 
-        .search-btn:hover {
-            background-color: #003366;
-        }
+    .search-box {
+        padding: 10px;
+    }
 
-        .search-bar {
-            width: 90%;
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 9999px;
-            margin-bottom: 16px;
-        }
+    .search-box input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+    }
 
-        .post {
-            background-color: white;
-            padding: 16px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.315);
-            margin-bottom: 16px;
-        }
+    .post {
+        background-color: white;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.315);
+        margin-bottom: 16px;
+    }
 
-        .profile-img {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-right: 8px;
-        }
+    .profile-img {
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        margin-right: 8px;
+        object-fit: cover;
+        border: 2px solid #ccc;
+    }
 
-        .post-img {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
+    .post-img {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
 
-        .post .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-        }
+    .post .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+    }
 
-        .post .post-header img {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-right: 8px;
-        }
+    .post .post-header .author-info {
+        display: flex;
+        flex-direction: column;
+    }
 
-        .post .post-header .author-info {
-            display: flex;
-            flex-direction: column;
-        }
+    .post .post-header .author-info h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
 
-        .post .post-header .author-info h2 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-        }
+    .dots-btn {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        background-color: transparent;
+        border: none;
+        padding: 3px;
+    }
 
-        .dots-btn {
-            position: relative;
-            width: 30px;
-            height: 30px;
-            background-color: transparent;
-            border: none;
-            padding: 3px;
-        }
+    .dots-btn:hover {
+        background-color: #9ca3af;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        padding: 3px;
+    }
 
-        .dots-btn:hover {
-            background-color: #9ca3af;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            padding: 3px;
-        }
+    .dropdown-toggle::after {
+        display: none;
+    }
 
-        .dropdown-toggle::after {
-            display: none;
-        }
+    .post .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        .post .post-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .post .post-footer i {
+        margin-right: 8px;
+    }
 
-        .post .post-footer i {
-            margin-right: 8px;
-        }
+    .post .post-footer .likes,
+    .post .post-footer .comments {
+        display: flex;
+        align-items: center;
+    }
 
-        .post .post-footer .likes,
-        .post .post-footer .comments {
-            display: flex;
-            align-items: center;
-        }
+    .post .post-footer .likes i {
+        color: #ef4444;
+    }
 
-        .post .post-footer .likes i {
-            color: #ef4444;
-        }
+    .post .post-footer .comments i {
+        color: #9ca3af;
+    }
 
-        .post .post-footer .comments i {
-            color: #9ca3af;
-        }
+    .comment-box {
+        margin-top: 10px;
+    }
 
-        .comment-box {
-            margin-top: 10px;
-        }
+    .comment-input {
+        display: flex;
+        align-items: center;
+    }
 
-        .comment-input {
-            display: flex;
-            align-items: center;
-        }
+    .comment-input img {
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        margin-right: 8px;
+        object-fit: cover;
+        border: 2px solid #ccc;
+    }
 
-        .comment-input img {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-right: 8px;
-        }
+    .comment-input input {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 20px;
+        outline: none;
+        margin-right: 8px;
+    }
 
-        .comment-input input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #d1d5db;
-            border-radius: 20px;
-            outline: none;
-            margin-right: 8px;
-        }
+    .comment {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 5px;
+        background: #f8f9fa;
+    }
 
-        .comment {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-radius: 5px;
-            background: #f8f9fa;
-        }
-
-        /*.document-preview {
+    /*.document-preview {
         margin-top: 16px;
         border: 1px solid #ddd;
         border-radius: 8px;
         overflow: hidden;
         }*/
 
-        .document-available {
-            position: absolute;
-            right: 65px;
-            color: #4caf50;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-        }
+    .document-available {
+        position: absolute;
+        right: 65px;
+        color: #4caf50;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+    }
 
-        .document-available i {
-            margin-right: 5px;
-            margin-left: 5px;
-        }
+    .document-available i {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
 
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+    /* Modal Styles */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
 
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+    }
 
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            cursor: pointer;
-        }
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
 
-        /* Button Styles */
-        .popup-btn {
-            background-color: #f0f2f5;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    /* Button Styles */
+    .popup-btn {
+        background-color: #f0f2f5;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        .popup-btn:hover {
-            background-color: #e0e4e8;
-        }
-    </style>
-</head>
+    .popup-btn:hover {
+        background-color: #e0e4e8;
+    }
+</style>
 
 <body>
     <div class="document-container">
@@ -255,6 +237,11 @@
                     document</button>
             </h4>
             {{/if}}
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search for document...">
+            </div>
 
             <!-- Popup Modal -->
             <div id="documentModal" class="modal" style="display: none;">
@@ -291,7 +278,8 @@
 
             <h2 class="text-center mb-3">All Documents</h2>
             {{#each documents}}
-            <div class="post">
+            <div class="post" data-title="{{this.title}}" data-author="{{this.author.fullname}}"
+                data-content="{{this.content}}">
                 <div class="post-header">
                     <img src="{{this.avatar}}" alt="Avatar" class="profile-img">
                     <div class="author-info">
@@ -364,7 +352,7 @@
                 {{#if ../user}}
                 <form action="/document/comment/{{this._id}}" method="POST" class="comment-box">
                     <div class="comment-input">
-                        <img src="{{../userAvatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
+                        <img src="{{../userAvatar}}" alt="Avatar" class="profile-img">
                         <input type="text" name="text" placeholder="Write a comment..." required>
                         <button type="submit" class="btn">Post</button>
                     </div>
@@ -394,6 +382,28 @@
             if (e.target === documentModal) {
                 documentModal.style.display = 'none';
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const posts = document.querySelectorAll('.post');
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+
+                posts.forEach(post => {
+                    const title = post.getAttribute('data-title').toLowerCase();
+                    const author = post.getAttribute('data-author').toLowerCase();
+                    const content = post.getAttribute('data-content').toLowerCase();
+
+                    if (title.includes(query) || author.includes(query) || content.includes(query)) {
+                        post.style.display = 'block';
+                    } else {
+                        post.style.display = 'none';
+                    }
+                });
+            });
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
