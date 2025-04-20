@@ -34,6 +34,7 @@
         height: 200px;
         object-fit: cover;
         border-radius: 5px 5px 0 0;
+        width: 100%;
     }
 
     /* Popup */
@@ -79,11 +80,17 @@
         font-size: 20px;
         cursor: pointer;
     }
+
+    @media (max-width: 605px) {
+        .profile-img {
+            margin-bottom: 25px;
+        }
+    }
 </style>
 
 <body>
     <div class="container">
-        <h1 class="text-center">Tutor User Page</h1>
+        <h1 class="text-center" style="font-weight: 700;">Tutor User Page</h1>
         <!-- Form đăng bài -->
         <h4 class="text-center mt-4">
             <img class="profile-img"
@@ -144,15 +151,16 @@
         <h2 class="text-center mt-4">Tutor Blogs</h2>
         <div class="row mt-4">
             {{#each blogs}}
-            <div class="col-4 mb-4">
+            <div class="col-md-4 mb-4">
                 <div class="blog-card shadow-sm">
                     <div class="content">
                         <!-- Ảnh bài viết -->
                         {{#if this.image}}
-                        <img src="{{{absolutePath this.image}}}" alt="{{this.title}}">
+                        <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
                         {{else}}
-                        <div class="card-img-top bg-secondary">
-                            <span class="text-white">No Image</span>
+                        <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
+                            style="height: 200px;">
+                            No Image
                         </div>
                         {{/if}}
 
