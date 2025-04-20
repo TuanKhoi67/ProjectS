@@ -5,45 +5,78 @@
 
 <style>
     .search-container {
-        max-width: 1300px;
-        margin-bottom: 15px;
         display: flex;
-        position: relative;
         align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        /* Allow wrapping for smaller screens */
+        gap: 10px;
+        /* Add spacing between elements */
+        margin-bottom: 30px;
     }
 
-    .search-container form {
-        flex-grow: 1;
-    }
-
-    .search-bar {
-        width: 100%;
-        max-width: 985px;
-        padding: 8px 16px;
-        border: 1px solid #d1d5db;
-        border-radius: 9999px;
-        margin-bottom: 16px;
-    }
-
-    .back-btn,
-    .search-btn {
+    .search-container .back-btn {
         background-color: black;
         color: white;
         border: none;
-        display: inline-block;
-        margin: 0 10px;
-        padding: 10px 10px;
+        padding: 10px 15px;
         border-radius: 30px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        text-decoration: none;
+        white-space: nowrap;
+        /* Prevent text wrapping */
     }
 
-    .back-btn:hover {
+    .search-container .back-btn:hover {
         background-color: #0056b3;
     }
 
-    .search-btn:hover {
+    .search-container .search-form {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        /* Allow the search bar to grow */
+        max-width: 1200px;
+        /* Limit the maximum width */
+    }
+
+    .search-container .search-bar {
+        flex-grow: 1;
+        /* Make the search bar take up available space */
+        padding: 8px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 9999px;
+        outline: none;
+    }
+
+    .search-container .search-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 10px;
+    }
+
+    .search-container .search-btn:hover {
         background-color: #0056b3;
+    }
+
+    @media (max-width: 576px) {
+        .search-container .search-form {
+            flex-grow: 1;
+            max-width: 100%;
+            /* Allow full width on small screens */
+        }
+
+        .search-container .back-btn {
+            width: 100%;
+            /* Make the back button full width on small screens */
+            text-align: center;
+        }
     }
 
     .blog-card {
@@ -69,6 +102,7 @@
         height: 200px;
         object-fit: cover;
         border-radius: 5px 5px 0 0;
+        width: 100%;
     }
 </style>
 
@@ -91,25 +125,26 @@
     </div>
     <!-- Main Content -->
     <div class="container">
-        <h2 class="text-center mb-4">📖 All Blogs</h2>
-        <div class="search-container text-center">
-            <form action="/blog/search" method="get">
-                <a href="/blog" class="back-btn"><i class="fa-solid fa-rotate-left"></i> Back</a>
+        <h2 class="text-center mb-4" style="font-weight: 700;">📖 All Blogs</h2>
+        <div class="search-container">
+            <a href="/blog" class="back-btn"><i class="fa-solid fa-rotate-left"></i> Back</a>
+            <form action="/blog/search" method="get" class="search-form">
                 <input type="text" class="search-bar" name="q" placeholder="Search for blog..." required>
-                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </div>
         <div class="row">
             {{#each blogs}}
-            <div class="col-4 mb-4">
+            <div class="col-md-4 mb-4">
                 <div class="blog-card shadow-sm">
                     <div class="content">
                         <!-- Ảnh bài viết -->
                         {{#if this.image}}
-                        <img src="{{{absolutePath this.image}}}" alt="{{this.title}}">
+                        <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
                         {{else}}
-                        <div class="card-img-top bg-secondary">
-                            <span class="text-white">No Image</span>
+                        <div class="card-img-top bg-secondary d-flex justify-content-center align-items-center text-white"
+                            style="height: 200px;">
+                            No Image
                         </div>
                         {{/if}}
 
