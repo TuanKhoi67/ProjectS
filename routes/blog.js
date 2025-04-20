@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
-const { ensureAuthenticated, checkAdmin } = require('../middleware/auth'); 
-const User = require('../models/Users'); 
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth');
+const User = require('../models/Users');
 const Student = require('../models/Student');
 const Tutor = require('../models/Tutor');
 const upload = require('../config/upload');
-const Student = require('../models/Student');
-const Tutor = require('../models/Tutor');
 
 // Route to display all blogs
-router.get('/', ensureAuthenticated, checkAdmin ,async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const blogs = await Blog.find().populate('author', 'fullname role');
         res.render('blog/index', { blogs, user: req.user }); // Gửi user vào view
@@ -180,24 +178,24 @@ router.get('/reel', async (req, res) => {
         for (let blog of blogs) {
             if (blog.author.role === 'student') {
                 const student = await Student.findOne({ user: blog.author._id });
-                blog.avatar = student?.imageStudent || '/images/default.jpg';
+                blog.avatar = student?.imageStudent || 'https://placehold.co/45x45';
             } else if (blog.author.role === 'tutor') {
                 const tutor = await Tutor.findOne({ user: blog.author._id });
-                blog.avatar = tutor?.imageTutor || '/images/default.jpg';
+                blog.avatar = tutor?.imageTutor || 'https://placehold.co/45x45';
             } else {
-                blog.avatar = '/images/default.jpg';
+                blog.avatar = 'https://placehold.co/45x45';
             }
 
             blog.isLiked = userId && blog.likedBy.some(id => id.toString() === userId);
             for (let comment of blog.comments) {
                 if (comment.user && comment.user.role === 'student') {
                     const student = await Student.findOne({ user: comment.user._id });
-                    comment.avatar = student?.imageStudent || '/images/default.jpg';
+                    comment.avatar = student?.imageStudent || 'https://placehold.co/45x45';
                 } else if (comment.user && comment.user.role === 'tutor') {
                     const tutor = await Tutor.findOne({ user: comment.user._id });
-                    comment.avatar = tutor?.imageTutor || '/images/default.jpg';
+                    comment.avatar = tutor?.imageTutor || '/https://placehold.co/45x45';
                 } else {
-                    comment.avatar = '/images/default.jpg';
+                    comment.avatar = 'https://placehold.co/45x45';
                 }
             }
         }
