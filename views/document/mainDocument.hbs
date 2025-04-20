@@ -228,6 +228,12 @@
     .popup-btn:hover {
         background-color: #e0e4e8;
     }
+
+    @media (max-width: 605px) {
+        .profile-img {
+            margin-bottom: 25px;
+        }
+    }
 </style>
 
 <body>
@@ -236,7 +242,7 @@
         <div class="main-content">
             <!-- Add a button to open the popup modal -->
             {{#if user}}
-            <h4 class="text-center mb-4">
+            <h4 class="text-center mb-3">
                 <img src="{{userAvatar}}" alt="Avatar" class="profile-img">
                 <button id="openDocumentPopup" class="popup-btn">What’s Your Document Inspiration Today,
                     {{user.fullname}}?</button>
