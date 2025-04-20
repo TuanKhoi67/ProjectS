@@ -202,7 +202,9 @@
             <div class="user-profile">
                 <div class="avatar-wrapper">
                     <img src="{{currentUser.avatar}}" alt="User Avatar">
-                    <span class="status-indicator {{#if currentUser.isOnline}}online{{else}}offline{{/if}}"></span>
+                    <span class="status-indicator {{#if currentUser.isOnline}}online{{else}}offline{{/if}}"
+                        title="{{#if currentUser.isOnline}}Online{{else}}Offline{{/if}}">
+                    </span>
                 </div>
                 <span class="ms-2">{{user.fullname}}</span>
             </div>
@@ -212,11 +214,13 @@
             </div>
             <div class="chat-list" id="chat-list">
                 {{#each users}}
-                <div class="chat-item" data-fullname="{{this.fullname}}" data-user-id="{{this._id}}"
+                <div class="chat-item" data-user-id="{{this._id}}" data-fullname="{{this.fullname}}"
                     onclick="selectUser('{{this._id}}', '{{this.fullname}}')">
                     <div class="avatar-wrapper">
                         <img src="{{this.avatar}}" alt="User Avatar">
-                        <span class="status-indicator {{#if this.isOnline}}online{{else}}offline{{/if}}"></span>
+                        <span class="status-indicator {{#if this.isOnline}}online{{else}}offline{{/if}}"
+                            title="{{#if this.isOnline}}Online{{else}}Offline{{/if}}">
+                        </span>
                     </div>
                     <span class="ms-2">{{this.fullname}}</span>
                 </div>
@@ -376,6 +380,9 @@
                 // Update the status indicator's class
                 userStatusIndicator.classList.toggle('online', isOnline);
                 userStatusIndicator.classList.toggle('offline', !isOnline);
+
+                // Update the title attribute for the tooltip
+                userStatusIndicator.setAttribute('title', isOnline ? 'Online' : 'Offline');
             }
 
             // Update the current user's profile status if applicable
@@ -384,6 +391,9 @@
                 if (profileStatusIndicator) {
                     profileStatusIndicator.classList.toggle('online', isOnline);
                     profileStatusIndicator.classList.toggle('offline', !isOnline);
+
+                    // Update the title attribute for the tooltip
+                    profileStatusIndicator.setAttribute('title', isOnline ? 'Online' : 'Offline');
                 }
             }
         });
