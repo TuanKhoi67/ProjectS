@@ -40,7 +40,7 @@
     margin-bottom: 2rem;
   }
 
-  .chart-container {
+  .tutor-chart-container {
     background: #ffffff;
     border: 1px solid #dee2e6;
     border-radius: 12px;
@@ -51,7 +51,7 @@
     justify-content: center;
   }
 
-  .chart-container canvas {
+  .tutor-chart-container canvas {
     max-height: 220px !important;
   }
 </style>
@@ -59,7 +59,7 @@
 <body>
   <div class="container py-4">
     <h2 class="mb-4">👨‍🏫 Hello, {{tutor.fullname}}!</h2>
-    
+
     <!-- === Tutor Summary Section === -->
     <div class="mt-5">
       <h4>📊 Tutor Document and Comment Statistics</h4>
@@ -67,7 +67,7 @@
         <p><strong>Total Documents:</strong> {{documentCount}}</p>
         <p><strong>Total Comments:</strong> {{totalComments}}</p>
       </div>
-      <div class="chart-container">
+      <div class="tutor-chart-container">
         <canvas id="docBarChart"></canvas>
       </div>
     </div>
@@ -77,13 +77,13 @@
       <h4>📊 Tutee Contribution Summary</h4>
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="chart-container"><canvas id="tuteeMessagesChart"></canvas></div>
+          <div class="tutor-chart-container"><canvas id="tuteeMessagesChart"></canvas></div>
         </div>
         <div class="col-md-4">
-          <div class="chart-container"><canvas id="tuteeMeetingsChart"></canvas></div>
+          <div class="tutor-chart-container"><canvas id="tuteeMeetingsChart"></canvas></div>
         </div>
         <div class="col-md-4">
-          <div class="chart-container"><canvas id="tuteeDocsChart"></canvas></div>
+          <div class="tutor-chart-container"><canvas id="tuteeDocsChart"></canvas></div>
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@
             <tr>
               <th>Full Name</th>
               <th>Email</th>
-              <th>Last Active</th>
+              <th>Last Interaction</th>
               <th>Messages</th>
               <th>Meetings</th>
               <th>Documents</th>
@@ -115,7 +115,7 @@
               <td>{{this.meetingCount}}</td>
               <td>{{this.documentCount}}</td>
               <td>
-                <a href="/profile/{{this._id}}" class="btn btn-sm">View</a>
+                <a href="/profile/student/{{this._id}}" class="btn btn-sm">View Profile</a>
               </td>
             </tr>
             {{/each}}
@@ -181,31 +181,31 @@
         datasets: [{
           label: 'Statistics',
           data: [{{ documentCount }}, {{ totalComments }}],
-          backgroundColor: ['#4e73df', '#1cc88a'],
-          borderColor: ['#4e73df', '#1cc88a'],
-          borderWidth: 1
-        }]
+      backgroundColor: ['#4e73df', '#1cc88a'],
+      borderColor: ['#4e73df', '#1cc88a'],
+      borderWidth: 1
+    }]
       },
-      options: {
-        responsive: true,
+    options: {
+      responsive: true,
         scales: {
-          y: {
-            beginAtZero: true,
+        y: {
+          beginAtZero: true,
             ticks: {
-              precision: 0
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          title: {
-            display: true,
-            text: 'Document and Comment Statistics'
+            precision: 0
           }
         }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+            text: 'Document and Comment Statistics'
+        }
       }
+    }
     });
 
     new Chart(document.getElementById('tuteeMessagesChart'), {
