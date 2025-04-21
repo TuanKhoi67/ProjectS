@@ -108,4 +108,3 @@ router.post('/take-attendance/:scheduleId', async (req, res) => {
 });
 
 module.exports = router;
-
