@@ -4,7 +4,7 @@ const router = express.Router();
 const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
-//const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
 
 
 router.get('/', async (req, res) => {
@@ -107,7 +107,7 @@ router.post("/create", async (req, res) => {
       console.log("Meeting created:", meeting);
   
       // Soạn nội dung email
-      const emailMessage = `Cuộc họp của bạn đã được lên lịch.\nTham gia tại: ${meeting.hangoutLink}`;
+      const emailMessage = `Bạn được mời tham gia một cuộc hop. Vào lúc ${startTime}.\nTham gia tại: ${meeting.hangoutLink}`;
   
       // Gửi email
       sendEmail(emailRecipients, "Lịch Họp Google Meet", emailMessage);
