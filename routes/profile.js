@@ -133,16 +133,17 @@ router.get('/student/:id', ensureAuthenticated, async (req, res) => {
             return res.redirect('/profile'); // Redirect students to their own profile
         }
 
-        // Fetch the student's profile
+        // Fetch the student's profile using the provided ID
         const student = await Student.findOne({ user: req.params.id }).populate('user').lean();
 
         if (!student) {
             return res.status(404).send('Student not found');
         }
 
+        // Pass the fetched student data to the template
         res.render('profile/student', {
-            student,
-            user: req.user, // Pass the logged-in user's data, including the role
+            student, // Data of the student being viewed
+            user: req.user, // Logged-in user's data (for role checking, etc.)
         });
     } catch (err) {
         console.error(err);
