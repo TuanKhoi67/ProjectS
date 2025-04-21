@@ -100,11 +100,16 @@ router.get('/edit/:id', async (req, res) => {
             .populate('class')
             .lean(); // Trả về dữ liệu JSON thuần
 
+        console.log("Schedule:", schedule);
+
         if (!schedule) {
             return res.status(404).send("Lịch học không tồn tại.");
         }
 
         const classes = await ClassModel.find().lean(); // Lấy danh sách lớp học
+
+        console.log("Danh sách lớp học:", classes);
+        console.log("Selected ClassId:", schedule.class ? schedule.class._id.toString() : null);
 
         console.log("Danh sách lớp học:", classes);
 
@@ -135,6 +140,17 @@ router.post('/edit/:id', async (req, res) => {
         const oldSchedule = await ScheduleModel.findById(req.params.id);
         if (!oldSchedule) {
             return res.status(404).send("Lịch học không tồn tại.");
+        }
+
+        // Kiểm tra lịch học đã tồn tại chưa (cùng ngày, cùng ca, cùng lớp)
+        const existingSchedule = await ScheduleModel.findOne({
+            day,
+            time,
+            class: classObj._id
+        });
+
+        if (existingSchedule) {
+            return res.redirect(`/schedule/add?error=exists&classId=${classId}`);
         }
 
         // Cập nhật thông tin lịch học
