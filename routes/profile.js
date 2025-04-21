@@ -4,12 +4,12 @@ const User = require('../models/Users');
 const Tutor = require('../models/Tutor');
 const Student = require('../models/Student');
 const upload = require('../config/upload');
-
+const { ensureAuthenticated } = require('../middleware/auth');
 
 // Xem profile
 router.get('/', async (req, res) => {
     try {
-        const user = req.user; 
+        const user = req.user;
 
         let tutor, student;
         if (user.role === 'tutor') {
@@ -54,7 +54,7 @@ router.get('/edit', async (req, res) => {
 });
 
 // Update profile
-router.post('/edit', upload.single('avatar'),async (req, res) => {
+router.post('/edit', upload.single('avatar'), async (req, res) => {
     try {
         const user = req.user;
         const { telephone, department, subject } = req.body;
@@ -122,6 +122,31 @@ router.post('/edit', upload.single('avatar'),async (req, res) => {
             message: 'Đã có lỗi xảy ra khi cập nhật thông tin',
             error: err.message
         });
+    }
+});
+
+// View a student's profile (accessible by tutors)
+router.get('/student/:id', ensureAuthenticated, async (req, res) => {
+    try {
+        // Check if the logged-in user is a student
+        if (req.user.role === 'student') {
+            return res.redirect('/profile'); // Redirect students to their own profile
+        }
+
+        // Fetch the student's profile
+        const student = await Student.findOne({ user: req.params.id }).populate('user').lean();
+
+        if (!student) {
+            return res.status(404).send('Student not found');
+        }
+
+        res.render('profile/student', {
+            student,
+            user: req.user, // Pass the logged-in user's data, including the role
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
     }
 });
 
