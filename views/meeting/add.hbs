@@ -1,51 +1,110 @@
-
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-    <title>Create to Schedule</title>
+    <meta charset="UTF-8">
+    <title>Tạo Lịch Họp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="mb-4">Create to Schedule</h2>
-        <form action="/api/meeting/create" method="POST">
+        <h2 class="mb-4">Tạo Lịch Họp</h2>
+        <form id="createMeetingForm" action="/api/meeting/create" method="POST">
             <div class="mb-3">
-                <strong>Title</strong>
-                <input type="text" class="form-control w-25" name="title" required>
+                <label>Tiêu đề</label>
+                <input type="text" class="form-control" name="title" required>
             </div>
             <div class="mb-3">
-                <strong>Form</strong>
-                <input type="text" class="form-control w-25" name="form" required>
+                <label>Hình thức</label>
+                <input type="text" class="form-control" name="form" required>
             </div>
             <div class="mb-3">
-                <strong>Location</strong>
-                <input type="text" class="form-control w-25" name="location" required>
+                <label>Địa điểm</label>
+                <input type="text" class="form-control" name="location" required>
             </div>
             <div class="mb-3">
-                <strong>Student</strong>
-                <br>
+                <label>Sinh viên</label>
+                <div>
                     {{#each students}}
-                        <input type="radio" value="{{this._id}}">{{this.name}}</input>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="students" id="student_{{@index}}" value="{{this._id}}" required>
+                        <label class="form-check-label" for="student_{{@index}}">
+                        {{this.name}}
+                        </label>
+                    </div>
                     {{/each}}
+                </div>
             </div>
             <div class="mb-3">
-                <strong>Tutor</strong>
-                <select class="form-select w-25" name="tutors[]" required>
+                <label>Giáo viên</label>
+                <div>
                     {{#each tutors}}
-                        <option value="{{this._id}}">{{this.name}}</option>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tutors" id="tutor_{{@index}}" value="{{this._id}}" required>
+                        <label class="form-check-label" for="tutor_{{@index}}">
+                        {{this.name}}
+                        </label>
+                    </div>
                     {{/each}}
-                </select>
+                </div>
             </div>
                         <div class="mb-3">
-                <strong>Begin Time</strong>
+                <label>Thời gian bắt đầu</label>
                 <input type="dateTime-local" name="startTime" required>
             </div>
             <div class="mb-3">
-                <strong>End Time</strong>
+                <label>Thời gian kết thúc</label>
                 <input type="dateTime-local" name="endTime" required>
             </div>
             <div class="mb-3">
-                <strong>Note</strong>
-                <textarea class="form-control w-35" name="note"></textarea>
+                <label>Ghi chú</label>
+                <textarea class="form-control" name="note"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">Tạo Lịch Họp</button>
         </form>
     </div>
 </body>
+</html>
+
+<script>
+document.getElementById('createMeetingForm').addEventListener('submit', async function (e) {
+  e.preventDefault(); // Ngăn submit mặc định
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  // Lấy dữ liệu từ FormData thành object JS
+  const data = {
+    title: formData.get('title'),
+    form: formData.get('form'),
+    location: formData.get('location'),
+    note: formData.get('note'),
+    startTime: formData.get('startTime'),
+    endTime: formData.get('endTime'),
+    students: formData.getAll('students[]'),
+    tutors: formData.getAll('tutors[]')
+  };
+
+  try {
+    const response = await fetch('/api/meeting/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(result.message + "\nLink họp: " + result.meetLink);
+      form.reset(); // Reset form nếu muốn
+    } else {
+      alert("Tạo lịch họp thất bại: " + (result.error || "Có lỗi xảy ra"));
+    }
+
+  } catch (error) {
+    alert("Lỗi kết nối đến máy chủ: " + error.message);
+  }
+});
+</script>
+
