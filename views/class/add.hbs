@@ -1,3 +1,4 @@
+<html>
 <head>
     <title>Create Class</title>
     <style>
@@ -81,7 +82,7 @@
         <!-- Tạo lớp với danh sách học sinh đã lọc -->
         <div class="form-section">
             <h2>Thông Tin Lớp</h2>
-            <form action="/class/create" method="POST">
+            <form id="createClassForm" action="/class/create" method="POST">
                 <input type="hidden" name="subject" value="{{subject}}">
 
                 <div class="mb-3">
@@ -166,5 +167,42 @@
         </div>
         {{/if}}
     </div>
-
 </body>
+</html>
+
+
+<script>
+document.getElementById("createClassForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {
+        classname: formData.get("classname"),
+        studentIds: formData.getAll("studentIds"), // nếu nhiều checkbox
+        tutorId: formData.get("tutorId")
+    };
+
+    try {
+        const response = await fetch("/class/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.error || "Đã xảy ra lỗi!");
+        } else {
+            alert(result.message);
+            // Có thể chuyển hướng sau đó
+            window.location.href = "/class"; 
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Lỗi không xác định khi gửi dữ liệu!");
+    }
+});
+</script>
