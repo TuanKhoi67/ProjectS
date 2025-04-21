@@ -1,0 +1,121 @@
+<head>
+    <title>Student Profile</title>
+</head>
+
+<style>
+    h2 {
+        text-align: center;
+        font-size: 2rem;
+        color: #2a2a91;
+        margin-bottom: 20px;
+    }
+
+    .profile-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .profile-card {
+        display: flex;
+        flex-direction: row;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        border-radius: 20px;
+        border: 1px solid #e0e6f0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 35px;
+        gap: 30px;
+        transition: box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .profile-image {
+        flex: 1;
+        text-align: center;
+    }
+
+    .profile-image img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 3px solid #2a2a91;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        flex: 2;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .profile-info p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    .profile-info strong {
+        color: #2a2a91;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #2a2a91;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background-color: #1e1e6d;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-image img {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-info {
+            width: 100%;
+        }
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="profile-wrapper">
+            <h2>Student Profile</h2>
+            <div class="profile-card">
+                <div class="profile-image">
+                    {{#if student.imageStudent}}
+                    <img src="{{absolutePath student.imageStudent}}" alt="Student Avatar">
+                    {{else}}
+                    <img src="https://placehold.co/200x200" alt="Default Avatar">
+                    {{/if}}
+                </div>
+                <div class="profile-info">
+                    <p><strong>Full Name:</strong> {{user.fullname}}</p>
+                    <p><strong>Email:</strong> {{user.email}}</p>
+                    <p><strong>Subject:</strong> {{student.subject}}</p>
+                    <p><strong>Phone Number:</strong> {{student.telephone}}</p>
+                    <p><strong>Enrollment Date:</strong> {{formatDate student.enrollmentDate}}</p>
+                </div>
+            </div>
+            {{#if (eq user.role "tutor")}}
+            <a href="/dashboard/tutor_dashboard" class="back-btn">Back to Dashboard</a>
+            {{/if}}
+        </div>
+    </div>
+</body>
