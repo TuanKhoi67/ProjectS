@@ -3,11 +3,11 @@ var ClassSchema = mongoose.Schema({
    classname: String,
    student: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'students'  
+        ref: 'students',
     }],
    tutor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'tutors'  
+        ref: 'tutors', 
    },
    createDate: {
      type: Date,
