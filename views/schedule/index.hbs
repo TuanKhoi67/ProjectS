@@ -33,9 +33,8 @@
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/blog/">Blog Management</a></li>
-        <li><a href="/document/">Document Management</a></li>
         <li><a href="/api/meeting/create">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
@@ -50,7 +49,7 @@
 </script>
 
 <div class="card-header text-center">
-    <h3>Schedule</h3>
+    <h3>{{title}}</h3>
     <p>Week: {{weekRange}}</p>
 </div>
 <div class="card-body">
@@ -71,7 +70,7 @@
             <tr>
                 <td>{{this.day}}</td>
                 <td>{{this.time}}</td>
-                <td>{{#if this.class}} {{this.class.classname}} {{else}} No class exist {{/if}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
 
                 <td>
                     <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
