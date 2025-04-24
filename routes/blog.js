@@ -166,7 +166,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/reel', async (req, res) => {
     try {
-        const blogs = await Blog.find()
+        let blogs = await Blog.find()
             .populate('author', 'fullname role')
             .populate({
                 path: 'comments.user',
@@ -175,7 +175,6 @@ router.get('/reel', async (req, res) => {
 
         const userId = req.user ? req.user._id.toString() : null;
 
-        // Gắn avatar cho user hiện tại và truyền riêng userAvatar
         let userAvatar = '/images/default.jpg';
 
         if (req.user) {
@@ -188,9 +187,11 @@ router.get('/reel', async (req, res) => {
             }
         }
 
-        // Xử lý avatar cho các blog và comment
         for (let blog of blogs) {
-            if (blog.author.role === 'student') {
+            // Nếu author không tồn tại
+            if (!blog.author || !blog.author.role) {
+                blog.avatar = 'https://placehold.co/45x45';
+            } else if (blog.author.role === 'student') {
                 const student = await Student.findOne({ user: blog.author._id });
                 blog.avatar = student?.imageStudent || 'https://placehold.co/45x45';
             } else if (blog.author.role === 'tutor') {
@@ -199,32 +200,37 @@ router.get('/reel', async (req, res) => {
             } else {
                 blog.avatar = 'https://placehold.co/45x45';
             }
-
+        
+            // Kiểm tra like
             blog.isLiked = userId && blog.likedBy.some(id => id.toString() === userId);
-
+        
+            // Duyệt qua các comment và gắn avatar
             for (let comment of blog.comments) {
-                if (comment.user && comment.user.role === 'student') {
+                if (!comment.user || !comment.user.role) {
+                    comment.avatar = 'https://placehold.co/45x45';
+                } else if (comment.user.role === 'student') {
                     const student = await Student.findOne({ user: comment.user._id });
                     comment.avatar = student?.imageStudent || 'https://placehold.co/45x45';
-                } else if (comment.user && comment.user.role === 'tutor') {
+                } else if (comment.user.role === 'tutor') {
                     const tutor = await Tutor.findOne({ user: comment.user._id });
-                    comment.avatar = tutor?.imageTutor || '/https://placehold.co/45x45';
+                    comment.avatar = tutor?.imageTutor || 'https://placehold.co/45x45';
                 } else {
                     comment.avatar = 'https://placehold.co/45x45';
                 }
             }
         }
+        
+        res.render('blog/reel', {
+            blogs,
+            user: req.user,
+            userAvatar
+        });
 
-        res.render('blog/reel', { blogs, user: req.user, userAvatar }); // ✅ Truyền userAvatar riêng
     } catch (error) {
         console.error('Error fetching blogs:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Errorrrrrr');
     }
 });
-
-
-
-
 
 router.post('/like/:id', ensureAuthenticated, async (req, res) => {
     try {

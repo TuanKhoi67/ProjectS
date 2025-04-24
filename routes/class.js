@@ -3,8 +3,9 @@ var router = express.Router();
 var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
+const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const classes = await ClassModel.find({})
             .populate('student')
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 
 
 // Hiển thị trang tạo lớp học với bộ lọc
-router.get('/create', async (req, res) => {
+router.get('/create', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         res.render('class/add'); // Giao diện để chọn môn học
     } catch (error) {
@@ -29,7 +30,7 @@ router.get('/create', async (req, res) => {
     }
 });
 
-router.post('/filter', async (req, res) => {
+router.post('/filter', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const { subject } = req.body;
 
@@ -47,7 +48,7 @@ router.post('/filter', async (req, res) => {
 
 
 // Xử lý tạo lớp học
-router.post('/create', async (req, res) => {
+router.post('/create', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         console.log("Request body:", JSON.stringify(req.body, null, 2));
 
@@ -114,7 +115,7 @@ router.get('/search-student', async (req, res) => {
     }
 });
 
-router.post('/assign-student', async (req, res) => {
+router.post('/assign-student', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const { studentId, classId } = req.body;
 
@@ -140,7 +141,7 @@ router.post('/assign-student', async (req, res) => {
     }
 });
 
-router.post('/create-class', async (req, res) => {
+router.post('/create-class', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const { classname, studentId, tutorId } = req.body;
 
@@ -164,7 +165,7 @@ router.post('/create-class', async (req, res) => {
 });
 
 // Xóa document theo ID
-router.get('/delete/:id', async (req, res) => {
+router.get('/delete/:id', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         await ClassModel.findByIdAndDelete(req.params.id);
         res.redirect('/class'); // hoặc route hiển thị danh sách lớp học
