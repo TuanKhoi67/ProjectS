@@ -31,7 +31,6 @@
 </head>
 
 <body>
-
     <div class="container">
         <h1 class="mb-4">Create to Class</h1>
 
@@ -77,12 +76,11 @@
             </div>
         </div>
 
-
         {{#if students}}
         <!-- Tạo lớp với danh sách học sinh đã lọc -->
         <div class="form-section">
             <h2>Thông Tin Lớp</h2>
-            <form id="createClassForm" action="/class/create" method="POST">
+            <form id="create-class-form" >
                 <input type="hidden" name="subject" value="{{subject}}">
 
                 <div class="mb-3">
@@ -97,7 +95,7 @@
                         <input class="form-check-input" type="checkbox" name="studentIds" value="{{this._id}}">
                         <label class="form-check-label">{{this.name}}</label>
                     </div>
-                    {{/each}}
+                    {{/each}} 
                 </div>
 
                 <div class="mb-3">
@@ -130,7 +128,7 @@
 
             {{#if classes.length}}
             <h5>Thêm sinh viên vào lớp có sẵn:</h5>
-            <form action="/class/assign-student" method="POST" class="mb-4">
+            <form id = "assign-student-form"  class="mb-4">
                 <input type="hidden" name="studentId" value="{{studentResult._id}}">
                 <label for="classId">Chọn lớp học:</label>
                 <select name="classId" id="classId" class="form-select mb-2">
@@ -169,40 +167,69 @@
     </div>
 </body>
 </html>
-
-
+    
 <script>
-document.getElementById("createClassForm").addEventListener("submit", async function (e) {
+document.getElementById('create-class-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(this);
-    const data = {
-        classname: formData.get("classname"),
-        studentIds: formData.getAll("studentIds"), // nếu nhiều checkbox
-        tutorId: formData.get("tutorId")
-    };
+    const classname = document.querySelector('input[name="classname"]').value;
+    const studentIdsRaw = document.querySelector('input[name="studentIds"]').value;
+    const studentIds = studentIdsRaw.split(',').map(s => s.trim()).filter(s => s);
+    const tutorId = document.querySelector('input[name="tutorId"]').value;
 
     try {
-        const response = await fetch("/class/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+        const res = await fetch('/class/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ classname, studentIds, tutorId })
         });
 
-        const result = await response.json();
+        const result = await res.json(); // Phân tích JSON từ phản hồi
 
-        if (!response.ok) {
-            alert(result.error || "Đã xảy ra lỗi!");
+        console.log(result); // Log kết quả để kiểm tra
+
+        if (res.ok) {
+            alert(result.message); // ✅ Hiển thị thông báo nếu thành công
+            document.getElementById('create-class-form').reset(); // Reset form nếu thành công
         } else {
-            alert(result.message);
-            // Có thể chuyển hướng sau đó
-            window.location.href = "/class"; 
+            alert("Lỗi: " + result.message); // ❌ Thông báo lỗi nếu có
         }
-    } catch (err) {
-        console.error(err);
-        alert("Lỗi không xác định khi gửi dữ liệu!");
+    } catch (error) {
+        alert("Lỗi gửi yêu cầu: " + error.message); // ❌ Nếu có lỗi trong quá trình gửi yêu cầu
     }
 });
+</script> 
+
+<script>
+    document.getElementById('assign-student-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const studentId = formData.get('studentId');
+        const classId = formData.get('classId');
+
+        try {
+            const response = await fetch('/class/assign-student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ studentId, classId }),
+            });
+
+            const result = await response.json();
+
+            // Kiểm tra phản hồi từ server
+            if (result.success) {
+                // Nếu thành công, chuyển hướng đến /class
+                window.location.href = '/class';
+            } else {
+                // Nếu có lỗi, hiển thị thông báo lỗi
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi gửi yêu cầu:", error);
+            alert("Đã xảy ra lỗi trong quá trình xử lý.");
+        }
+    });
 </script>
