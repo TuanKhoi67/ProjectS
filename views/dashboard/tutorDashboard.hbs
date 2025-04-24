@@ -1,238 +1,92 @@
-<head>
-  <title>Tutor Dashboard</title>
-</head>
+<h3>📄 Tài liệu bạn đã đăng:</h3>
 
-<style>
-  .dashboard-header {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #2a2a91;
-  }
+{{#if documents.length}}
+{{#each documents}}
+<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+  <h4>{{this.title}}</h4>
+  <p><strong>Ngày đăng:</strong> {{formatDate this.createdAt}}</p>
 
-  .summary-card {
-    border-radius: 12px;
-    background: #f9f9ff;
-    border-left: 4px solid #2a2a91;
-    padding: 1rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
+  <img src="{{this.imageUrl}}" alt="Hình ảnh tài liệu" style="max-width: 300px; height: auto; margin-bottom: 10px;">
 
-  .summary-card h4 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #2a2a91;
-  }
+  <p><strong>Nội dung:</strong> {{this.content}}</p>
 
-  .summary-card p {
-    margin: 0.5rem 0 0;
-    font-size: 1.1rem;
-  }
+  {{#if this.documentFile}}
+  <p><a href="{{this.documentFile}}" target="_blank">📎 Tải tài liệu đính kèm</a></p>
+  {{/if}}
 
-  .table thead {
-    background-color: #e9ecef;
-  }
+  <p><strong>Bình luận:</strong> {{this.comments.length}}</p>
+</div>
+{{/each}}
+{{else}}
+<p>Bạn chưa đăng tài liệu nào.</p>
+{{/if}}
+<br><br>
+<h3>Tổng số câu hỏi đã giải đáp cho sinh viên thông qua Document</h3>
+<br><br>
+<h3>📩 Tin nhắn gần đây:</h3>
 
-  .highlight-box {
-    border: 1px solid #2a2a91;
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-  }
+{{#if messages.length}}
+{{#each messages}}
+<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+  <h4>Tin nhắn mới: {{this.content}}</h4>
+  <p><strong>Người gửi đến:</strong> {{this.sender.fullname}}</p>
+  <p><strong>Thời gian:</strong> {{formatDate this.createdAt}}</p>
 
-  .tutor-chart-container {
-    background: #ffffff;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
-    padding: 1rem;
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+</div>
+{{/each}}
+{{else}}
+<p>Không có tin nhắn nào gửi đến bạn gần đây.</p>
+{{/if}}
 
-  .tutor-chart-container canvas {
-    max-height: 220px !important;
-  }
-</style>
+<br><br>
+<h3>📚 Các lớp học tôi đang dạy:</h3>
 
-<body>
-  <div class="container py-4">
-    <h2 class="mb-4">👨‍🏫 Hello, {{tutor.fullname}}!</h2>
+{{#if classes.length}}
+<ul>
+  {{#each classes}}
+  <li>
+    <strong>Tên lớp:</strong> {{this.classname}}<br>
+    <strong>Số lượng sinh viên:</strong> {{this.student.length}}<br>
+    <strong>Danh sách sinh viên:</strong>
+    <ul>
+      {{#each this.student}}
+      <li>{{this.name}}</li>
+      {{/each}}
+    </ul>
+  </li>
+  {{/each}}
+</ul>
+{{else}}
+<p>Hiện tại bạn chưa dạy lớp nào.</p>
+{{/if}}
 
-    <!-- === Tutor Summary Section === -->
-    <div class="mt-5">
-      <h4>📊 Tutor Document and Comment Statistics</h4>
-      <div class="highlight-box">
-        <p><strong>Total Documents:</strong> {{documentCount}}</p>
-        <p><strong>Total Comments:</strong> {{totalComments}}</p>
-      </div>
-      <div class="tutor-chart-container">
-        <canvas id="docBarChart"></canvas>
-      </div>
-    </div>
+<br><br>
+<h3>📅 Các cuộc họp gần đây:</h3>
+<br>
+{{#if meetings.length}}
+<ul>
+  {{#each meetings}}
+  <br>
+  <li>
+    <strong>Tiêu đề:</strong> {{this.title}}<br>
+    <strong>Trạng thái:</strong> {{this.status}}<br>
+    <strong>Sinh viên:</strong>
+    <ul>
+      {{#each this.student}}
+      <li>{{this.name}}</li> <!-- Hiển thị tên của student -->
+      {{/each}}
+    </ul>
+    <strong>Địa điểm:</strong> {{this.location}}<br>
+    <strong>Thời gian bắt đầu:</strong> {{this.startTime}}<br>
+    <strong>Thời gian kết thúc:</strong> {{this.endTime}}<br>
+    <strong>Ghi chú:</strong> {{this.note}}<br>
+  </li>
+  {{/each}}
 
-    <!-- === Tutee Activity Charts === -->
-    <div class="mt-5">
-      <h4>📊 Tutee Contribution Summary</h4>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="tutor-chart-container"><canvas id="tuteeMessagesChart"></canvas></div>
-        </div>
-        <div class="col-md-4">
-          <div class="tutor-chart-container"><canvas id="tuteeMeetingsChart"></canvas></div>
-        </div>
-        <div class="col-md-4">
-          <div class="tutor-chart-container"><canvas id="tuteeDocsChart"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- === Tutee Table with Filter === -->
-    <div class="mt-5">
-      <h4>📊 Tutee Activity Overview</h4>
-      <input type="text" id="tuteeSearch" class="form-control my-3" placeholder="Search tutees by name or email..." />
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="tuteeTable">
-          <thead>
-            <tr>
-              <th>Full Name</th>
-              <th>Email</th>
-              <th>Last Interaction</th>
-              <th>Messages</th>
-              <th>Meetings</th>
-              <th>Documents</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each tutees}}
-            <tr>
-              <td>{{this.fullname}}</td>
-              <td>{{this.email}}</td>
-              <td>{{this.lastActive}}</td>
-              <td>{{this.messageCount}}</td>
-              <td>{{this.meetingCount}}</td>
-              <td>{{this.documentCount}}</td>
-              <td>
-                <a href="/profile/student/{{this._id}}" class="btn btn-sm">View Profile</a>
-              </td>
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- === Manage Classes Section === -->
-    <div class="mt-5">
-      <h4>📚 Your Managed Classes</h4>
-      <table class="table table-striped mt-3">
-        <thead>
-          <tr>
-            <th>Class Name</th>
-            <th>Subject</th>
-            <th>Student Count</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each classes}}
-          <tr>
-            <td>{{this.name}}</td>
-            <td>{{this.subject}}</td>
-            <td>{{this.studentCount}}</td>
-            <td><a href="/manage_class/{{this._id}}" class="btn btn-sm">Manage</a></td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Filter Tutees
-    document.getElementById('tuteeSearch').addEventListener('input', function () {
-      const value = this.value.toLowerCase();
-      document.querySelectorAll('#tuteeTable tbody tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(value) ? '' : 'none';
-      });
-    });
-
-    // Chart Data from backend (inject later)
-    const tuteeChartData = {{{ json tutees }}};
-
-    const names = tuteeChartData.map(t => t.fullname);
-    const msgCounts = tuteeChartData.map(t => t.messageCount);
-    const meetingCounts = tuteeChartData.map(t => t.meetingCount);
-    const docCounts = tuteeChartData.map(t => t.documentCount);
-
-    const ctx = document.getElementById('docBarChart').getContext('2d');
+</ul>
+{{else}}
+<p>Hiện tại bạn chưa có cuộc họp nào.</p>
+{{/if}}
 
 
-    // Bar Chart for Document and Comment Statistics
-    const docBarChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Posted Document', 'Total Comments'],
-        datasets: [{
-          label: 'Statistics',
-          data: [{{ documentCount }}, {{ totalComments }}],
-      backgroundColor: ['#4e73df', '#1cc88a'],
-      borderColor: ['#4e73df', '#1cc88a'],
-      borderWidth: 1
-    }]
-      },
-    options: {
-      responsive: true,
-        scales: {
-        y: {
-          beginAtZero: true,
-            ticks: {
-            precision: 0
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        title: {
-          display: true,
-            text: 'Document and Comment Statistics'
-        }
-      }
-    }
-    });
-
-    new Chart(document.getElementById('tuteeMessagesChart'), {
-      type: 'bar',
-      data: {
-        labels: names,
-        datasets: [{ label: 'Messages', data: msgCounts, backgroundColor: '#0d6efd' }]
-      },
-      options: { plugins: { title: { display: true, text: 'Messages Sent' } } }
-    });
-
-    new Chart(document.getElementById('tuteeMeetingsChart'), {
-      type: 'bar',
-      data: {
-        labels: names,
-        datasets: [{ label: 'Meetings', data: meetingCounts, backgroundColor: '#198754' }]
-      },
-      options: { plugins: { title: { display: true, text: 'Meetings Attended' } } }
-    });
-
-    new Chart(document.getElementById('tuteeDocsChart'), {
-      type: 'bar',
-      data: {
-        labels: names,
-        datasets: [{ label: 'Documents', data: docCounts, backgroundColor: '#ffc107' }]
-      },
-      options: { plugins: { title: { display: true, text: 'Documents Contributed' } } }
-    });
-  </script>
-</body>
+<br><br>
