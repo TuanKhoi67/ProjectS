@@ -58,19 +58,15 @@ router.post('/create', async (req, res) => {
             studentIds = [studentIds];
         }
 
-        if (!classname || !studentIds || !tutorId) {
-            return res.status(400).json("Thiếu dữ liệu đầu vào");
-        }
-
         // Kiểm tra tên lớp đã tồn tại chưa
         const existingClass = await ClassModel.findOne({ classname });
         if (existingClass) {
-            return res.status(400).json("Tên lớp đã tồn tại. Vui lòng chọn tên khác.");
+            return res.status(400).json({success: false, message:"Tên lớp đã tồn tại. Vui lòng chọn tên khác."});
         }
 
         // Kiểm tra số lượng sinh viên không vượt quá 10
         if (studentIds.length > 10) {
-            return res.status(400).json("Một lớp không được có quá 10 sinh viên.");
+            return res.status(400).json({success: false, message:"Một lớp không được có quá 10 sinh viên."});
         }
 
         const newClass = new ClassModel({
@@ -82,7 +78,7 @@ router.post('/create', async (req, res) => {
         await newClass.save();
 
         //res.redirect('/class'); // Điều hướng sau khi tạo lớp thành công
-        res.status(200).json({ message: "Tạo lớp thành công!" }); // bỏ res.redirect
+        res.status(200).json({success: false, message: "Tạo lớp thành công!" }); // bỏ res.redirect
     } catch (error) {
         console.error("Lỗi khi tạo lớp học:", error);  // In lỗi chi tiết
         res.status(500).json(`Lỗi khi tạo lớp học: ${error.message}`);
@@ -122,15 +118,7 @@ router.post('/assign-student', async (req, res) => {
     try {
         const { studentId, classId } = req.body;
 
-        if (!studentId || !classId) {
-            return res.status(400).send("Thiếu dữ liệu đầu vào");
-        }
-
         const selectedClass = await ClassModel.findById(classId).populate('student');
-
-        if (selectedClass.student.length >= 10) {
-            return res.status(400).send("Lớp đã đủ 10 sinh viên, không thể thêm.");
-        }
 
         // Kiểm tra nếu sinh viên đã tồn tại trong lớp
         const isAlreadyInClass = selectedClass.student.some(
@@ -138,15 +126,17 @@ router.post('/assign-student', async (req, res) => {
         );
 
         if (isAlreadyInClass) {
-            return res.redirect(`/class/search-student?error=exists&studentId=${studentId}`);
+            return res.json({ success: false, message: "Sinh viên đã có trong lớp." });
         }
 
         await ClassModel.findByIdAndUpdate(classId, { $push: { student: studentId } });
 
-        res.redirect('/class');
+        //res.redirect('/class');
+        // Trả về thông báo thành công để frontend redirect
+        res.json({ success: true, message: "Thêm sinh viên thành công!" });
     } catch (error) {
         console.error("Lỗi khi thêm sinh viên vào lớp:", error);
-        res.status(500).send('Lỗi khi thêm sinh viên vào lớp');
+        res.status(500).json('Lỗi khi thêm sinh viên vào lớp');
     }
 });
 
@@ -155,7 +145,7 @@ router.post('/create-class', async (req, res) => {
         const { classname, studentId, tutorId } = req.body;
 
         if (!classname || !studentId || !tutorId) {
-            return res.status(400).send("Thiếu dữ liệu đầu vào");
+            return res.status(400).json("Thiếu dữ liệu đầu vào");
         }
 
         const newClass = new ClassModel({
