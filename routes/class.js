@@ -5,7 +5,7 @@ var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
 const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 
-router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const classes = await ClassModel.find({})
             .populate('student')
