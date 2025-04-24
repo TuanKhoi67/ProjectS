@@ -1,30 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-<style>
-    .sidebar {
-        min-height: 100vh;
-        background-color: #343a40;
-        color: white;
-        padding: 20px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        display: block;
-        padding: 10px;
-    }
-
-    .sidebar a:hover {
-        background-color: #495057;
-    }
-
-    .content {
-        padding: 20px;
-    }
-</style>
-
 <body>
     <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
     <div class="sidebar" id="sidebar">
@@ -42,18 +49,13 @@
             <li><a href="/schedule/schedule-view">Schedule</a></li>
         </ul>
     </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('hidden');
-        }
-    </script>
 
     <div class="d-flex">
         <div class="content w-100">
             <div class="container mt-4">
                 <h1 class="text-center">Account Management</h1>
                 <div class="row mt-4 align-items-start">
+                    <!-- Tutor List -->
                     <div class="col-md-6">
                         <h2 class="text-primary">Tutor List</h2>
                         <table class="table table-hover table-bordered mt-3">
@@ -70,10 +72,9 @@
                                     <td>{{this.fullname}}</td>
                                     <td>{{this.email}}</td>
                                     <td>
-                                        <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
+                                        <a href="/userpage/edit/{{this._id}}" class="btn btn-warning">Edit</a>
                                         <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
-                                            <button type="submit" class="btn"
-                                                onclick="return confirm('Are you sure to delete?');">Delete</button>
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete?');">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -81,6 +82,8 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Student List -->
                     <div class="col-md-6">
                         <h2 class="text-primary">Student List</h2>
                         <table class="table table-hover table-bordered mt-3">
@@ -97,10 +100,39 @@
                                     <td>{{this.fullname}}</td>
                                     <td>{{this.email}}</td>
                                     <td>
-                                        <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
+                                        <a href="/userpage/edit/{{this._id}}" class="btn btn-warning">Edit</a>
                                         <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
-                                            <button type="submit" class="btn"
-                                                onclick="return confirm('Are you sure to delete?');">Delete</button>
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin List -->
+                <div class="row mt-4 align-items-start">
+                    <div class="col-md-12">
+                        <h2 class="text-primary">Admin List</h2>
+                        <table class="table table-hover table-bordered mt-3">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each admins}}
+                                <tr>
+                                    <td>{{this.fullname}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>
+                                        <a href="/userpage/edit/{{this._id}}" class="btn btn-warning">Edit</a>
+                                        <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete?');">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -112,4 +144,12 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+    </script>
 </body>
+</html>

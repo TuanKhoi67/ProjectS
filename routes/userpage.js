@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/Users');
+const bcrypt = require('bcrypt');
 
 // Hiển thị trang Admin
 router.get('/admin', async (req, res) => {
   try {
     const tutors = await User.find({ role: 'tutor' });
     const students = await User.find({ role: 'student' });
-    res.render('userpage/admin', { user: req.user, tutors, students });
+    const admins = await User.find({ role: 'admin' });
+    res.render('userpage/admin', { user: req.user, tutors, students, admins });
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server khi lấy danh sách người dùng');
@@ -21,9 +23,32 @@ router.get('/edit/:id', async (req, res) => {
 });
 
 router.post('/edit/:id', async (req, res) => {
-  const { fullname, email, role } = req.body;
-  await User.findByIdAndUpdate(req.params.id, { fullname, email, role });
-  res.redirect('/userpage/admin');
+  try {
+    const { fullname, email, role, password } = req.body;
+
+    // Tìm user hiện tại
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send('Người dùng không tồn tại');
+    }
+
+    // Cập nhật các trường
+    user.fullname = fullname;
+    user.email = email;
+    user.role = role;
+
+    // Nếu mật khẩu được nhập, thì hash và cập nhật
+    if (password && password.trim() !== '') {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+    res.redirect('/userpage/admin');
+  } catch (err) {
+    console.error('Lỗi khi cập nhật người dùng:', err);
+    res.status(500).send('Lỗi server khi cập nhật người dùng');
+  }
 });
 
 router.get('/delete/:id', async (req, res) => {

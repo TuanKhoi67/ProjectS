@@ -1,38 +1,44 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Chỉnh sửa người dùng</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Edit User</h1>
+  <div class="container mt-5">
+    <h2>Edit user information</h2>
 
-        <form action="/userpage/edit/{{user._id}}" method="POST" class="mt-4">
-            <div class="mb-3">
-                <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" name="fullname" class="form-control" value="{{user.fullname}}" required>
-            </div>
+    <form action="/userpage/edit/{{user._id}}" method="POST">
+      <div class="mb-3">
+        <h4 for="fullname" >Name:</h4>
+        <input type="text" class="form-control" id="fullname" name="fullname" value="{{user.fullname}}" required>
+      </div>
 
-            <div class="mb-3">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{user.email}}" required>
-            </div>
+      <div class="mb-3">
+        <h4 for="email" >Email</h4>
+        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required>
+      </div>
 
-            <div class="mb-3">
-                <label for="role">Role</label>
-                <select id="role" name="role" class="form-control">
-                    <option value="student" {{#if (eq user.role "student")}}selected{{/if}}>Student</option>
-                    <option value="tutor" {{#if (eq user.role "tutor")}}selected{{/if}}>Tutor</option>
-                    <option value="admin" {{#if (eq user.role "admin")}}selected{{/if}}>Admin</option>
-                </select>
-            </div>
+      <div class="mb-3">
+        <h4 for="role" >Role</h4>
+        <select class="form-select" id="role" name="role" required>
+          <option value="student" {{#if (eq user.role 'student')}}selected{{/if}}>Student</option>
+          <option value="tutor" {{#if (eq user.role 'tutor')}}selected{{/if}}>Tutor</option>
+          <option value="admin" {{#if (eq user.role 'admin')}}selected{{/if}}>Admin</option>
+        </select>
+      </div>
 
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a href="/userpage/admin" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
+      <div class="mb-3">
+        <h4 for="password" >New password (leave blank if not changed)</label>
+        <input type="password" class="form-control" id="password" name="password">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="/userpage/admin" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+  </div>
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
