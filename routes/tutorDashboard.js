@@ -6,6 +6,7 @@ const Message = require('../models/Message');
 const Meeting = require('../models/Meeting');
 const User = require('../models/Users');
 const Tutor = require('../models/Tutor');
+const Student = require('../models/Student');
 const ClassModel = require('../models/Class');
 const { ensureAuthenticated } = require('../middleware/auth');
 
@@ -27,6 +28,11 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('author', 'fullname');
 
+    const answeredDocsCount = await Document.countDocuments({
+      author: tutorId,
+      comments: { $exists: true, $not: { $size: 0 } }
+    });
+
     const messages = await Message.find({ receiver: tutorId })
       .sort({ createdAt: -1 })
       .limit(5)
@@ -39,10 +45,10 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       .lean();
 
     const meetings = await Meeting.find({ tutor: tutor._id })
-            .populate('student', 'name')
-            .populate('tutor', 'name')
-            .sort({ startTime: 1 })
-            .lean();
+      .populate('student', 'name')
+      .populate('tutor', 'name')
+      .sort({ startTime: 1 })
+      .lean();
 
 
     res.render('dashboard/tutorDashboard', {
@@ -52,6 +58,7 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       messages,
       classes: tutorClasses,
       meetings,
+      answeredDocsCount,
       error: null
     });
   } catch (error) {

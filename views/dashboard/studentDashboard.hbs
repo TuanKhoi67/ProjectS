@@ -23,6 +23,49 @@
 </ul>
 <br>
 <br>
+<h3>📊 Thống kê Blog tháng này</h3>
+<ul>
+  <li><strong>Số blog:</strong> {{totalBlogsThisMonth}}</li>
+  <li><strong>Số lượt thích:</strong> {{totalLikesThisMonth}}</li>
+  <li><strong>Số bình luận:</strong> {{totalCommentsThisMonth}}</li>
+</ul>
+
+<canvas id="monthlyBlogChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('monthlyBlogChart').getContext('2d');
+  const blogChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Blog', 'Like', 'Comment'],
+      datasets: [{
+        label: 'Thống kê tháng này',
+        data: [{{ totalBlogsThisMonth }}, {{ totalLikesThisMonth }}, {{ totalCommentsThisMonth }}],
+  backgroundColor: [
+    'rgba(75, 192, 192, 0.6)',
+    'rgba(255, 206, 86, 0.6)',
+    'rgba(255, 99, 132, 0.6)'
+  ],
+    borderColor: [
+      'rgba(75, 192, 192, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(255, 99, 132, 1)'
+    ],
+      borderWidth: 1
+      }]
+    },
+  options: {
+    responsive: true,
+      scales: {
+      y: {
+        beginAtZero: true,
+          precision: 0
+      }
+    }
+  }
+  });
+</script>
 
 
 <br>
@@ -46,69 +89,128 @@
 
 
 <br>
-<br> 
+<br>
+
+
+<br>
+<br>
 
 <h2>Lớp học của bạn</h2>
 
 {{#if error}}
-  <p>{{error}}</p>
+<p>{{error}}</p>
 {{else}}
-  <ul>
-    {{#each classes}}
-      <li>
-        <strong>{{this.classname}}</strong><br>
-        Giảng viên: {{this.tutor.name}}<br>
-        Ngày tạo: {{this.formatCreateDate}}<br>
-        <strong>Sinh viên tham gia:</strong>
-        <ul>
-          {{#each this.student}}
-            <li>{{this.name}}</li>
-          {{/each}}
-        </ul>
-      </li>
-    {{/each}}
-  </ul>
+<ul>
+  {{#each classes}}
+  <li>
+    <strong>{{this.classname}}</strong><br>
+    Giảng viên: {{this.tutor.name}}<br>
+    Ngày tạo: {{this.formatCreateDate}}<br>
+    <strong>Sinh viên tham gia:</strong>
+    <ul>
+      {{#each this.student}}
+      <li>{{this.name}}</li>
+      {{/each}}
+    </ul>
+  </li>
+  {{/each}}
+</ul>
 {{/if}}
 <br>
 <br>
+<h3>📊 Tình trạng điểm danh theo lớp học</h3>
 
+{{#if attendanceStats.length}}
+{{#each attendanceStats}}
+<div style="margin-bottom: 40px;">
+  <h4>🧑‍🏫 Lớp học: {{this.className}}</h4>
+  <canvas id="attendanceChart{{@index}}" width="300" height="300"></canvas>
+</div>
+{{/each}}
+{{else}}
+<p>Không có dữ liệu điểm danh.</p>
+{{/if}}
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Script render biểu đồ -->
+<script>
+  const attendanceStats = {{{ json attendanceStats }}};
+
+  attendanceStats.forEach((stat, index) => {
+    const ctx = document.getElementById(`attendanceChart${index}`).getContext('2d');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Có mặt', 'Vắng mặt'],
+        datasets: [{
+          data: [stat.present, stat.absent],
+          backgroundColor: ['#4CAF50', '#F44336'],
+          borderColor: ['#ffffff', '#ffffff'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#333',
+              font: {
+                size: 14
+              }
+            }
+          },
+          title: {
+            display: false
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<br>
+<br><br>
 <h3>📅 Danh sách Cuộc họp</h3>
 
 {{#if meetings.length}}
-  <table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-      <tr>
-        <th>Trạng thái</th>
-        <th>Giảng viên</th>
-        <th>Sinh viên</th>
-        <th>Bắt đầu</th>
-        <th>Kết thúc</th>
-        <th>Ghi chú</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each meetings}}
-        <tr>
-          <td>{{this.status}}</td>
-          <td>
-            {{#each this.tutor}}
-              {{this.name}}<br>
-            {{/each}}
-          </td>
-          <td>
-            {{#each this.student}}
-              {{this.name}}<br>
-            {{/each}}
-          </td>
-          <td>{{formatDate this.startTime}}</td>
-          <td>{{formatDate this.endTime}}</td>
-          <td>{{this.note}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Trạng thái</th>
+      <th>Giảng viên</th>
+      <th>Sinh viên</th>
+      <th>Bắt đầu</th>
+      <th>Kết thúc</th>
+      <th>Ghi chú</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each meetings}}
+    <tr>
+      <td>{{this.status}}</td>
+      <td>
+        {{#each this.tutor}}
+        {{this.name}}<br>
+        {{/each}}
+      </td>
+      <td>
+        {{#each this.student}}
+        {{this.name}}<br>
+        {{/each}}
+      </td>
+      <td>{{formatDate this.startTime}}</td>
+      <td>{{formatDate this.endTime}}</td>
+      <td>{{this.note}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
 {{else}}
-  <p>Không có cuộc họp nào.</p>
+<p>Không có cuộc họp nào.</p>
 {{/if}}
 
 
