@@ -56,11 +56,21 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       .populate('sender', 'fullname image')
       .lean();
 
-    // Classes managed by tutor
+    // Classes managed by the tutor
     const tutorClasses = await ClassModel.find({ tutor: tutor._id })
-      .populate('student')
+      .populate('student', '_id user name email') // Populate student with their user ID and details
       .populate('tutor')
       .lean();
+
+    console.log('Tutor Classes:', tutorClasses); // Debugging
+
+    // Extract all students from the classes
+    const tutees = tutorClasses.flatMap(c => c.student); // Directly use the populated student objects
+    console.log('Tutees:', tutees); // Debugging
+
+    // Map student IDs to user IDs
+    const userIds = tutees.map(t => t.user); // Extract user IDs from the populated student objects
+    console.log('User IDs:', userIds); // Debugging
 
     // Meetings
     const meetings = await Meeting.find({ tutor: tutor._id })
@@ -73,8 +83,6 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
     const messageSenders = await Message.find({ receiver: tutorId }).distinct('sender');
     const meetingStudents = await Meeting.find({ tutor: tutor._id }).distinct('student');
     const tuteeIds = [...new Set([...messageSenders, ...meetingStudents])];
-
-    const tutees = await User.find({ _id: { $in: tuteeIds }, role: 'student' }).lean();
 
     const messagesThisWeek = await Message.countDocuments({
       sender: { $in: tuteeIds },
@@ -91,8 +99,8 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
 
     // Build tutee data for table & chart
     const tuteeData = await Promise.all(tutees.map(async (t) => {
-      const lastMsg = await Message.findOne({ sender: t._id }).sort({ createdAt: -1 });
-      const lastMeeting = await Meeting.findOne({ student: t._id }).sort({ startTime: -1 });
+      const lastMsg = await Message.findOne({ sender: t.user }).sort({ createdAt: -1 }); // Use user ID
+      const lastMeeting = await Meeting.findOne({ student: t.user }).sort({ startTime: -1 }); // Use user ID
 
       let lastActiveDate;
       if (lastMsg && lastMeeting) {
@@ -105,13 +113,14 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
 
       const lastActive = lastActiveDate ? lastActiveDate.fromNow() : 'No activity';
 
-      const messageCount = await Message.countDocuments({ sender: t._id });
-      const meetingCount = await Meeting.countDocuments({ student: t._id });
-      const docCount = await Document.countDocuments({ author: t._id });
+      const messageCount = await Message.countDocuments({ sender: t.user }); // Use user ID
+      const meetingCount = await Meeting.countDocuments({ student: t._id }); // Use user ID
+      const docCount = await Document.countDocuments({ author: t.user }); // Use user ID
 
       return {
-        _id: t._id,
-        fullname: t.fullname,
+        _id: t._id, // Student ID
+        userId: t.user, // Add the user ID here
+        fullname: t.name,
         email: t.email,
         lastActive,
         lastActiveDate: lastActiveDate || null,
@@ -120,6 +129,8 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
         documentCount: docCount
       };
     }));
+
+    console.log('Tutee Data:', tuteeData); // Debugging
 
     // Exception reporting
     const inactive7 = tuteeData.filter(t => !t.lastActiveDate || moment().diff(t.lastActiveDate, 'days') >= 7).length;
