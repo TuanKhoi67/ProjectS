@@ -1,65 +1,78 @@
-<!DOCTYPE html>
-<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Tạo Lịch Họp</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <title>Create a Meeting</title>
 </head>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
+    
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>
+
 <body>
     <div class="container mt-5">
-        <h2 class="mb-4">Tạo Lịch Họp</h2>
-        <form id = "createMeetingForm" action="/api/meeting/create" method="POST">
+        <h2 class="mb-4">Create a Meeting</h2>
+        <form action="/api/meeting/create" method="POST">
             <div class="mb-3">
-                <label>Tiêu đề</label>
-                <input type="text" class="form-control" name="title" required>
+                <strong>Title</strong>
+                <input type="text" class="form-control w-25" name="title" required>
             </div>
             <div class="mb-3">
-                <label>Hình thức</label>
-                <input type="text" class="form-control" name="form" required>
+                <strong>Form</strong>
+                <input type="text" class="form-control w-25" name="form" required>
             </div>
             <div class="mb-3">
-                <label>Địa điểm</label>
-                <input type="text" class="form-control" name="location" required>
+                <strong>Location</strong>
+                <input type="text" class="form-control w-25" name="location" required>
             </div>
             <div class="mb-3">
-                <label>Sinh viên</label>
-                <select class="form-control" name="students[]" required>
-                    {{#each students}}
-                        <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
-                <select class="form-control" name="students[]" required>
-                    {{#each students}}
-                        <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
+                <strong>Student</strong><br>
+                {{#each students}}
+                <input type="checkbox" name="students[]" value="{{this._id}}"> {{this.name}} <br>
+                {{/each}}
             </div>
+
             <div class="mb-3">
-                <label>Giáo viên</label>
-                <select class="form-control" name="tutors[]" required>
+                <strong>Tutor</strong>
+                <select class="form-select w-25" name="tutors[]" required>
                     {{#each tutors}}
-                        <option value="{{this._id}}">{{this.name}}</option>
+                    <option value="{{this._id}}">{{this.name}}</option>
                     {{/each}}
                 </select>
             </div>
-                        <div class="mb-3">
-                <label>Thời gian bắt đầu</label>
+            <div class="mb-3">
+                <strong>Begin Time</strong>
                 <input type="dateTime-local" name="startTime" required>
             </div>
             <div class="mb-3">
-                <label>Thời gian kết thúc</label>
+                <strong>End Time</strong>
                 <input type="dateTime-local" name="endTime" required>
             </div>
             <div class="mb-3">
-                <label>Ghi chú</label>
-                <textarea class="form-control" name="note"></textarea>
+                <strong>Note</strong>
+                <textarea class="form-control w-35" name="note"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Tạo Lịch Họp</button>
+            <button type="submit" class="btn btn-primary">Create</button>
         </form>
     </div>
 </body>
-</html>
-
 
 <script>
 document.getElementById('createMeetingForm').addEventListener('submit', async function (e) {
