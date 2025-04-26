@@ -1,111 +1,144 @@
 const express = require('express');
 const router = express.Router();
 const Blog = require('../models/Blog');
-const Message = require('../models/Message');
-const Meeting = require('../models/Meeting');
 const Document = require('../models/Document');
+const Meeting = require('../models/Meeting');
+const Message = require('../models/Message');
 var ClassModel = require('../models/Class');
-const User = require('../models/Users');
 const Student = require('../models/Student');
 const Attendance = require('../models/Attendance');
 const { ensureAuthenticated } = require('../middleware/auth');
-
+const moment = require('moment');
 
 router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
-    try {
-        const studentId = req.user._id;
-        const student = await Student.findOne({ user: studentId });
+  try {
+    const studentId = req.user._id;
+    const student = await Student.findOne({ user: studentId });
 
-        const userBlogs = await Blog.find({ author: studentId })
-            .sort({ createdAt: -1 })
-            .populate('author', 'fullname image');
+    // Blog data
+    const blogs = await Blog.find({ author: studentId })
+      .sort({ createdAt: -1 })
+      .populate('author', 'fullname image');
 
-        const messages = await Message.find({ receiver: studentId })
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate('sender', 'fullname image')
-            .populate('receiver', 'fullname image')
-            .populate('sender receiver', 'fullname').lean();
+    const totalBlogs = blogs.length;
+    const totalLikes = blogs.reduce((acc, blog) => acc + (blog.likes || 0), 0);
+    const totalComments = blogs.reduce((acc, blog) => acc + (blog.comments.length || 0), 0);
 
-        const studentClasses = await ClassModel.find({ student: student._id })
-            .populate('student')
-            .populate('tutor')
-            .sort({ createDate: -1 });
-        console.log("Classes found:", studentClasses);
+    const likedBlogs = await Blog.find({ likedBy: studentId });
+    const commentedBlogs = await Blog.find({ 'comments.user': studentId });
 
-        if (!studentClasses.length) {
-            return res.render('dashboard/studentDashboard', {
-                classes: [],
-                error: 'Bạn chưa tham gia lớp học nào.'
-            });
-        }
+    // Messages
+    const recentMessages = await Message.find({ receiver: studentId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate('sender', 'fullname image')
+      .lean();
 
-        const meetings = await Meeting.find({ student: student._id })
-            .populate('student', 'name')
-            .populate('tutor', 'name')
-            .sort({ startTime: 1 })
-            .lean();
+    // Classes
+    const classes = await ClassModel.find({ student: student._id })
+      .populate('student')
+      .populate('tutor')
+      .sort({ createDate: -1 });
+    console.log("Classes found:", classes);
 
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        const blogsThisMonth = await Blog.find({
-            author: studentId,
-            createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-        }).lean();
-
-        const totalBlogsThisMonth = blogsThisMonth.length;
-        let totalLikesThisMonth = 0;
-        let totalCommentsThisMonth = 0;
-
-        blogsThisMonth.forEach(blog => {
-            totalLikesThisMonth += blog.likes || 0;
-            totalCommentsThisMonth += blog.comments?.length || 0;
-        });
-
-        const attendanceStats = [];
-
-        for (const classItem of studentClasses) {
-            const studentsInClass = classItem.student.map(s => s._id.toString());
-
-            if (studentsInClass.includes(student._id.toString())) {
-                const presentCount = await Attendance.countDocuments({
-                    student_id: student._id,
-                    status: 'present'
-                });
-
-                const absentCount = await Attendance.countDocuments({
-                    student_id: student._id,
-                    status: 'absent'
-                });
-
-                attendanceStats.push({
-                    className: classItem.name || 'Lớp không tên',
-                    present: presentCount,
-                    absent: absentCount
-                });
-            }
-        }
-
-        res.render('dashboard/studentDashboard', {
-            user: req.user,
-            student,
-            blogs: userBlogs,
-            messages,
-            classes: studentClasses,
-            meetings,
-            totalBlogsThisMonth,
-            totalLikesThisMonth,
-            totalCommentsThisMonth,
-            attendanceStats,
-            error: null
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Something went wrong.');
+    if (!classes.length) {
+      return res.render('dashboard/studentDashboard', {
+        classes: [],
+        error: 'Bạn chưa tham gia lớp học nào.'
+      });
     }
-});
 
+    // Meetings
+    const meetings = await Meeting.find({ student: student._id })
+      .populate('student', 'name')
+      .populate('tutor', 'name')
+      .sort({ startTime: 1 })
+      .lean();
+
+    // Documents
+    const documents = await Document.find({ author: studentId });
+
+    // Weekly activity
+    const today = moment().startOf('day');
+    const pastWeek = [...Array(7).keys()].map(i =>
+      today.clone().subtract(i, 'days').format('YYYY-MM-DD')
+    );
+    const weeklyActivity = {};
+    pastWeek.reverse().forEach(date => weeklyActivity[date] = { blogs: 0, messages: 0, comments: 0 });
+
+    blogs.forEach(blog => {
+      const date = moment(blog.createdAt).format('YYYY-MM-DD');
+      if (weeklyActivity[date]) weeklyActivity[date].blogs += 1;
+      blog.comments.forEach(comment => {
+        const cDate = moment(comment.createdAt).format('YYYY-MM-DD');
+        if (weeklyActivity[cDate]) weeklyActivity[cDate].comments += 1;
+      });
+    });
+
+    const messages = await Message.find({ receiver: studentId });
+    messages.forEach(msg => {
+      const msgDate = moment(msg.createdAt).format('YYYY-MM-DD');
+      if (weeklyActivity[msgDate]) weeklyActivity[msgDate].messages += 1;
+    });
+
+    // Document type breakdown
+    const fileTypes = { pdf: 0, word: 0, image: 0, other: 0 };
+    documents.forEach(doc => {
+      const ext = (doc.documentFile || doc.imageUrl || '').split('.').pop()?.toLowerCase();
+      if (ext === 'pdf') fileTypes.pdf++;
+      else if (['doc', 'docx'].includes(ext)) fileTypes.word++;
+      else if (['jpg', 'jpeg', 'png'].includes(ext)) fileTypes.image++;
+      else fileTypes.other++;
+    });
+
+    // Attendance
+    const attendanceStats = [];
+
+    for (const classItem of classes) {
+      const studentsInClass = classItem.student.map(s => s._id.toString());
+
+      if (studentsInClass.includes(student._id.toString())) {
+        const presentCount = await Attendance.countDocuments({
+          student_id: student._id,
+          status: 'present'
+        });
+
+        const absentCount = await Attendance.countDocuments({
+          student_id: student._id,
+          status: 'absent'
+        });
+
+        attendanceStats.push({
+          className: classItem.name || 'Lớp không tên',
+          present: presentCount,
+          absent: absentCount
+        });
+      }
+    }
+
+    res.render('dashboard/studentDashboard', {
+      studentName: req.user.fullname,
+      student,
+      blogs,
+      recentMessages,
+      classes,
+      meetings,
+      documents,
+      chartData: {
+        totalBlogs,
+        totalLikes,
+        totalComments,
+        likedCount: likedBlogs.length,
+        commentedCount: commentedBlogs.length,
+        weeklyActivity,
+        fileTypes
+      },
+      attendanceStats
+    });
+  } catch (error) {
+    console.error('Error fetching student dashboard data:', error);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = router;
