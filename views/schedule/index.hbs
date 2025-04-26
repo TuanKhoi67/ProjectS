@@ -25,17 +25,18 @@
 
 {{!-- schedule_index.hbs --}}
 
-<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar" id="sidebar">
-    <h3>Dashboard</h3>
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
     <hr>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
     </ul>
@@ -48,21 +49,25 @@
     }
 </script>
 
+<div class="content">
+
+
 <div class="card-header text-center">
-    <h3>{{title}}</h3>
+    <h3>Schedule</h3>
     <p>Week: {{weekRange}}</p>
 </div>
-<div class="card-body">
+<div class="card-body" style="text-align: center;">
     <div class="col-6 col-md-4">
         <a href="/schedule/add" class="btn btn-primary" style="margin-left: 100px;">Add Schedule</a>
+        <a href="/attendance/all" class="btn btn-primary">View Attendance</a>
     </div>
-    <table class="table table-bordered">
+    <table class="table table-bordered w-30">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Slot</th>
                 <th>Class</th>
-                <th>Action</th>
+                <th class="w-25">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -70,7 +75,7 @@
             <tr>
                 <td>{{this.day}}</td>
                 <td>{{this.time}}</td>
-                <td>{{#if this.class}} {{this.class.classname}} {{else}} Không có lớp {{/if}}</td>
+                <td>{{#if this.class}} {{this.class.classname}} {{else}} No class exist {{/if}}</td>
 
                 <td>
                     <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
@@ -85,5 +90,5 @@
 
     <a href="/schedule/schedule-view/{{prevWeek}}" class="btn btn-light" style="margin-left: 20px;">Previous Week</a>
     <a href="/schedule/schedule-view/{{nextWeek}}" class="btn btn-light" style="margin-left: 80%;">Next Week</a>
-
+</div>
 </div>
