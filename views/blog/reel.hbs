@@ -258,7 +258,7 @@
                 {{#if ../user}}
                 <form action="/blog/reel/comment/{{this._id}}" method="POST" class="comment-form">
                     <div class="comment-input">
-                        <img src="{{this.avatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
+                        <img src="{{../userAvatar}}" alt="Avatar" class="rounded-circle" width="40" height="40">
                         <input type="text" name="content" placeholder="Write a comment..." required>
                         <button type="submit" class="btn">Post</button>
                     </div>

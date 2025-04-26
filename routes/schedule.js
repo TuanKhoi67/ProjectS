@@ -8,7 +8,7 @@ var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
 const { ensureAuthenticated, checkAdmin, checkTutor } = require('../middleware/auth');
 
-router.get('/tutor-attendance', ensureAuthenticated, checkAdmin, checkTutor, async (req, res) => {
+router.get('/tutor-attendance', ensureAuthenticated,  async (req, res) => {
     try {
       const user = req.user; // do Passport gán user vào req.user
   
