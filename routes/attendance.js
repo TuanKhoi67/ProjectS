@@ -101,4 +101,19 @@ router.post('/take-attendance/:scheduleId', ensureAuthenticated, checkAdmin, asy
   }
 });
 
+router.get('/all/delete/:id', async (req, res) => {
+  await AttendanceModel.findByIdAndDelete(req.params.id);
+res.redirect('/attendance/all');
+});
+
+router.post('/all/delete/:id', async (req, res) => {
+    try {
+        await AttendanceModel.findByIdAndDelete(req.params.id);
+        res.redirect('attendance/all'); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Deleting error.");
+    }
+});
+
 module.exports = router;
