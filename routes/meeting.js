@@ -119,5 +119,19 @@ router.post("/create", async (req, res) => {
     }
   });
 
+  router.get('/delete/:id', async (req, res) => {
+    await MeetingModel.findByIdAndDelete(req.params.id);
+  res.redirect('/api/meeting');
+  });
+
+  router.post('/delete/:id', async (req, res) => {
+      try {
+          await MeetingModel.findByIdAndDelete(req.params.id);
+          res.redirect('api/meeting'); 
+      } catch (err) {
+          console.error(err);
+          res.status(500).send("Deleting error.");
+      }
+  });
 
 module.exports = router;
