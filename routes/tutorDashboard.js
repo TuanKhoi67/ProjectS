@@ -30,12 +30,24 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       .lean();
 
     const documentCount = documents.length;
-    const totalComments = documents.reduce((sum, doc) => sum + (doc.comments?.length || 0), 0);
+    const totalDocComments = documents.reduce((sum, doc) => sum + (doc.comments?.length || 0), 0);
 
     const answeredDocsCount = await Document.countDocuments({
       author: tutorId,
       comments: { $exists: true, $not: { $size: 0 } }
     });
+
+    // Blog data
+    const blogs = await Blog.find({ author: tutorId })
+      .sort({ createdAt: -1 })
+      .populate('author', 'fullname image');
+
+    const totalBlogs = blogs.length;
+    const totalLikes = blogs.reduce((acc, blog) => acc + (blog.likes || 0), 0);
+    const totalBlogComments = blogs.reduce((acc, blog) => acc + (blog.comments.length || 0), 0);
+
+    const likedBlogs = await Blog.find({ likedBy: tutorId });
+    const commentedBlogs = await Blog.find({ 'comments.user': tutorId });
 
     // Recent Messages
     const messages = await Message.find({ receiver: tutorId })
@@ -118,8 +130,14 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
       tutor,
       documents,
       documentCount,
-      totalComments,
+      totalDocComments,
       answeredDocsCount,
+      blogs,
+      totalBlogs,
+      totalLikes,
+      totalBlogComments,
+      likedCount: likedBlogs.length,
+      commentedCount: commentedBlogs.length,
       messages,
       tutorClasses,
       meetings,
