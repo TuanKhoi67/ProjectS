@@ -7,6 +7,49 @@ var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
 
+router.get('/tutor-attendance', ensureAuthenticated, async (req, res) => {
+    try {
+      const user = req.user; // do Passport gán user vào req.user
+  
+      if (user.role === 'tutor') {
+        const tutor = await TutorModel.findOne({ email: user.email });
+  
+        if (!tutor) {
+          req.flash('error', 'Không tìm thấy giáo viên tương ứng!');
+          return res.redirect('/auth/login');
+        }
+  
+        const classes = await ClassModel.find({ tutor: tutor._id });
+        const classIds = classes.map(cls => cls._id);
+  
+        const schedules = await ScheduleModel.find({ class: { $in: classIds } })
+          .populate('class');
+  
+        return res.render('schedule/tutor', {
+          tutor: {
+            id: tutor._id,
+            name: tutor.name,
+            email: tutor.email,
+          },
+          schedules: schedules.map(sch => ({
+            _id: sch._id,
+            day: sch.day,
+            time: sch.time,
+            classname: sch.class.classname
+          }))
+        });
+      } else {
+        // Role khác (student, admin)
+        return res.render('/class', { user });
+      }
+  
+    } catch (error) {
+      console.error(error);
+      req.flash('error', 'Lỗi khi hiển thị dashboard');
+      res.redirect('/auth/login');
+    }
+  });
+
 
 router.get('/schedule-view/:weekOffset?', async (req, res) => {
     let weekOffset = parseInt(req.params.weekOffset) || 1;
