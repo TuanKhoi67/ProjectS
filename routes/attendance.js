@@ -43,7 +43,7 @@ router.get('/all', ensureAuthenticated, checkAdmin, async (req, res) => {
   }
 });
 
-router.get('/take-attendance/:scheduleId', ensureAuthenticated, checkAdmin, async (req, res) => {
+router.get('/take-attendance/:scheduleId', ensureAuthenticated, async (req, res) => {
     try {
       const scheduleId = req.params.scheduleId;
   
@@ -81,7 +81,7 @@ router.get('/take-attendance/:scheduleId', ensureAuthenticated, checkAdmin, asyn
   });
 
 // Route xử lý điểm danh
-router.post('/take-attendance/:scheduleId', ensureAuthenticated, checkAdmin, async (req, res) => {
+router.post('/take-attendance/:scheduleId', ensureAuthenticated,  async (req, res) => {
   const { attendance } = req.body; // Object chứa student_id và trạng thái
   try {
     for (const [studentId, status] of Object.entries(attendance)) {
