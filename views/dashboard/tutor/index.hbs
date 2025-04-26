@@ -1,33 +1,33 @@
-<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar" id="sidebar">
-    <h3>Dashboard</h3>
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
     <hr>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/blog/">Blog Management</a></li>
-        <li><a href="/document/">Document Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
     </ul>
 </div>
 
-<div class="main-content">
+<div class="content">
     <h1>Tutor Informations Management</h1>
-    <h3>Tutor List: <span id="total">{{totalTutors}}</span></h3>
+
+    <h3>Tutor Total: <span id="total">{{totalTutors}}</span></h3>
 
     <div class="table-wrapper">
-        <table class="table table-striped-columns table-primary">
+        <table class="table table-bordered table-primary">
             <thead>
                 <tr>
                     <th>Tutor name</th>
                     <th>Email</th>
                     <th>Telephone</th>
                     <th>Department</th>
-                    <th>Enrollment Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -38,7 +38,6 @@
                     <td>{{ email }}</td>
                     <td>{{ telephone }}</td>
                     <td>{{ department }}</td>
-                    <td>{{ formatDate enrollmentDate }}</td>
                     <td>
                         <a class="btn button-3" href="/admin/dashboard/tutor-edit/{{ _id }}">Edit</a>
                         <a class="btn button-3" href="/admin/dashboard/tutor-delete/{{ _id }}"
