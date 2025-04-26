@@ -109,10 +109,10 @@ router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
         });
 
         attendanceStats.push({
-          className: classItem.name || 'Lớp không tên',
+          classname: classItem.classname || 'Lớp không tên',
           present: presentCount,
           absent: absentCount
-        });
+      });
       }
     }
 

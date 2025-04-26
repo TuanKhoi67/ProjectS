@@ -9,9 +9,10 @@ var StudentModel = require('../models/Student');
 var TutorModel = require('../models/Tutor');
 var UserModel = require('../models/Users')
 const upload = require('../config/upload');
+const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
 
 /* ------------------------ Phần hiển thị biểu đồ------------------------ */
-router.get('/', async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const currentMonth = new Date().getMonth();
         const currentYear = new Date().getFullYear();
@@ -300,7 +301,7 @@ router.get('/', async (req, res) => {
 
 /* ------------------------ Phần của sinh viên ------------------------ */
 
-router.get("/student", async (req, res) => {
+router.get("/student", ensureAuthenticated, checkAdmin, async (req, res) => {
     var students = await StudentModel.find({});
     res.render("dashboard/student/index", { students });
 });
@@ -321,14 +322,14 @@ router.post('/add-student', upload.single('image'), async (req, res) => {
    res.redirect('/admin/dashboard/student');
 });
 
-router.get("/student-edit/:id", async (req, res) => {
+router.get("/student-edit/:id", ensureAuthenticated, async (req, res) => {
     var id = req.params.id;
     var student = await StudentModel.findById(id);
     console.log(student);
     res.render("dashboard/student/edit", { student });
 });
 
-router.post("/student-edit/:id", async (req, res) => {
+router.post("/student-edit/:id", ensureAuthenticated, async (req, res) => {
     var id = req.params.id;
     var student = req.body;
     try {
@@ -350,7 +351,7 @@ router.get('/student-delete/:id', async (req, res) => {
 
  /* ------------------------ Phần của giáo viên ------------------------ */
 
-router.get('/tutor', async (req, res) => {
+router.get('/tutor', ensureAuthenticated, checkAdmin, async (req, res) => {
   var tutors = await TutorModel.find({});
   res.render('dashboard/tutor/index', { tutors });
 });

@@ -4,9 +4,9 @@ const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
 const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+const { ensureAuthenticated, checkAdmin } = require('../middleware/auth');
 
-
-router.get('/', async (req, res) => {
+router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
   try {
       const meetings = await MeetingModel.find()
           .populate('student')
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 });
 
 // Route GET: Render form tạo meeting
-router.get("/create", async (req, res) => {
+router.get("/create", ensureAuthenticated, checkAdmin, async (req, res) => {
   try {
       const students = await StudentModel.find().lean();
       const tutors = await TutorModel.find().lean();

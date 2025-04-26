@@ -6,9 +6,9 @@ var ScheduleModel = require('../models/Schedule');
 var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
-const { ensureAuthenticated } = require('../middleware/auth');
+const { ensureAuthenticated, checkAdmin, checkTutor } = require('../middleware/auth');
 
-router.get('/tutor-attendance', ensureAuthenticated, async (req, res) => {
+router.get('/tutor-attendance', ensureAuthenticated, checkAdmin, checkTutor, async (req, res) => {
     try {
       const user = req.user; // do Passport gán user vào req.user
   
@@ -74,7 +74,7 @@ router.get('/schedule-view/:weekOffset?', async (req, res) => {
 });
 
 // Hiển thị form tạo lịch học
-router.get('/add', async (req, res) => {
+router.get('/add', checkAdmin, async (req, res) => {
     try {
         const classes = await ClassModel.find(); // Lấy danh sách tất cả lớp học
         res.render('schedule/add', { 
@@ -169,7 +169,7 @@ router.get('/edit/:id', async (req, res) => {
     }
 });
 
-router.post('/edit/:id', async (req, res) => {
+router.post('/edit/:id', checkAdmin,async (req, res) => {
     try {
         // Lấy dữ liệu từ request body (đổi class thành classId)
         const { day, time, classId } = req.body;

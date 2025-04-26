@@ -509,7 +509,7 @@
 
     // Prepare attendance data grouped by class
     const attendanceData = {
-      classes: attendanceStats.map(stat => stat.className),
+      classes: attendanceStats.map(stat => stat.classname),
       presentCounts: attendanceStats.map(stat => stat.present),
       absentCounts: attendanceStats.map(stat => stat.absent)
     };
