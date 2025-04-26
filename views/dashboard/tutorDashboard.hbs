@@ -161,6 +161,31 @@
     font-size: 0.9rem;
   }
 
+  .profile-btn,
+  .attendance-btn,
+  .edit-btn,
+  .delete-btn {
+    background-color: #4e73df;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    /* Padding for better spacing */
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .profile-btn:hover,
+  .attendance-btn:hover,
+  .edit-btn:hover,
+  .delete-btn:hover {
+    background-color: #3b3bc0;
+  }
+
   .card-custom {
     border-radius: 1rem;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
@@ -356,7 +381,7 @@
               <td>{{this.messageCount}}</td>
               <td>{{this.meetingCount}}</td>
               <td>{{this.documentCount}}</td>
-              <td><a href="/profile/student/{{this._id}}" class="btn btn-sm">Profile</a></td>
+              <td><a href="/profile/student/{{this.userId}}" class="profile-btn">Profile</a></td>
             </tr>
             {{/each}}
           </tbody>
@@ -376,7 +401,7 @@
             <p><strong>Students:</strong>
               {{#each this.student}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
             </p>
-            <a href="/schedule/tutor-attendance" class="btn btn-sm mt-2">Take Attendance</a>
+            <a href="/schedule/tutor-attendance" class="attendance-btn mt-2">Take Attendance</a>
           </div>
         </div>
         {{/each}}
@@ -408,10 +433,10 @@
             <div class="blog-content-dashboard">{{this.content}}</div>
 
             <div class="blog-actions-dashboard">
-              <a href="/blog/edit/{{this._id}}" class="btn btn-sm"><i class="fa-regular fa-pen-to-square"></i>
+              <a href="/blog/edit/{{this._id}}" class="edit-btn"><i class="fa-regular fa-pen-to-square"></i>
                 Edit</a>
               <form action="/blog/delete/{{this._id}}" method="POST" onsubmit="return confirm('Delete blog?');">
-                <button type="submit" class="btn btn-sm"><i class="fa-regular fa-trash-can"></i> Delete</button>
+                <button type="submit" class="delete-btn"><i class="fa-regular fa-trash-can"></i> Delete</button>
               </form>
             </div>
           </div>
