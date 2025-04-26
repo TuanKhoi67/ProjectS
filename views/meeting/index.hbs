@@ -10,6 +10,8 @@
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/blog">Blog Management</a></li>
+        <li><a href="/document">Document Management</a></li>
         <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
@@ -39,6 +41,7 @@
       <th>Student</th>
       <th>Note</th>
       <th>Date</th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody>
@@ -62,6 +65,9 @@
         </td>
         <td>{{note}}</td>
         <td>{{formatDate createDate}}</td>
+        <td>
+          <a class="btn button-3" href="meeting/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this meeting ?');">Delete</a></td>
       </tr>
     {{/each}}
   </tbody>
