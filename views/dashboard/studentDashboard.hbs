@@ -1,219 +1,551 @@
-<div style="display: flex; align-items: center; gap: 10px;">
-  <img src="{{student.imageStudent}}" alt="Avatar" width="60" height="60" style="border-radius: 50%;">
-  <h1>Chào mừng, {{user.fullname}}!</h1>
-</div>
+<head>
+  <title>Student Dashboard</title>
+</head>
 
-<hr>
+<style>
+  .dashboard-section {
+    margin-bottom: 2.5rem;
+  }
 
-<h2>📚 Bài Blog Mới Nhất</h2>
-<ul style="list-style: none; padding: 0;">
-  {{#each blogs}}
-  <li style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img src="{{this.author.image}}" alt="avatar" width="40" height="40" style="border-radius: 50%;">
-      <div>
-        <strong>{{this.title}}</strong><br>
-        <small>Bởi {{this.author.fullname}} - {{this.createdAt}}</small>
-      </div>
-    </div>
-    <p style="margin-top: 10px;">{{this.content}}</p>
-    <p>❤️ {{this.likes}} like | 💬 {{this.comments.length}} bình luận</p>
-  </li>
-  {{/each}}
-</ul>
-<br>
-<br>
-<h3>📊 Thống kê Blog tháng này</h3>
-<ul>
-  <li><strong>Số blog:</strong> {{totalBlogsThisMonth}}</li>
-  <li><strong>Số lượt thích:</strong> {{totalLikesThisMonth}}</li>
-  <li><strong>Số bình luận:</strong> {{totalCommentsThisMonth}}</li>
-</ul>
+  .student-dashboard-header {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #2a2a91;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
 
-<canvas id="monthlyBlogChart" width="400" height="200"></canvas>
+  .meeting-card,
+  .class-card,
+  .doc-card,
+  .blog-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-left: 4px solid #2a2a91;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+    height: 240px;
+    /* Set a fixed height */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+  }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const ctx = document.getElementById('monthlyBlogChart').getContext('2d');
-  const blogChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Blog', 'Like', 'Comment'],
-      datasets: [{
-        label: 'Thống kê tháng này',
-        data: [{{ totalBlogsThisMonth }}, {{ totalLikesThisMonth }}, {{ totalCommentsThisMonth }}],
-  backgroundColor: [
-    'rgba(75, 192, 192, 0.6)',
-    'rgba(255, 206, 86, 0.6)',
-    'rgba(255, 99, 132, 0.6)'
-  ],
-    borderColor: [
-      'rgba(75, 192, 192, 1)',
-      'rgba(255, 206, 86, 1)',
-      'rgba(255, 99, 132, 1)'
-    ],
-      borderWidth: 1
-      }]
-    },
-  options: {
-    responsive: true,
-      scales: {
-      y: {
-        beginAtZero: true,
-          precision: 0
-      }
+  .message-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-left: 4px solid #2a2a91;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+    height: 505px;
+    /* Set a fixed height */
+  }
+
+  .meeting-card:hover,
+  .class-card:hover,
+  .message-card:hover,
+  .doc-card:hover,
+  .blog-card:hover {
+    background-color: #eef2ff;
+  }
+
+  .class-card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2a2a91;
+    margin-bottom: 0.5rem;
+  }
+
+  .class-card-meta {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 0.3rem;
+  }
+
+  .class-card-student-list {
+    margin-left: 1rem;
+    list-style-type: disc;
+  }
+
+  .blog-card-dashboard {
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    background: #fff;
+    padding: 1rem;
+    height: 100%;
+  }
+
+  .blog-card-dashboard:hover {
+    transform: scale(1.02);
+  }
+
+  .blog-img-dashboard {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .blog-title-dashboard {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2a2a91;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-meta-dashboard {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-content-dashboard {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .blog-actions-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .blog-actions-dashboard form,
+  .blog-actions-dashboard a {
+    flex-grow: 1;
+  }
+
+  .blog-actions-dashboard .btn {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+
+  .meeting-item-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: 0.3s;
+  }
+
+  .meeting-item-card:hover {
+    background-color: #eef2ff;
+  }
+
+  .meeting-status .badge {
+    font-size: 0.85rem;
+  }
+
+  .student-chart-contaier {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 0.75rem;
+    /* reduced padding */
+    margin-bottom: 1.5rem;
+    /* smaller spacing */
+    height: 260px;
+    /* smaller container height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .student-chart-contaier canvas {
+    max-height: 220px !important;
+    /* force canvas to scale down */
+  }
+
+  @media (max-width: 576px) {
+
+    .class-card,
+    .meeting-card,
+    .doc-card {
+      overflow: visible;
+      height: auto;
+    }
+
+    .message-card {
+      margin-bottom: 0px;
     }
   }
-  });
-</script>
+</style>
 
+<body>
+  <div class="container py-4">
+    <h2 class="mb-4">🎓 Hello, {{studentName}}!</h2>
 
-<br>
-<hr>
+    <!-- === Chart Section === -->
+    <div class="dashboard-section">
+      <div class="student-dashboard-header">📊 Activity Overview</div>
 
-<h2>✉️ Tin nhắn gần đây</h2>
-<ul style="list-style: none; padding: 0;">
-  {{#each messages}}
-  <li style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img src="{{this.sender.image}}" alt="avatar" width="40" height="40" style="border-radius: 50%;">
-      <div>
-        <strong>Từ: {{this.sender.fullname}}</strong><br>
-        <small>{{this.createdAt}}</small>
+      <div class="row g-4">
+        <!-- Row 1: Interaction + Blog Stats -->
+        <div class="col-12 col-md-6">
+          <div class="student-chart-contaier">
+            <canvas id="interactionChart"></canvas>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="student-chart-contaier">
+            <canvas id="myBlogsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Row 2: Document Types + Weekly Activity -->
+        <div class="col-12 col-md-6">
+          <div class="student-chart-contaier">
+            <canvas id="fileTypesChart"></canvas>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="student-chart-contaier">
+            <canvas id="weeklyActivityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Row 3: Attendance (Full-width) -->
+        <div class="col-12">
+          <div class="student-chart-contaier">
+            <canvas id="attendanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classes Section -->
+      <div class="dashboard-section">
+        <div class="student-dashboard-header">🏫 Your Classes</div>
+        {{#if error}}
+        <p>{{error}}</p>
+        {{else}}
+        {{#each classes}}
+        <div class="meeting-card">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">{{this.classname}}</h5>
+            <small class="text-muted">Created: {{this.formatCreateDate}}</small>
+          </div>
+          <p><strong>Tutor:</strong> {{this.tutor.name}}</p>
+          <p><strong>Participating Students:</strong></p>
+          <ul class="mb-2">
+            {{#each this.student}}
+            <li>{{this.name}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/each}}
+        {{/if}}
+      </div>
+
+      <!-- === Blog Section Next === -->
+      <div class="dashboard-section mt-5">
+        <div class="student-dashboard-header">📝 Your Blog</div>
+        {{#if blogs.length}}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+          {{#each blogs}}
+          <div class="col">
+            <div class="blog-card-dashboard d-flex flex-column">
+              {{#if this.image}}
+              <img src="{{absolutePath this.image}}" alt="Blog Image" class="blog-img-dashboard" />
+              {{else}}
+              <div class="bg-secondary text-white text-center py-4 rounded mb-2">No Image</div>
+              {{/if}}
+
+              <div class="blog-title-dashboard">{{this.title}}</div>
+              <div class="blog-meta-dashboard">
+                <i class="fa-solid fa-heart"> {{this.likes}}</i> |
+                <i class="fa-solid fa-comment-dots"> {{this.comments.length}}</i>
+              </div>
+              <div class="blog-content-dashboard">{{this.content}}</div>
+
+              <div class="blog-actions-dashboard">
+                <a href="/blog/edit/{{this._id}}" class="btn btn-sm"><i class="fa-regular fa-pen-to-square"></i>
+                  Edit</a>
+                <form action="/blog/delete/{{this._id}}" method="POST" onsubmit="return confirm('Delete blog?');">
+                  <button type="submit" class="btn btn-sm"><i class="fa-regular fa-trash-can"></i> Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="text-muted">You haven't posted any blogs yet.</p>
+        {{/if}}
+      </div>
+
+      <!-- === Messages (left), Meetings + Documents (right) === -->
+      <div class="dashboard-section mt-5">
+        <div class="row g-4">
+          <!-- Messages Left -->
+          <div class="col-12 col-lg-6">
+            <div class="message-card">
+              <div class="student-dashboard-header">💬 Messages</div>
+              {{#if recentMessages.length}}
+              {{#each recentMessages}}
+              <div>
+                <strong>{{this.sender.fullname}}</strong>: {{this.content}}<br />
+                <small>{{this.createdAt}}</small>
+                <hr />
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No messages.</p>
+              {{/if}}
+            </div>
+          </div>
+
+          <!-- Meetings + Documents Right -->
+          <div class="col-12 col-lg-6">
+            <div class="meeting-card mb-4">
+              <div class="student-dashboard-header">📅 Meetings</div>
+              {{#if meetings.length}}
+              <div class="row row-cols-1 g-3">
+                {{#each meetings}}
+                <div class="col">
+                  <div class="meeting-item-card d-flex flex-column">
+                    <div class="meeting-status mb-1">
+                      <span class="badge bg-{{#if (eq this.status " Scheduled")}}primary{{else if (eq
+                        this.status "Completed" )}}success{{else}}secondary{{/if}}">
+                        {{this.status}}
+                      </span>
+                    </div>
+                    <div><strong>Tutor:</strong>
+                      {{#each this.tutor}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+                    </div>
+                    <div><strong>Students:</strong>
+                      {{#each this.student}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+                    </div>
+                    <div><strong>Start:</strong> {{formatDate this.startTime}}</div>
+                    <div><strong>End:</strong> {{formatDate this.endTime}}</div>
+                    <div><strong>Note:</strong> {{this.note}}</div>
+                  </div>
+                </div>
+                {{/each}}
+              </div>
+              {{else}}
+              <p class="text-muted">No meetings available.</p>
+              {{/if}}
+            </div>
+
+            <div class="doc-card">
+              <div class="student-dashboard-header">📁 Documents</div>
+              {{#if documents.length}}
+              {{#each documents}}
+              <div>
+                <strong>{{this.title}}</strong><br />
+                <a href="{{this.imageUrl}}" target="_blank">View Document Image</a>
+                {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download Document
+                  File</a>{{/if}}<br />
+                <small>{{this.content}}</small>
+                <hr />
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No uploaded documents.</p>
+              {{/if}}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <p style="margin-top: 10px;">{{this.content}}</p>
-  </li>
-  {{/each}}
-</ul>
+  </div>
 
 
-<br>
-<br>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chartData = {{{ json chartData }}};
 
+    // === Weekly Activity Chart (Line) ===
+    const weeklyLabels = Object.keys(chartData.weeklyActivity);
+    const blogsData = weeklyLabels.map(d => chartData.weeklyActivity[d].blogs);
+    const messagesData = weeklyLabels.map(d => chartData.weeklyActivity[d].messages);
+    const commentsData = weeklyLabels.map(d => chartData.weeklyActivity[d].comments);
 
-<br>
-<br>
-
-<h2>Lớp học của bạn</h2>
-
-{{#if error}}
-<p>{{error}}</p>
-{{else}}
-<ul>
-  {{#each classes}}
-  <li>
-    <strong>{{this.classname}}</strong><br>
-    Giảng viên: {{this.tutor.name}}<br>
-    Ngày tạo: {{this.formatCreateDate}}<br>
-    <strong>Sinh viên tham gia:</strong>
-    <ul>
-      {{#each this.student}}
-      <li>{{this.name}}</li>
-      {{/each}}
-    </ul>
-  </li>
-  {{/each}}
-</ul>
-{{/if}}
-<br>
-<br>
-<h3>📊 Tình trạng điểm danh theo lớp học</h3>
-
-{{#if attendanceStats.length}}
-{{#each attendanceStats}}
-<div style="margin-bottom: 40px;">
-  <h4>🧑‍🏫 Lớp học: {{this.className}}</h4>
-  <canvas id="attendanceChart{{@index}}" width="300" height="300"></canvas>
-</div>
-{{/each}}
-{{else}}
-<p>Không có dữ liệu điểm danh.</p>
-{{/if}}
-
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Script render biểu đồ -->
-<script>
-  const attendanceStats = {{{ json attendanceStats }}};
-
-  attendanceStats.forEach((stat, index) => {
-    const ctx = document.getElementById(`attendanceChart${index}`).getContext('2d');
-    new Chart(ctx, {
-      type: 'pie',
+    new Chart(document.getElementById('weeklyActivityChart').getContext('2d'), {
+      type: 'line',
       data: {
-        labels: ['Có mặt', 'Vắng mặt'],
+        labels: weeklyLabels,
+        datasets: [
+          {
+            label: 'Blogs',
+            data: blogsData,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Messages',
+            data: messagesData,
+            borderColor: '#198754',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Comments',
+            data: commentsData,
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Weekly Interaction Timeline'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+
+    // === Document Types Chart (Doughnut for PDF & Word Only) ===
+    new Chart(document.getElementById('fileTypesChart').getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['PDF', 'Word'],
         datasets: [{
-          data: [stat.present, stat.absent],
-          backgroundColor: ['#4CAF50', '#F44336'],
-          borderColor: ['#ffffff', '#ffffff'],
-          borderWidth: 2
+          data: [
+            chartData.fileTypes.pdf,
+            chartData.fileTypes.word
+          ],
+          backgroundColor: ['#6610f2', '#0dcaf0']
         }]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              color: '#333',
-              font: {
-                size: 14
-              }
-            }
-          },
           title: {
-            display: false
+            display: true,
+            text: 'Document Types Uploaded'
           }
         }
       }
     });
-  });
-</script>
 
-<br>
-<br><br>
-<h3>📅 Danh sách Cuộc họp</h3>
+    // === Blog Summary Chart (Bar) ===
+    new Chart(document.getElementById('myBlogsChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Posts', 'Likes', 'Comments'],
+        datasets: [{
+          label: 'Your Blog Stats',
+          data: [chartData.totalBlogs, chartData.totalLikes, chartData.totalComments],
+          backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        indexAxis: 'y', // Horizontal bars
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Blog Summary'
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
 
-{{#if meetings.length}}
-<table border="1" cellpadding="8" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Trạng thái</th>
-      <th>Giảng viên</th>
-      <th>Sinh viên</th>
-      <th>Bắt đầu</th>
-      <th>Kết thúc</th>
-      <th>Ghi chú</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each meetings}}
-    <tr>
-      <td>{{this.status}}</td>
-      <td>
-        {{#each this.tutor}}
-        {{this.name}}<br>
-        {{/each}}
-      </td>
-      <td>
-        {{#each this.student}}
-        {{this.name}}<br>
-        {{/each}}
-      </td>
-      <td>{{formatDate this.startTime}}</td>
-      <td>{{formatDate this.endTime}}</td>
-      <td>{{this.note}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-{{else}}
-<p>Không có cuộc họp nào.</p>
-{{/if}}
+    // === Interactions with Others Chart (Doughnut) ===
+    new Chart(document.getElementById('interactionChart').getContext('2d'), {
+      type: 'polarArea',
+      data: {
+        labels: ['Liked Posts', 'Commented Posts'],
+        datasets: [{
+          data: [chartData.likedCount, chartData.commentedCount],
+          backgroundColor: ['#20c997', '#6f42c1']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Interactions with Others'
+          }
+        }
+      }
+    });
 
+    // === Attendance Chart (Bar) ===
+    // Use the attendanceStats data passed from the backend
+    const attendanceStats = {{{ json attendanceStats }}};
 
+    // Prepare attendance data grouped by class
+    const attendanceData = {
+      classes: attendanceStats.map(stat => stat.className),
+      presentCounts: attendanceStats.map(stat => stat.present),
+      absentCounts: attendanceStats.map(stat => stat.absent)
+    };
 
-<br>
-<br>
+    // Render the attendance chart
+    new Chart(document.getElementById('attendanceChart'), {
+      type: 'bar',
+      data: {
+        labels: attendanceData.classes, // Class names as labels
+        datasets: [
+          {
+            label: 'Present',
+            data: attendanceData.presentCounts, // Present counts for each class
+            backgroundColor: '#198754' // Green color for present
+          },
+          {
+            label: 'Absent',
+            data: attendanceData.absentCounts, // Absent counts for each class
+            backgroundColor: '#dc3545' // Red color for absent
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Attendance by Class' // Chart title
+          }
+        },
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true // Ensure the y-axis starts at 0
+          }
+        }
+      }
+    });
+  </script>
+</body>
