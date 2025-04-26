@@ -33,28 +33,58 @@
     </style>
 </head>
 <body>
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
     <div class="sidebar" id="sidebar">
-        <h3>Dashboard</h3>
-        <hr>
-        <ul>
-            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-            <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-            <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-            <li><a href="/userpage/admin">User Management</a></li>
-            <li><a href="/blog/">Blog Management</a></li>
-            <li><a href="/document/">Document Management</a></li>
-            <li><a href="/api/meeting/create">Meeting</a></li>
-            <li><a href="/class">Class</a></li>
-            <li><a href="/schedule/schedule-view">Schedule</a></li>
-        </ul>
-    </div>
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
+    <hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+    </ul>
+</div>
 
     <div class="d-flex">
         <div class="content w-100">
             <div class="container mt-4">
                 <h1 class="text-center">Account Management</h1>
                 <div class="row mt-4 align-items-start">
+                    <!-- Admin List -->
+                <div class="row mt-4 align-items-start">
+                    <div class="col-md-12">
+                        <h2 class="text-primary">Admin List</h2>
+                        <table class="table table-hover table-bordered mt-3">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each admins}}
+                                <tr>
+                                    <td>{{this.fullname}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>
+                                        <a href="/userpage/edit/{{this._id}}" class="btn btn-warning">Edit</a>
+                                        <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                    
                     <!-- Tutor List -->
                     <div class="col-md-6">
                         <h2 class="text-primary">Tutor List</h2>
@@ -112,35 +142,6 @@
                     </div>
                 </div>
 
-                <!-- Admin List -->
-                <div class="row mt-4 align-items-start">
-                    <div class="col-md-12">
-                        <h2 class="text-primary">Admin List</h2>
-                        <table class="table table-hover table-bordered mt-3">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each admins}}
-                                <tr>
-                                    <td>{{this.fullname}}</td>
-                                    <td>{{this.email}}</td>
-                                    <td>
-                                        <a href="/userpage/edit/{{this._id}}" class="btn btn-warning">Edit</a>
-                                        <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
-                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure to delete?');">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
