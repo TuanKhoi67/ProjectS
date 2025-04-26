@@ -26,7 +26,7 @@ router.get('/tutor-attendance', ensureAuthenticated, async (req, res) => {
         const schedules = await ScheduleModel.find({ class: { $in: classIds } })
           .populate('class');
   
-        return res.render('schedule/tutor', {
+        return res.render('schedule/tutor-attendance', {
           tutor: {
             id: tutor._id,
             name: tutor.name,
