@@ -1,99 +1,573 @@
-<h3>📄 Tài liệu bạn đã đăng:</h3>
+<head>
+  <title>Tutor Dashboard</title>
+</head>
 
-{{#if documents.length}}
-{{#each documents}}
-<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
-  <h4>{{this.title}}</h4>
-  <p><strong>Ngày đăng:</strong> {{formatDate this.createdAt}}</p>
+<style>
+  body {
+    background-color: #f5f7fa;
+  }
 
-  <img src="{{this.imageUrl}}" alt="Hình ảnh tài liệu" style="max-width: 300px; height: auto; margin-bottom: 10px;">
+  .dashboard-section {
+    margin-bottom: 2.5rem;
+  }
 
-  <p><strong>Nội dung:</strong> {{this.content}}</p>
+  .tutor-dashboard-header {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #2a2a91;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
 
-  {{#if this.documentFile}}
-  <p><a href="{{this.documentFile}}" target="_blank">📎 Tải tài liệu đính kèm</a></p>
-  {{/if}}
+  .meeting-card,
+  .class-card,
+  .doc-card,
+  .blog-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-left: 4px solid #2a2a91;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+    height: 240px;
+    /* Set a fixed height */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+  }
 
-  <p><strong>Bình luận:</strong> {{this.comments.length}}</p>
-</div>
-{{/each}}
-{{else}}
-<p>Bạn chưa đăng tài liệu nào.</p>
-{{/if}}
-<br><br>
-<h3>Tổng số câu hỏi đã giải đáp cho sinh viên thông qua Document</h3>
-<div class="card shadow mb-4">
-  <div class="card-body">
-    <h5 class="card-title">📚 Tổng số câu hỏi đã được giải đáp</h5>
-    <p class="card-text display-6 text-success">{{answeredDocsCount}}</p>
+  .meeting-card-header,
+  .doc-card-header {
+    position: sticky;
+    top: 0;
+    /* Adjust this value if you have a fixed navbar */
+    background-color: #f9f9ff;
+    /* Match the card background */
+    z-index: 10;
+    /* Ensure it stays above other content */
+    box-shadow: 0px -16px 0px 16px #f9f9ff;
+    /* Add a subtle shadow for better visibility */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .message-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-left: 4px solid #2a2a91;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+    height: 505px;
+    /* Set a fixed height */
+  }
+
+  .meeting-card:hover,
+  .class-card:hover,
+  .message-card:hover,
+  .doc-card:hover,
+  .blog-card:hover {
+    background-color: #eef2ff;
+  }
+
+  .meeting-card:hover .meeting-card-header,
+  .doc-card:hover .doc-card-header {
+    background-color: #eef2ff;
+    /* Match the card's hover background */
+    color: #2a2a91;
+    /* Optional: Change text color */
+    box-shadow: 0px -16px 0px 16px #eef2ff;
+    /* Match the hover shadow */
+  }
+
+  .meeting-item-card,
+  .doc-item-card {
+    background-color: #f9f9ff;
+    border: 1px solid #d4d8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: 0.3s;
+  }
+
+  .meeting-item-card:hover,
+  .doc-item-card:hover {
+    background-color: #dce3f9;
+  }
+
+  .meeting-status .badge {
+    font-size: 0.85rem;
+  }
+
+  .blog-card-dashboard {
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    background: #fff;
+    padding: 1rem;
+    height: 100%;
+  }
+
+  .blog-card-dashboard:hover {
+    transform: scale(1.02);
+  }
+
+  .blog-img-dashboard {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .blog-title-dashboard {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2a2a91;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-meta-dashboard {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-content-dashboard {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .blog-actions-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .blog-actions-dashboard form,
+  .blog-actions-dashboard a {
+    flex-grow: 1;
+  }
+
+  .blog-actions-dashboard .btn {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .card-custom {
+    border-radius: 1rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    background-color: #ffffff;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .card-custom:hover {
+    background-color: #eef2ff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #4e73df;
+    margin-bottom: 1rem;
+  }
+
+  .display-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: orange;
+  }
+
+  .tutor-chart-container {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+  }
+
+  .tutor-chart-container canvas {
+    max-height: 230px !important;
+  }
+
+  .table thead {
+    background-color: #f1f3f5;
+    font-weight: 600;
+  }
+
+  .img-doc {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .search-input {
+    padding: 0.75rem 1rem;
+    border-radius: 0.6rem;
+    border: 1px solid #ced4da;
+    width: 100%;
+  }
+
+  .list-group-item {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .tutor-chart-container {
+      height: 220px;
+    }
+
+    .class-card,
+    .meeting-card,
+    .doc-card {
+      overflow: visible;
+      height: auto;
+    }
+
+    .meeting-card-header,
+    .doc-card-header {
+      position: static;
+      /* Reset to default behavior */
+      box-shadow: none;
+      /* Remove shadow */
+      top: auto;
+      /* Remove the top offset */
+    }
+
+    .meeting-card:hover .meeting-card-header,
+    .doc-card:hover .doc-card-header {
+      box-shadow: none;
+    }
+
+    .message-card {
+      margin-bottom: 0px;
+    }
+  }
+</style>
+
+<body>
+  <div class="container py-4">
+
+    <h2 class="mb-4">👨‍🏫 Hello, {{tutorName}}!</h2>
+
+    <div class="dashboard-section">
+      <div class="tutor-dashboard-header">📊 Document & Comment Overview</div>
+      <!-- Summary Stats -->
+      <div class="row mt-4">
+        {{!-- Card Example --}}
+        <div class="col-md-6 col-lg-4">
+          <div class="card-custom text-center">
+            <h4 class="card-title">Total Shared Documents</h4>
+            <p class="display-number text-primary">{{documentCount}}</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card-custom text-center">
+            <h4 class="card-title">Total Documents Comments</h4>
+            <p class="display-number">{{totalDocComments}}</p>
+          </div>
+        </div>
+        <div class="col-md-12 col-lg-4">
+          <div class="card-custom text-center">
+            <h4 class="card-title">Answered Questions</h4>
+            <p class="display-number text-success">{{answeredDocsCount}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="card-custom">
+        <div class="tutor-chart-container">
+          <canvas id="docBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-section mt-5">
+      <div class="tutor-dashboard-header">📊 Tutee Contribution Summary</div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card-custom">
+            <div class="tutor-dashboard-header">Messages</div>
+            <div class="tutor-chart-container">
+              <canvas id="tuteeMessagesChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-custom">
+            <div class="tutor-dashboard-header">Meetings</div>
+            <div class="tutor-chart-container">
+              <canvas id="tuteeMeetingsChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-custom">
+            <div class="tutor-dashboard-header">Documents</div>
+            <div class="tutor-chart-container">
+              <canvas id="tuteeDocsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📊 Tutees Overview Table -->
+    <div class="dashboard-section mt-5">
+      <div class="tutor-dashboard-header">📊 Tutee Activity Overview</div>
+      <input type="text" id="tuteeSearch" class="search-input mb-3" placeholder="Search by name or email...">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered" id="tuteeTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Last Interaction</th>
+              <th>Messages</th>
+              <th>Meetings</th>
+              <th>Documents</th>
+              <th>Information</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each tutees}}
+            <tr>
+              <td>{{this.fullname}}</td>
+              <td>{{this.email}}</td>
+              <td>{{this.lastActive}}</td>
+              <td>{{this.messageCount}}</td>
+              <td>{{this.meetingCount}}</td>
+              <td>{{this.documentCount}}</td>
+              <td><a href="/profile/student/{{this._id}}" class="btn btn-sm">Profile</a></td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 📚 Classes You Manage -->
+    <div class="dashboard-section mt-5">
+      <div class="tutor-dashboard-header">📚 Classes You Manage</div>
+      <div class="row">
+        {{#if tutorClasses.length}}
+        {{#each tutorClasses}}
+        <div class="col-md-6 col-lg-4">
+          <div class="card-custom">
+            <h5>{{this.classname}}</h5>
+            <p><strong>Students:</strong>
+              {{#each this.student}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+            </p>
+            <a href="/schedule/tutor-attendance" class="btn btn-sm mt-2">Take Attendance</a>
+          </div>
+        </div>
+        {{/each}}
+        {{else}}
+        <p>No classes managed.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- === Blog Section Next === -->
+    <div class="dashboard-section mt-5">
+      <div class="tutor-dashboard-header">📝 Your Blog</div>
+      {{#if blogs.length}}
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        {{#each blogs}}
+        <div class="col">
+          <div class="blog-card-dashboard d-flex flex-column">
+            {{#if this.image}}
+            <img src="{{absolutePath this.image}}" alt="Blog Image" class="blog-img-dashboard" />
+            {{else}}
+            <div class="bg-secondary text-white text-center py-4 rounded mb-2">No Image</div>
+            {{/if}}
+
+            <div class="blog-title-dashboard">{{this.title}}</div>
+            <div class="blog-meta-dashboard">
+              <i class="fa-solid fa-heart"> {{this.likes}}</i> |
+              <i class="fa-solid fa-comment-dots"> {{this.comments.length}}</i>
+            </div>
+            <div class="blog-content-dashboard">{{this.content}}</div>
+
+            <div class="blog-actions-dashboard">
+              <a href="/blog/edit/{{this._id}}" class="btn btn-sm"><i class="fa-regular fa-pen-to-square"></i>
+                Edit</a>
+              <form action="/blog/delete/{{this._id}}" method="POST" onsubmit="return confirm('Delete blog?');">
+                <button type="submit" class="btn btn-sm"><i class="fa-regular fa-trash-can"></i> Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="text-muted">You haven't posted any blogs yet.</p>
+      {{/if}}
+    </div>
+
+    <!-- === Messages (left), Meetings + Documents (right) === -->
+    <div class="dashboard-section mt-5">
+      <div class="row g-4">
+        <!-- Messages Left -->
+        <div class="col-12 col-lg-6">
+          <div class="message-card">
+            <div class="tutor-dashboard-header">💬 Messages</div>
+            {{#if messages.length}}
+            {{#each messages}}
+            <div>
+              <strong>{{this.sender.fullname}}</strong>: {{this.content}}<br />
+              <small>{{formatDate this.createdAt}}</small>
+              <hr />
+            </div>
+            {{/each}}
+            {{else}}
+            <p class="text-muted">No messages.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- Meetings + Documents Right -->
+        <div class="col-12 col-lg-6">
+          <!-- Meetings Section -->
+          <div class="meeting-card mb-4">
+            <div class="meeting-card-header">
+              <div class="tutor-dashboard-header">📅 Meetings</div>
+            </div>
+            {{#if meetings.length}}
+            <div class="row row-cols-1 g-3">
+              {{#each meetings}}
+              <div class="col">
+                <div class="meeting-item-card d-flex flex-column">
+                  <div class="meeting-status mb-1">
+                    <span class="badge bg-{{#if (eq this.status " Scheduled")}}primary{{else if (eq
+                      this.status "Completed" )}}success{{else}}secondary{{/if}}">
+                      {{this.status}}
+                    </span>
+                  </div>
+                  <div><strong>Title:</strong> {{this.title}}</div>
+                  <div><strong>Location:</strong> {{this.location}}</div>
+                  <div><strong>Students:</strong>
+                    {{#each this.student}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+                  </div>
+                  <div><strong>Start:</strong> {{formatDate this.startTime}}</div>
+                  <div><strong>End:</strong> {{formatDate this.endTime}}</div>
+                  <div><strong>Note:</strong> {{this.note}}</div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+            {{else}}
+            <p class="text-muted">No meetings available.</p>
+            {{/if}}
+          </div>
+
+          <!-- Documents Section -->
+          <div class="doc-card">
+            <div class="doc-card-header">
+              <div class="tutor-dashboard-header">📁 Documents</div>
+            </div>
+            {{#if documents.length}}
+            <div class="row row-cols-1 g-3">
+              {{#each documents}}
+              <div class="col">
+                <div class="doc-item-card d-flex flex-column">
+                  <div>
+                    <strong>{{this.title}}</strong><br />
+                    <a href="{{this.imageUrl}}" target="_blank">View Document Image</a>
+                    {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download Document
+                      File</a>{{/if}}<br />
+                    <small>{{this.content}}</small>
+                    <hr />
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No uploaded documents.</p>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<br><br>
-<h3>📩 Tin nhắn gần đây:</h3>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.getElementById('tuteeSearch').addEventListener('input', function () {
+      const value = this.value.toLowerCase(); // Get the search input and convert to lowercase
+      const rows = document.querySelectorAll('#tuteeTable tbody tr'); // Select all table rows
 
-{{#if messages.length}}
-{{#each messages}}
-<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
-  <h4>Tin nhắn mới: {{this.content}}</h4>
-  <p><strong>Người gửi đến:</strong> {{this.sender.fullname}}</p>
-  <p><strong>Thời gian:</strong> {{formatDate this.createdAt}}</p>
+      rows.forEach(row => {
+        const name = row.children[0].textContent.toLowerCase(); // Get the name column
+        const email = row.children[1].textContent.toLowerCase(); // Get the email column
 
-</div>
-{{/each}}
-{{else}}
-<p>Không có tin nhắn nào gửi đến bạn gần đây.</p>
-{{/if}}
+        // Check if the search value matches the name or email
+        if (name.includes(value) || email.includes(value)) {
+          row.style.display = ''; // Show the row if it matches
+        } else {
+          row.style.display = 'none'; // Hide the row if it doesn't match
+        }
+      });
+    });
 
-<br><br>
-<h3>📚 Các lớp học tôi đang dạy:</h3>
+    const tuteeChartData = {{{ json tutees }}};
+    const names = tuteeChartData.map(t => t.fullname);
+    const msgCounts = tuteeChartData.map(t => t.messageCount);
+    const meetingCounts = tuteeChartData.map(t => t.meetingCount);
+    const docCounts = tuteeChartData.map(t => t.documentCount);
 
-{{#if classes.length}}
-<ul>
-  {{#each classes}}
-  <li>
-    <strong>Tên lớp:</strong> {{this.classname}}<br>
-    <strong>Số lượng sinh viên:</strong> {{this.student.length}}<br>
-    <strong>Danh sách sinh viên:</strong>
-    <ul>
-      {{#each this.student}}
-      <li>{{this.name}}</li>
-      {{/each}}
-    </ul>
-  </li>
-  {{/each}}
-</ul>
-{{else}}
-<p>Hiện tại bạn chưa dạy lớp nào.</p>
-{{/if}}
+    const ctx = document.getElementById('docBarChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Documents', 'Comments'],
+        datasets: [{
+          data: [{{ documentCount }}, {{ totalDocComments }}],
+      backgroundColor: ['#4e73df', '#1cc88a']
+    }]
+      },
+      options: {
+      responsive: true,
+      plugins: { legend: { display: false }, title: { display: true, text: 'Document and Comment Stats' } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+    });
 
-<br><br>
-<h3>📅 Các cuộc họp gần đây:</h3>
-<br>
-{{#if meetings.length}}
-<ul>
-  {{#each meetings}}
-  <br>
-  <li>
-    <strong>Tiêu đề:</strong> {{this.title}}<br>
-    <strong>Trạng thái:</strong> {{this.status}}<br>
-    <strong>Sinh viên:</strong>
-    <ul>
-      {{#each this.student}}
-      <li>{{this.name}}</li> <!-- Hiển thị tên của student -->
-      {{/each}}
-    </ul>
-    <strong>Địa điểm:</strong> {{this.location}}<br>
-    <strong>Thời gian bắt đầu:</strong> {{this.startTime}}<br>
-    <strong>Thời gian kết thúc:</strong> {{this.endTime}}<br>
-    <strong>Ghi chú:</strong> {{this.note}}<br>
-  </li>
-  {{/each}}
+    new Chart(document.getElementById('tuteeMessagesChart'), {
+      type: 'bar',
+      data: { labels: names, datasets: [{ label: 'Messages', data: msgCounts, backgroundColor: '#0d6efd' }] },
+      options: { plugins: { title: { display: true, text: 'Messages Sent' } } }
+    });
 
-</ul>
-{{else}}
-<p>Hiện tại bạn chưa có cuộc họp nào.</p>
-{{/if}}
+    new Chart(document.getElementById('tuteeMeetingsChart'), {
+      type: 'bar',
+      data: { labels: names, datasets: [{ label: 'Meetings', data: meetingCounts, backgroundColor: '#198754' }] },
+      options: { plugins: { title: { display: true, text: 'Meetings Attended' } } }
+    });
 
-
-<br><br>
+    new Chart(document.getElementById('tuteeDocsChart'), {
+      type: 'bar',
+      data: { labels: names, datasets: [{ label: 'Documents', data: docCounts, backgroundColor: '#ffc107' }] },
+      options: { plugins: { title: { display: true, text: 'Documents Contributed' } } }
+    });
+  </script>
+</body>
