@@ -1,23 +1,27 @@
-<button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar" id="sidebar">
-    <h3>Dashboard</h3>
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
     <hr>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-        <li><a href="/admin/dashboard/user">User Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/api/meeting/create">Meeting</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
     </ul>
 </div>
 
-<div class="main-content">
+<div class="content">
 <h1>Show All Classes</h1> 
-<div class="container">
+<div class="center" style="text-align: center;">
 <a href="/class/create" class="btn">Create to Class</a>
+<a href="/attendance/all" class="btn">View Attendance</a>
+</div>
+
 <div class="table-container">
     <table class="table table-bordered"> 
         <thead>
@@ -46,12 +50,10 @@
                     <a class="btn btn-primary" href="/class/delete/{{ _id }}"
                         onclick="return confirm('Are you sure to delete this class ?');">Delete</a>
                 </td>
-                <td></td>
             </tr>
             {{/each}}
         </tbody>
     </table>
-</div>
 </div>
 </div>
 
@@ -65,49 +67,7 @@
         margin: 0;
     }
 
-    .table-container {
-        width: 50%;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #008060;
-        color: white;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    tr.highlight {
-        background-color: #e6f4ea;
-        font-weight: bold;
-    }
-
-    tr.highlight td {
-        color: #008060;
-    }
-    table.table-bordered th {
-    background-color: #082995 !important;
-    color: white !important;
-    text-align: center;
-    }
-    table.table-bordered td {
-        text-align: center;
-    }
-    .table-container{
-        margin-left: 25%;
-    }
+    
 </style>
 
 <script>
