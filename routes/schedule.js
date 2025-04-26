@@ -6,6 +6,7 @@ var ScheduleModel = require('../models/Schedule');
 var ClassModel = require('../models/Class');
 var TutorModel = require('../models/Tutor');
 var StudentModel = require('../models/Student');
+const { ensureAuthenticated } = require('../middleware/auth');
 
 router.get('/tutor-attendance', ensureAuthenticated, async (req, res) => {
     try {
