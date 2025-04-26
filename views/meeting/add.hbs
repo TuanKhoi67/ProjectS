@@ -1,22 +1,25 @@
-<head>
-    <title>Create a Meeting</title>
-</head>
+<h1>Meeting List</h1>
 
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
   <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
   <span class="sidebar-title">Dashboard</span>
 </div>
-    
+    <hr>
+    </div>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
         <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
         <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/blog">Blog Management</a></li>
+        <li><a href="/document">Document Management</a></li>
         <li><a href="/api/meeting">Meeting</a></li>
         <li><a href="/class">Class</a></li>
         <li><a href="/schedule/schedule-view">Schedule</a></li>
+        <li><a href="/attendance/all">View Attendance</a></li>
     </ul>
+</div>
 </div>
 
 <script>
@@ -26,53 +29,60 @@
     }
 </script>
 
-<body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Create a Meeting</h2>
-        <form id = "createMeetingForm" action="/api/meeting/create" method="POST">
-            <div class="mb-3">
-                <strong>Title</strong>
-                <input type="text" class="form-control w-25" name="title" required>
-            </div>
-            <div class="mb-3">
-                <strong>Form</strong>
-                <input type="text" class="form-control w-25" name="form" required>
-            </div>
-            <div class="mb-3">
-                <strong>Location</strong>
-                <input type="text" class="form-control w-25" name="location" required>
-            </div>
-            <div class="mb-3">
-                <strong>Student</strong><br>
-                {{#each students}}
-                <input type="checkbox" name="students[]" value="{{this._id}}"> {{this.name}} <br>
-                {{/each}}
-            </div>
+<div class="container">
+<a href="/api/meeting/create" class="btn">Create A Meeting</a>
+<table class="table table-bordered table-primary" border="1" cellspacing="0" cellpadding="10">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Form 
+        <br>(Online - Offline)</th>
+      <th>Location</th>
+      <th>Status</th>
+      <th>Begin Time</th>
+      <th>End Time</th>
+      <th>Tutor</th>
+      <th>Student</th>
+      <th>Note</th>
+      <th>Date</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each meetings}}
+      <tr>
+        <td>{{title}}</td>
+        <td>{{form}}</td>
+        <td>{{location}}</td>
+        <td>{{status}}</td>
+        <td>{{formatDate startTime}}</td>
+        <td>{{formatDate endTime}}</td>
+        <td>
+          {{#each tutor}}
+            <div>{{this.name}}</div>
+          {{/each}}
+        </td>
+        <td>
+          {{#each student}}
+            <div>{{this.name}}</div>
+          {{/each}}
+        </td>
+        <td>{{note}}</td>
+        <td>{{formatDate createDate}}</td>
+        <td>
+          <a class="btn button-3" href="meeting/delete/{{ _id }}"
+                        onclick="return confirm('Are you sure to delete this meeting ?');">Delete</a></td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+</div>
 
-            <div class="mb-3">
-                <strong>Tutor</strong>
-                <select class="form-select w-25" name="tutors[]" required>
-                    {{#each tutors}}
-                    <option value="{{this._id}}">{{this.name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div class="mb-3">
-                <strong>Begin Time</strong>
-                <input type="dateTime-local" name="startTime" required>
-            </div>
-            <div class="mb-3">
-                <strong>End Time</strong>
-                <input type="dateTime-local" name="endTime" required>
-            </div>
-            <div class="mb-3">
-                <strong>Note</strong>
-                <textarea class="form-control w-35" name="note"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Create</button>
-        </form>
-    </div>
-</body>
+<style>
+  th{
+    text-align: center;
+  }
+</style>
 
 <script>
 document.getElementById('createMeetingForm').addEventListener('submit', async function (e) {
