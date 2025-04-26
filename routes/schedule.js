@@ -41,7 +41,7 @@ router.get('/tutor-attendance', ensureAuthenticated, async (req, res) => {
         });
       } else {
         // Role khác (student, admin)
-        return res.render('/class', { user });
+        return res.render('/', { user });
       }
   
     } catch (error) {
