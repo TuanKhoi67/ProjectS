@@ -1,71 +1,134 @@
-<!DOCTYPE html>
-<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Lịch học của Giáo viên</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-
-    h2 {
-      color: #2c3e50;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #ccc;
-    }
-
-    th {
-      background-color: #f4f4f4;
-    }
-
-    .tutor-info {
-      margin-bottom: 20px;
-    }
-  </style>
+  <title>Tutor Schedule</title>
 </head>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .tutor-info {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  th,
+  td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #4e73df;
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  tr:hover {
+    background-color: #f1f3f5;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #4e73df;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    background-color: #2c3e91;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .no-schedule {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+
+    th,
+    td {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
 <body>
+  <div class="container">
+    <div class="tutor-info">
+      <h2>Schedule for tutor {{tutor.name}}</h2>
+      <p><strong>Email:</strong> {{tutor.email}}</p>
+    </div>
 
-  <div class="tutor-info">
-    <h2>Lịch học của {{tutor.name}}</h2>
-    <p><strong>Email:</strong> {{tutor.email}}</p>
-  </div>
-
-  {{#if schedules.length}}
+    {{#if schedules.length}}
     <table>
       <thead>
         <tr>
-          <th>Ngày</th>
-          <th>Giờ</th>
-          <th>Lớp học</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Class</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         {{#each schedules}}
-          <tr>
-            <td>{{this.day}}</td>
-            <td>{{this.time}}</td>
-            <td>{{this.classname}}</td>
-            <td>
-                    <a class="btn button-3" href="/attendance/take-attendance/{{_id }}">Attendance</a>
-                </td>
-          </tr>
+        <tr>
+          <td>{{this.day}}</td>
+          <td>{{this.time}}</td>
+          <td>{{this.classname}}</td>
+          <td>
+            <a class="btn" href="/attendance/take-attendance/{{_id}}">Take Attendance</a>
+          </td>
+        </tr>
         {{/each}}
       </tbody>
     </table>
-  {{else}}
-    <p>Không có lịch học nào.</p>
-  {{/if}}
-
+    {{else}}
+    <p class="no-schedule">No schedules available.</p>
+    {{/if}}
+  </div>
 </body>
-</html>
