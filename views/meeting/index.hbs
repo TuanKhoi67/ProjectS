@@ -48,7 +48,7 @@
   </thead>
   <tbody>
     {{#each meetings}}
-      <tr>
+<tr>
         <td>{{title}}</td>
         <td>{{form}}</td>
         <td>{{location}}</td>
@@ -71,6 +71,8 @@
           <a class="btn button-3" href="/api/meeting/delete/{{ _id }}"
             onclick="return confirm('Are you sure to delete this meeting ?');">Delete</a>
         </td>
+      </tr>
+      </tr>
     {{/each}}
   </tbody>
 </table>
