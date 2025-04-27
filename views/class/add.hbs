@@ -207,3 +207,69 @@
     </div>
 
 </body>
+
+<script>
+document.getElementById('create-class-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const classname = document.querySelector('input[name="classname"]').value;
+    const studentIdsRaw = document.querySelector('input[name="studentIds"]').value;
+    const studentIds = studentIdsRaw.split(',').map(s => s.trim()).filter(s => s);
+    const tutorId = document.querySelector('input[name="tutorId"]').value;
+
+    try {
+        const res = await fetch('/class/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ classname, studentIds, tutorId })
+        });
+
+        const result = await res.json(); // Phân tích JSON từ phản hồi
+
+        console.log(result); // Log kết quả để kiểm tra
+
+        if (res.ok) {
+            alert(result.message); // ✅ Hiển thị thông báo nếu thành công
+            document.getElementById('create-class-form').reset(); // Reset form nếu thành công
+        } else {
+            alert("Lỗi: " + result.message); // ❌ Thông báo lỗi nếu có
+        }
+    } catch (error) {
+        alert("Lỗi gửi yêu cầu: " + error.message); // ❌ Nếu có lỗi trong quá trình gửi yêu cầu
+    }
+});
+</script> 
+
+<script>
+    document.getElementById('assign-student-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const studentId = formData.get('studentId');
+        const classId = formData.get('classId');
+
+        try {
+            const response = await fetch('/class/assign-student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ studentId, classId }),
+            });
+
+            const result = await response.json();
+
+            // Kiểm tra phản hồi từ server
+            if (result.success) {
+                // Nếu thành công, chuyển hướng đến /class
+                window.location.href = '/class';
+            } else {
+                // Nếu có lỗi, hiển thị thông báo lỗi
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi gửi yêu cầu:", error);
+            alert("Đã xảy ra lỗi trong quá trình xử lý.");
+        }
+    });
+</script>
