@@ -37,6 +37,7 @@
         <th>Status</th>
         <th>Date</th>
         <th>Class</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -56,7 +57,7 @@
           <td>{{formatDate this.date}}</td>
           <td>{{this.className}}</td>
           <td>
-          <a class="button-3" href="/attendance/delete/{{ _id }}"
+          <a class="btn button-3" href="/attendance/delete/{{ _id }}"
             onclick="return confirm('Are you sure to delete this attendance ?');">Delete</a>
         </td>
         </tr>
