@@ -6,7 +6,7 @@ const Student = require('../models/Student');
 const upload = require('../config/upload');
 const { ensureAuthenticated } = require('../middleware/auth');
 
-// Xem profile
+// View profile
 router.get('/', async (req, res) => {
     try {
         const user = req.user;
@@ -59,12 +59,12 @@ router.post('/edit', upload.single('avatar'), async (req, res) => {
         const user = req.user;
         const { telephone, department, subject } = req.body;
 
-        // Xử lý ảnh đại diện
+        // Handle avatar image
         let imagePath = null;
         if (req.file) {
-            imagePath = '/images/' + req.file.filename; // Lưu đường dẫn tương đối
+            imagePath = '/images/' + req.file.filename; // Save relative path
 
-            // Xóa ảnh cũ nếu có
+            // Delete old avatar if it exists
             if (user.role === 'tutor' && user.tutor?.imageTutor && user.tutor.imageTutor !== 'https://placehold.co/200x200') {
                 const oldImagePath = path.join(__dirname, '../public', user.tutor.imageTutor);
                 if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
@@ -112,14 +112,14 @@ router.post('/edit', upload.single('avatar'), async (req, res) => {
     } catch (err) {
         console.error(err);
 
-        // Xóa file vừa upload nếu có lỗi
+        // Delete uploaded file if an error occurs
         if (req.file) {
             const filePath = path.join(__dirname, '../public/images/', req.file.filename);
             if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         }
 
         res.status(500).render('error', {
-            message: 'Đã có lỗi xảy ra khi cập nhật thông tin',
+            message: 'An error occurred while updating the information',
             error: err.message
         });
     }
