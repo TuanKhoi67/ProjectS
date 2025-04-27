@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
-//const UserModel = require("../models/Users"); // User Model
-const StudentModel = require("../models/Student"); // Student Model
-const TutorModel = require("../models/Tutor"); // Tutor Model
-const MeetingModel = require("../models/Meeting"); // Meeting Model
+//const UserModel = require("../models/Users"); // Model User
+const StudentModel = require("../models/Student"); // Model Student
+const TutorModel = require("../models/Tutor"); // Model Tutor
+const MeetingModel = require("../models/Meeting"); // Model Meeting
 //const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
 
-// Route GET: Display list of meetings
+
 router.get('/', async (req, res) => {
   try {
       const meetings = await MeetingModel.find()
           .populate('student')
           .populate('tutor')
-          .lean(); // .lean() to make data compatible with Handlebars
+          .lean(); // .lean() để dữ liệu tương thích với Handlebars
 
       res.render('meeting/index', { meetings });
   } catch (err) {
@@ -21,120 +21,119 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Route GET: Render form to create a meeting
+// Route GET: Render form tạo meeting
 router.get("/create", async (req, res) => {
   try {
       const students = await StudentModel.find().lean();
       const tutors = await TutorModel.find().lean();
       res.render("meeting/add", { students, tutors });
   } catch (error) {
-      console.error("Error fetching data:", error);
-      res.status(500).send("Server Error");
+      console.error("Lỗi khi lấy dữ liệu:", error);
+      res.status(500).send("Lỗi server");
   }
 });
 
-// Route POST: Handle meeting creation
+
 router.post("/create", async (req, res) => {
     try {
       const { title, form, location, note, startTime, endTime, students = [], tutors = [] } = req.body;
   
-      // Check if students and tutors are arrays
+      // Kiểm tra xem students và tutors có phải là mảng không
       if (!Array.isArray(students)) {
-        return res.status(400).json({ error: "'students' must be an array" });
+        return res.status(400).json({ error: "'students' phải là một mảng" });
       }
       if (!Array.isArray(tutors)) {
-        return res.status(400).json({ error: "'tutors' must be an array" });
+        return res.status(400).json({ error: "'tutors' phải là một mảng" });
       }
   
-      // Check if startTime and endTime are provided
+      // Kiểm tra thời gian bắt đầu và kết thúc có hợp lệ
       if (!startTime || !endTime) {
-        return res.status(400).json({ error: "Both startTime and endTime are required" });
+        return res.status(400).json({ error: "Cả startTime và endTime phải có giá trị" });
       }
   
-      // Convert startTime and endTime to ISO 8601 format
-      const startDateTime = new Date(`${startTime}`).toISOString();
-      const endDateTime = new Date(`${endTime}`).toISOString();
+      // Chuyển startTime và endTime thành chuỗi ISO 8601 (hoặc bạn có thể định dạng theo kiểu khác nếu cần)
+      const startDateTime = new Date(`${startTime}`).toISOString();  // Đảm bảo là định dạng ISO 8601
+      const endDateTime = new Date(`${endTime}`).toISOString();      // Đảm bảo là định dạng ISO 8601
   
-      // Validate that end time is after start time
+      // Kiểm tra xem thời gian kết thúc có sau thời gian bắt đầu không
       if (new Date(startDateTime) >= new Date(endDateTime)) {
-        return res.status(400).json({ error: "End time must be after start time" });
+        return res.status(400).json({ error: "Thời gian kết thúc phải sau thời gian bắt đầu" });
       }
   
-      // Prepare meeting data
-      const meetingData = {
+     // Tạo Meeting
+    const meetingData = {
         title,
         form,
         location,
         note,
         startTime: startDateTime,
         endTime: endDateTime,
-        student: students,  // Keep student ObjectIds
-        tutor: tutors,      // Keep tutor ObjectIds
-        status: "Scheduled", // Default status
+        student: students,  // Giữ nguyên các ObjectId của students
+        tutor: tutors,      // Giữ nguyên các ObjectId của tutors
+        status: "Scheduled", // Mặc định trạng thái là "Scheduled"
       };
   
-      // Save meeting to database
+      // Lưu cuộc họp vào database
       const newMeeting = await MeetingModel.create(meetingData);
       console.log("Meeting created:", newMeeting);
   
-      // Prepare attendee list
+      // Tạo danh sách người tham dự
       const attendees = [...students, ...tutors];
       if (attendees.length === 0) {
-        return res.status(400).json({ error: "No attendees were defined" });
+        return res.status(400).json({ error: "Không có người tham dự nào được định nghĩa" });
       }
   
-      // Validate attendees' ObjectIds in database
+      // Kiểm tra xem các ObjectId có hợp lệ và tồn tại trong cơ sở dữ liệu không
       const studentsInDb = await StudentModel.find({ '_id': { $in: students } }).exec();
       const tutorsInDb = await TutorModel.find({ '_id': { $in: tutors } }).exec();
   
-      // Extract attendee emails
+      // Lấy email của người tham dự
       const attendeeEmails = [
         ...studentsInDb.map(student => ({ email: student.email })),
-        ...tutorsInDb.map(tutor => ({ email: tutor.email })),
+          ...tutorsInDb.map(tutor => ({ email: tutor.email })),
       ];
 
       const emailRecipients = attendeeEmails.map(attendee => attendee.email);
       
-      console.log("Attendee email list:", attendeeEmails);
+      console.log("Attendees Email List:", attendeeEmails);
 
-      // Check if attendee emails exist
+      // Kiểm tra xem có email hợp lệ không
       if (attendeeEmails.length === 0) {
-        return res.status(400).json({ error: "Could not retrieve attendee emails" });
+        return res.status(400).json({ error: "Không thể lấy email của người tham dự" });
       }
   
-      // Create Google Meet through API
+      // Tạo Google Meet thông qua API
       const meeting = await createGoogleMeet({ title, form, location, note, startTime: startDateTime, endTime: endDateTime, attendees });
       console.log("Meeting created:", meeting);
   
-      // Prepare email content
-      const emailMessage = `Your meeting has been scheduled.\nJoin here: ${meeting.hangoutLink}`;
+      // Soạn nội dung email
+      const emailMessage = `Your meeting has been scheduled.\nJoin to: ${meeting.hangoutLink}`;
   
-      // Send email
+      // Gửi email
       sendEmail(emailRecipients, "Google Meet Schedule", emailMessage);
   
-      // Return success response
-      res.json({ message: "Meeting has been scheduled!", meetLink: meeting.hangoutLink });
+      // Trả về phản hồi thành công
+      res.json({ message: "Meeting has been created!", meetLink: meeting.hangoutLink });
     } catch (error) {
         console.error("Error from Google Meet API:", error.response?.data?.details || error.message);
         res.status(500).json({ error: "Error creating meeting", details: error.message });
     }
-});
+  });
 
-// Route GET: Delete a meeting by ID
-router.get('/delete/:id', async (req, res) => {
+  router.get('/delete/:id', async (req, res) => {
     await MeetingModel.findByIdAndDelete(req.params.id);
-    res.redirect('/api/meeting');
-});
+  res.redirect('/api/meeting');
+  });
 
-// Route POST: Delete a meeting by ID
-router.post('/delete/:id', async (req, res) => {
-    try {
-        await MeetingModel.findByIdAndDelete(req.params.id);
-        res.redirect('api/meeting'); 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Deleting error.");
-    }
-});
+  router.post('/delete/:id', async (req, res) => {
+      try {
+          await MeetingModel.findByIdAndDelete(req.params.id);
+          res.redirect('api/meeting'); 
+      } catch (err) {
+          console.error(err);
+          res.status(500).send("Deleting error.");
+      }
+  });
+
 
 module.exports = router;
