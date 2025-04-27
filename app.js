@@ -17,6 +17,14 @@ require('./config/passport')(passport);
 require('./config/upload');
 require('./middleware/auth');
 
+hbs.registerHelper('contains', function(array, value) {
+  // Kiểm tra xem array có phải là một mảng hợp lệ không
+  if (!array || !Array.isArray(array)) {
+      return false; // Trả về false nếu array không phải là mảng
+  }
+  return array.indexOf(value) !== -1;
+});
+
 dotenv.config();
 const app = express();
 const httpServer = http.createServer(app);
