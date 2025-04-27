@@ -106,7 +106,7 @@ router.get('/delete/:id', async (req, res) => {
   var attendance = await AttendanceModel.findById(id);
   await AttendanceModel.deleteOne(attendance);
 
-  res.redirect('/api/meeting');
+  res.redirect('/attendance/all');
 })
 
 module.exports = router;
