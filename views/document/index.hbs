@@ -1,30 +1,3 @@
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-  <span class="sidebar-title">Dashboard</span>
-</div>
-<hr>
-    <ul>
-        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-        <li><a href="/userpage/admin">User Management</a></li>
-        <li><a href="/blog">Blog Management</a></li>
-        <li><a href="/document">Document Management</a></li>
-        <li><a href="/api/meeting">Meeting</a></li>
-        <li><a href="/class">Class</a></li>
-        <li><a href="/schedule/schedule-view">Schedule</a></li>
-        <li><a href="/attendance/all">View Attendance</a></li>
-    </ul>
-</div>
-
-<script>
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('hidden');
-    }
-</script>
-
 <head>
     <title>Document Management</title>
 </head>
@@ -139,22 +112,25 @@
 </style>
 
 <body>
-    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
     <div class="sidebar" id="sidebar">
-        <h3>Dashboard</h3>
-        <hr>
-        <ul>
-            <li><a href="/admin/dashboard">Admin Dashboard</a></li>
-            <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
-            <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
-            <li><a href="/userpage/admin">User Management</a></li>
-            <li><a href="/blog/">Blog Management</a></li>
-            <li><a href="/document/">Document Management</a></li>
-            <li><a href="/api/meeting/create">Meeting</a></li>
-            <li><a href="/class">Class</a></li>
-            <li><a href="/schedule/schedule-view">Schedule</a></li>
-        </ul>
-    </div>
+    <div class="sidebar-header">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <span class="sidebar-title">Dashboard</span>
+</div>
+<hr>
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/blog">Blog Management</a></li>
+        <li><a href="/document">Document Management</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+        <li><a href="/attendance/all">View Attendance</a></li>
+    </ul>
+</div>
     <div class="container">
         <h2 class="text-center mb-4">📚 Document Management</h2>
 
