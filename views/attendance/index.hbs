@@ -55,6 +55,10 @@
           </td>
           <td>{{formatDate this.date}}</td>
           <td>{{this.className}}</td>
+          <td>
+          <a class="button-3" href="/attendance/delete/{{ _id }}"
+            onclick="return confirm('Are you sure to delete this attendance ?');">Delete</a>
+        </td>
         </tr>
       {{/each}}
     </tbody>
