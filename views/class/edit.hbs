@@ -1,1 +1,34 @@
+<form action="/class/edit/{{classData._id}}" method="POST">
+    <div>
+        <label for="classname">Tên lớp:</label>
+        <input type="text" name="classname" value="{{classData.classname}}" required />
+    </div>
+    
+    <div>
+    <label for="student">Chọn sinh viên:</label>
+    <div>
+        {{#each students}}
+            <label>
+                <input type="checkbox" name="student" value="{{this._id}}" 
+                    {{#if (contains classData.student this._id)}}checked{{/if}}>
+                {{this.name}}
+            </label>
+        {{/each}}
+    </div>
+    </div>
+
+    <div>
+        <label for="tutor">Chọn giáo viên:</label>
+        <select name="tutor">
+            {{#each tutors}}
+                <option value="{{this._id}}" 
+                    {{#if (equals classData.tutor this._id)}}selected{{/if}}>{{this.name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    
+    <div>
+        <button type="submit">Cập nhật</button>
+    </div>
+</form>
 
