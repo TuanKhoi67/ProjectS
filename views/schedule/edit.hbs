@@ -1,33 +1,42 @@
-<form action="/class/edit/{{classData._id}}" method="POST">
-    <div>
-        <label for="classname">Tên lớp:</label>
-        <input type="text" name="classname" value="{{classData.classname}}" required />
-    </div>
-    
-    <div>
-    <label for="student">Chọn sinh viên:</label>
-    <div>
-        {{#each students}}
-            <label>
-                <input type="checkbox" name="student" value="{{this._id}}" 
-                    {{#if (contains classData.student this._id)}}checked{{/if}}>
-                {{this.name}}
-            </label>
-        {{/each}}
-    </div>
-    </div>
+<h2>Update Schedule</h2>
+<div class="container mt-5">
+<form action="/schedule/edit/{{schedule._id}}" method="POST">
+    <label for="day">Day:</label>
+    <div class="mb-3">
+    <select class="form-select" name="day" id="day">
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+    </select>
+</div>
 
-    <div>
-        <label for="tutor">Chọn giáo viên:</label>
-        <select name="tutor">
-            {{#each tutors}}
-                <option value="{{this._id}}" 
-                    {{#if (equals classData.tutor this._id)}}selected{{/if}}>{{this.name}}</option>
-            {{/each}}
-        </select>
-    </div>
-    
-    <div>
-        <button type="submit">Cập nhật</button>
-    </div>
+    <label for="time">Time:</label>
+    <div class="mb-3">
+    <select class="form-select" name="time" id="time">
+            <option value="Slot1">8:50 - 10:20</option>
+            <option value="Slot4">10:30 - 12:00</option>
+            <option value="Slot2">12:50 - 14:20</option>
+            <option value="Slot3">14:30 - 16:00</option>
+            <option value="Slot5">16:10 - 17:40</option>
+    </select>
+</div>
+
+    <label for="classId">Class:</label>
+    <div class="mb-3">
+<select class="form-select" name="classId">
+    {{#each classes}}
+    <option value="{{_id}}" 
+        {{#if (eq _id (selectedClassId.toString))}}selected{{/if}}>
+    {{classname}}
+    </option>
+    {{/each}}
+</select>
+</div>
+
+    <button class="btn btn-toggle" type="submit">Update</button>
 </form>
+</div>
