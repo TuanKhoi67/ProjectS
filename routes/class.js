@@ -164,6 +164,45 @@ router.post('/create-class', ensureAuthenticated, checkAdmin, async (req, res) =
     }
 });
 
+// Route hiển thị form chỉnh sửa lớp học
+router.get('/edit/:classId', async (req, res) => {
+    try {
+        const classId = req.params.classId;
+        // Tìm lớp học theo classId
+        const classData = await ClassModel.findById(classId).populate('student').populate('tutor');
+        // Lấy danh sách tất cả sinh viên và giáo viên để tạo dropdown
+        const students = await StudentModel.find();
+        const tutors = await TutorModel.find();
+        
+        // Render form chỉnh sửa lớp học, truyền dữ liệu lớp học, danh sách sinh viên và giáo viên
+        res.render('class/edit', {
+            classData,
+            students,
+            tutors
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Có lỗi xảy ra!');
+    }
+});
+
+// Route xử lý việc cập nhật lớp học
+router.post('/edit/:classId', async (req, res) => {
+    try {
+        const classId = req.params.classId;
+        const { classname, student, tutor } = req.body;
+
+        // Cập nhật thông tin lớp học
+        await ClassModel.findByIdAndUpdate(classId, { classname, student, tutor });
+
+        // Chuyển hướng về trang chi tiết lớp học sau khi cập nhật thành công
+        res.redirect("/class");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Có lỗi xảy ra!');
+    }
+});
+
 // Xóa document theo ID
 router.get('/delete/:id', async (req, res) => {
     try {
