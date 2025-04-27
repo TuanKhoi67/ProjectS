@@ -120,11 +120,15 @@ router.post("/create", async (req, res) => {
   });
 
 router.get('/delete/:id', async (req, res) => {
-    const id = req.params.id; // Lấy id từ URL params
-    var meeting = await MeetingModel.findById(id);
-    await MeetingModel.deleteOne(meeting);
- 
-    res.redirect('/api/meeting');
- })
+  const id = req.params.id;
+
+  try {
+      await MeetingModel.findByIdAndDelete(id);
+      res.redirect('/api/meeting');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error deleting meeting');
+  }
+ });
 
 module.exports = router;
