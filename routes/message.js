@@ -9,8 +9,7 @@ module.exports = (io) => {
     const Message = require('../models/Message');
     const { onlineUsers } = require('../app'); // Import onlineUsers
 
-
-    // 📨 Lấy danh sách người dùng và hiển thị trang chat
+    // 📨 Get the list of users and display the chat page
     router.get('/', ensureAuthenticated, async (req, res) => {
         try {
             const allUsers = await User.find({ _id: { $ne: req.user._id } }).lean();
@@ -56,14 +55,13 @@ module.exports = (io) => {
         }
     });
 
-
-    // 📨 API lấy lịch sử chat giữa hai người
+    // 📨 API to get chat history between two users
     router.get('/chat/:userId', ensureAuthenticated, async (req, res) => {
         try {
             const { userId } = req.params;
 
             if (!mongoose.Types.ObjectId.isValid(userId)) {
-                return res.status(400).json({ error: "ID người dùng không hợp lệ" });
+                return res.status(400).json({ error: "Invalid user ID" });
             }
 
             const messages = await Message.find({
@@ -76,25 +74,25 @@ module.exports = (io) => {
             res.json(messages);
         } catch (err) {
             console.error(err);
-            res.status(500).json({ error: "Lỗi server" });
+            res.status(500).json({ error: "Server error" });
         }
     });
 
-    // 📨 API gửi tin nhắn
+    // 📨 API to send a message
     router.post('/chat', ensureAuthenticated, async (req, res) => {
         try {
             const { receiver, content } = req.body;
             const sender = req.user._id;
 
             if (!mongoose.Types.ObjectId.isValid(receiver)) {
-                return res.status(400).json({ error: "ID người nhận không hợp lệ" });
+                return res.status(400).json({ error: "Invalid recipient ID" });
             }
 
             if (!content || content.trim().length === 0) {
-                return res.status(400).json({ error: "Nội dung tin nhắn không được để trống" });
+                return res.status(400).json({ error: "Message content cannot be empty" });
             }
 
-            // 📝 Lưu tin nhắn vào database
+            // 📝 Save the message to the database
             const message = new Message({ sender, receiver, content: content.trim(), createdAt: new Date() });
             await message.save();
 
@@ -106,20 +104,18 @@ module.exports = (io) => {
                 createdAt: message.createdAt
             };
 
-            // 📡 Gửi tin nhắn đến người nhận qua Socket.io
+            // 📡 Send the message to the recipient via Socket.io
             io.to(receiver).emit('receiveMessage', messageData);
 
-            // 📡 Gửi tin nhắn đến chính người gửi để cập nhật UI
+            // 📡 Send the message to the sender to update the UI
             io.to(sender).emit('messageSent', messageData);
 
             res.json({ success: true, message: messageData });
 
         } catch (error) {
-            console.error("Lỗi server:", error);
-            res.status(500).json({ error: "Lỗi server" });
+            console.error("Server error:", error);
+            res.status(500).json({ error: "Server error" });
         }
     });
-
     return router;
-
 };
