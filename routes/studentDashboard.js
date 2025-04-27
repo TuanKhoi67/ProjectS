@@ -15,6 +15,29 @@ router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
     const studentId = req.user._id;
     const student = await Student.findOne({ user: studentId });
 
+    if (!student) {
+      // Render an error page or display a message if the student profile is not found
+      return res.render('dashboard/studentDashboard', {
+        error: 'Student profile not found. Please update your profile to access the dashboard.',
+        studentName: req.user.fullname, // Pass the user's name for context
+        blogs: [],
+        recentMessages: [],
+        classes: [],
+        meetings: [],
+        documents: [],
+        chartData: {
+          totalBlogs: 0,
+          totalLikes: 0,
+          totalComments: 0,
+          likedCount: 0,
+          commentedCount: 0,
+          weeklyActivity: {},
+          fileTypes: { pdf: 0, word: 0, image: 0, other: 0 }
+        },
+        attendanceStats: []
+      });
+    }
+
     // Blog data
     const blogs = await Blog.find({ author: studentId })
       .sort({ createdAt: -1 })
@@ -40,13 +63,6 @@ router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
       .populate('tutor')
       .sort({ createDate: -1 });
     console.log("Classes found:", classes);
-
-    if (!classes.length) {
-      return res.render('dashboard/studentDashboard', {
-        classes: [],
-        error: 'Bạn chưa tham gia lớp học nào.'
-      });
-    }
 
     // Meetings
     const meetings = await Meeting.find({ student: student._id })
@@ -112,7 +128,7 @@ router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
           classname: classItem.classname || 'Lớp không tên',
           present: presentCount,
           absent: absentCount
-      });
+        });
       }
     }
 
