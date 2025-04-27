@@ -147,12 +147,26 @@
             {{#if (eq role "tutor")}}
             <div class="form-group">
                 <label>Department</label>
-                <input type="text" name="department" class="form-control" value="{{profileData.department}}" required>
+                <select name="department" class="form-control" required>
+                    <option value="" disabled {{#unless profileData.department}}selected{{/unless}}>Select Department</option>
+                    <option value="English" {{#if (eq profileData.department "English" )}}selected{{/if}}>English</option>
+                    <option value="History" {{#if (eq profileData.department "History" )}}selected{{/if}}>History</option>
+                    <option value="IT" {{#if (eq profileData.department "IT" )}}selected{{/if}}>IT</option>
+                    <option value="Mathematics" {{#if (eq profileData.department "Mathematics" )}}selected{{/if}}>Mathematics</option>
+                    <option value="Physics" {{#if (eq profileData.department "Physics" )}}selected{{/if}}>Physics</option>
+                </select>
             </div>
             {{else if (eq role "student")}}
             <div class="form-group">
                 <label>Subject</label>
-                <input type="text" name="subject" class="form-control" value="{{profileData.subject}}" required>
+                <select name="subject" class="form-control" required>
+                    <option value="" disabled {{#unless profileData.subject}}selected{{/unless}}>Select Subject</option>
+                    <option value="English" {{#if (eq profileData.subject "English" )}}selected{{/if}}>English</option>
+                    <option value="History" {{#if (eq profileData.subject "History" )}}selected{{/if}}>History</option>
+                    <option value="IT" {{#if (eq profileData.subject "IT" )}}selected{{/if}}>IT</option>
+                    <option value="Mathematics" {{#if (eq profileData.subject "Mathematics" )}}selected{{/if}}>Mathematics</option>
+                    <option value="Physics" {{#if (eq profileData.subject "Physics" )}}selected{{/if}}>Physics</option>
+                </select>
             </div>
             {{/if}}
 
