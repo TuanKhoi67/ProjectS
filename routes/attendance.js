@@ -101,19 +101,12 @@ router.post('/take-attendance/:scheduleId', ensureAuthenticated,  async (req, re
   }
 });
 
-router.get('/all/delete/:id', async (req, res) => {
-  await AttendanceModel.findByIdAndDelete(req.params.id);
-res.redirect('/attendance/all');
-});
+router.get('/delete/:id', async (req, res) => {
+  const id = req.params.id; // Lấy id từ URL params
+  var attendance = await AttendanceModel.findById(id);
+  await AttendanceModel.deleteOne(attendance);
 
-router.post('/all/delete/:id', async (req, res) => {
-    try {
-        await AttendanceModel.findByIdAndDelete(req.params.id);
-        res.redirect('attendance/all'); 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Deleting error.");
-    }
-});
+  res.redirect('/api/meeting');
+})
 
 module.exports = router;
