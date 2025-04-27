@@ -290,8 +290,11 @@
 
 <body>
   <div class="container py-4">
-
     <h2 class="mb-4">👨‍🏫 Hello, {{tutorName}}!</h2>
+
+    {{#if error}}
+    <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
 
     <div class="dashboard-section">
       <div class="tutor-dashboard-header">📊 Document & Comment Overview</div>
