@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/Users');
 const bcrypt = require('bcrypt');
 
-// Hiển thị trang Admin
+// Display the Admin page
 router.get('/admin', async (req, res) => {
   try {
     const tutors = await User.find({ role: 'tutor' });
@@ -12,10 +12,9 @@ router.get('/admin', async (req, res) => {
     res.render('userpage/admin', { user: req.user, tutors, students, admins });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Lỗi server khi lấy danh sách người dùng');
+    res.status(500).send('Server error while fetching the user list');
   }
 });
-
 
 router.get('/edit/:id', async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -26,18 +25,18 @@ router.post('/edit/:id', async (req, res) => {
   try {
     const { fullname, email, role, password } = req.body;
 
-    // Tìm user hiện tại
+    // Find the current user
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).send('Người dùng không tồn tại');
+      return res.status(404).send('User does not exist');
     }
 
-    // Cập nhật các trường
+    // Update fields
     user.fullname = fullname;
     user.email = email;
     user.role = role;
 
-    // Nếu mật khẩu được nhập, thì hash và cập nhật
+    // If a password is entered, hash and update it
     if (password && password.trim() !== '') {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
@@ -46,8 +45,8 @@ router.post('/edit/:id', async (req, res) => {
     await user.save();
     res.redirect('/userpage/admin');
   } catch (err) {
-    console.error('Lỗi khi cập nhật người dùng:', err);
-    res.status(500).send('Lỗi server khi cập nhật người dùng');
+    console.error('Error updating user:', err);
+    res.status(500).send('Server error while updating user');
   }
 });
 
@@ -80,6 +79,5 @@ router.patch('/users/:id/role', async (req, res) => {
   await User.findByIdAndUpdate(req.params.id, { role });
   res.json({ message: 'User role updated successfully' });
 });
-
 
 module.exports = router;
