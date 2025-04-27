@@ -125,7 +125,7 @@ router.get('/student_dashboard', ensureAuthenticated, async (req, res) => {
         });
 
         attendanceStats.push({
-          classname: classItem.classname || 'Lớp không tên',
+          classname: classItem.classname || 'Unnamed class',
           present: presentCount,
           absent: absentCount
         });
