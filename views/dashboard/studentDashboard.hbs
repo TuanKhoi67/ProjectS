@@ -229,6 +229,10 @@
   <div class="container py-4">
     <h2 class="mb-4">🎓 Hello, {{studentName}}!</h2>
 
+    {{#if error}}
+    <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
+
     <!-- === Chart Section === -->
     <div class="dashboard-section">
       <div class="student-dashboard-header">📊 Activity Overview</div>
@@ -271,9 +275,7 @@
       <!-- Classes Section -->
       <div class="dashboard-section">
         <div class="student-dashboard-header">🏫 Your Classes</div>
-        {{#if error}}
-        <p>{{error}}</p>
-        {{else}}
+        {{#if classes.length}}
         {{#each classes}}
         <div class="meeting-card">
           <div class="d-flex justify-content-between align-items-center mb-2">
@@ -289,6 +291,8 @@
           </ul>
         </div>
         {{/each}}
+        {{else}}
+        <p>No classes found.</p>
         {{/if}}
       </div>
 
