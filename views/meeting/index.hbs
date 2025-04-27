@@ -68,9 +68,9 @@
         <td>{{note}}</td>
         <td>{{formatDate createDate}}</td>
         <td>
-          <a class="btn button-3" href="meeting/delete/{{ _id }}"
-                        onclick="return confirm('Are you sure to delete this meeting ?');">Delete</a></td>
-      </tr>
+          <a class="btn button-3" href="/api/meeting/delete/{{ _id }}"
+            onclick="return confirm('Are you sure to delete this meeting ?');">Delete</a>
+        </td>
     {{/each}}
   </tbody>
 </table>
