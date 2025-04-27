@@ -191,7 +191,8 @@ document.getElementById('create-class-form').addEventListener('submit', async fu
 
         if (res.ok) {
             alert(result.message); // ✅ Hiển thị thông báo nếu thành công
-            document.getElementById('create-class-form').reset(); // Reset form nếu thành công
+            //document.getElementById('create-class-form').reset(); // Reset form nếu thành công
+            window.location.href = '/class';
         } else {
             alert("Lỗi: " + result.message); // ❌ Thông báo lỗi nếu có
         }
