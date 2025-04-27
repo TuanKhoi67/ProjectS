@@ -13,8 +13,8 @@ router.get('/', ensureAuthenticated, checkAdmin, async (req, res) => {
         const blogs = await Blog.find().populate('author', 'fullname role');
         res.render('blog/index', { blogs, user: req.user }); // Gửi user vào view
     } catch (error) {
-        console.error('Lỗi lấy danh sách bài viết:', error);
-        res.status(500).send('Lỗi máy chủ');
+        console.error('Error retrieving blog list:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -25,7 +25,7 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
         const role = req.user.role;
 
         if (!title || !content) {
-            return res.status(400).send('Vui lòng điền đầy đủ các trường bắt buộc');
+            return res.status(400).send('Please fill in all required fields');
         }
 
         let imagePath = '';
@@ -46,8 +46,8 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
         await blog.save();
         res.redirect(role === 'student' ? '/blog/student' : '/blog/tutor');
     } catch (error) {
-        console.error('Lỗi khi tạo bài viết:', error);
-        res.status(500).send('Lỗi máy chủ: ' + error.message);
+        console.error('Error creating blog:', error);
+        res.status(500).send('Internal Server Error: ' + error.message);
     }
 });
 
@@ -129,8 +129,8 @@ router.post('/edit/:id', upload.single('imageFile'), async (req, res) => {
 
         res.redirect('/blog');
     } catch (error) {
-        console.error('Lỗi khi cập nhật blog:', error);
-        res.status(500).send('Lỗi máy chủ');
+        console.error('Error updating blog:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -228,7 +228,7 @@ router.get('/reel', async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching blogs:', error);
-        res.status(500).send('Internal Server Errorrrrrr');
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -239,7 +239,7 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
         const blog = await Blog.findById(blogId);
 
         if (!blog) {
-            return res.status(404).json({ error: 'Bài viết không tồn tại' });
+            return res.status(404).json({ error: 'Blog does not exist!' });
         }
 
         const index = blog.likedBy.indexOf(userId);
@@ -258,8 +258,8 @@ router.post('/like/:id', ensureAuthenticated, async (req, res) => {
             isLiked: index === -1 // Correctly calculate the new liked state
         });
     } catch (error) {
-        console.error('Lỗi khi thả tim:', error);
-        res.status(500).json({ error: 'Lỗi máy chủ' });
+        console.error('Error liking:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -272,12 +272,12 @@ router.post('/reel/comment/:id', ensureAuthenticated, async (req, res) => {
         const { content } = req.body;
 
         if (!user) {
-            return res.status(401).send('Bạn cần đăng nhập để bình luận!');
+            return res.status(401).send('You need to log in to comment!');
         }
 
         const blog = await Blog.findById(blogId);
         if (!blog) {
-            return res.status(404).send('Bài viết không tồn tại!');
+            return res.status(404).send('Blog does not exist!');
         }
 
         const comment = {
@@ -290,8 +290,8 @@ router.post('/reel/comment/:id', ensureAuthenticated, async (req, res) => {
 
         res.redirect('/blog/reel');
     } catch (error) {
-        console.error('Lỗi khi bình luận:', error);
-        res.status(500).send('Lỗi máy chủ!');
+        console.error('Error commenting:', error);
+        res.status(500).send('Internal Server Error!');
     }
 });
 
