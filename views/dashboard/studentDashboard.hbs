@@ -33,20 +33,6 @@
     /* Enable vertical scrolling */
   }
 
-  .meeting-card-header,
-  .doc-card-header {
-    position: sticky;
-    top: 0;
-    /* Adjust this value if you have a fixed navbar */
-    background-color: #f9f9ff;
-    /* Match the card background */
-    z-index: 10;
-    /* Ensure it stays above other content */
-    box-shadow: 0px -16px 0px 16px #f9f9ff;
-    /* Add a subtle shadow for better visibility */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  }
-
   .message-card {
     background-color: #f9f9ff;
     border: 1px solid #d4d8f0;
@@ -65,16 +51,6 @@
   .doc-card:hover,
   .blog-card:hover {
     background-color: #eef2ff;
-  }
-
-  .meeting-card:hover .meeting-card-header,
-  .doc-card:hover .doc-card-header {
-    background-color: #eef2ff;
-    /* Match the card's hover background */
-    color: #2a2a91;
-    /* Optional: Change text color */
-    box-shadow: 0px -16px 0px 16px #eef2ff;
-    /* Match the hover shadow */
   }
 
   .class-card-title {
@@ -157,8 +133,8 @@
     font-size: 0.9rem;
   }
 
-  .meeting-item-card,
-  .doc-item-card {
+
+  .meeting-item-card {
     background-color: #f9f9ff;
     border: 1px solid #d4d8f0;
     border-radius: 12px;
@@ -166,9 +142,8 @@
     transition: 0.3s;
   }
 
-  .meeting-item-card:hover,
-  .doc-item-card:hover {
-    background-color: #dce3f9;
+  .meeting-item-card:hover {
+    background-color: #eef2ff;
   }
 
   .meeting-status .badge {
@@ -202,21 +177,6 @@
     .doc-card {
       overflow: visible;
       height: auto;
-    }
-
-    .meeting-card-header,
-    .doc-card-header {
-      position: static;
-      /* Reset to default behavior */
-      box-shadow: none;
-      /* Remove shadow */
-      top: auto;
-      /* Remove the top offset */
-    }
-
-    .meeting-card:hover .meeting-card-header,
-    .doc-card:hover .doc-card-header {
-      box-shadow: none;
     }
 
     .message-card {
@@ -270,7 +230,7 @@
 
       <!-- Classes Section -->
       <div class="dashboard-section">
-        <div class="student-dashboard-header">🏫 Your Classes</div>
+        <div class="student-dashboard-header">🏫 Your Classes </div>
         {{#if error}}
         <p>{{error}}</p>
         {{else}}
@@ -353,9 +313,7 @@
           <!-- Meetings + Documents Right -->
           <div class="col-12 col-lg-6">
             <div class="meeting-card mb-4">
-              <div class="meeting-card-header">
-                <div class="student-dashboard-header">📅 Meetings</div>
-              </div>
+              <div class="student-dashboard-header">📅 Meetings</div>
               {{#if meetings.length}}
               <div class="row row-cols-1 g-3">
                 {{#each meetings}}
@@ -367,7 +325,6 @@
                         {{this.status}}
                       </span>
                     </div>
-                    <div><strong>Title:</strong> {{this.title}}</div>
                     <div><strong>Tutor:</strong>
                       {{#each this.tutor}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
                     </div>
@@ -387,29 +344,21 @@
             </div>
 
             <div class="doc-card">
-              <div class="doc-card-header">
-                <div class="student-dashboard-header">📁 Documents</div>
-              </div>
+              <div class="student-dashboard-header">📁 Documents</div>
               {{#if documents.length}}
-              <div class="row row-cols-1 g-3">
-                {{#each documents}}
-                <div class="col">
-                  <div class="doc-item-card d-flex flex-column">
-                    <div>
-                      <strong>{{this.title}}</strong><br />
-                      <a href="{{this.imageUrl}}" target="_blank">View Document Image</a>
-                      {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download Document
-                        File</a>{{/if}}<br />
-                      <small>{{this.content}}</small>
-                      <hr />
-                    </div>
-                  </div>
-                </div>
-                {{/each}}
-                {{else}}
-                <p class="text-muted">No uploaded documents.</p>
-                {{/if}}
+              {{#each documents}}
+              <div>
+                <strong>{{this.title}}</strong><br />
+                <a href="{{this.imageUrl}}" target="_blank">View Document Image</a>
+                {{#if this.documentFile}} | <a href="{{this.documentFile}}" target="_blank">Download Document
+                  File</a>{{/if}}<br />
+                <small>{{this.content}}</small>
+                <hr />
               </div>
+              {{/each}}
+              {{else}}
+              <p class="text-muted">No uploaded documents.</p>
+              {{/if}}
             </div>
           </div>
         </div>
