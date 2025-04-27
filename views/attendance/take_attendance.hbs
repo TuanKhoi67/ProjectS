@@ -18,6 +18,13 @@
     </ul>
 </div>
 
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>
+
 <h2 class="mb-4 text-center">
   Class: {{schedule.class.classname}} – Day: {{schedule.day}}, Time: {{schedule.time}}
 </h2>
