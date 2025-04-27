@@ -297,7 +297,7 @@
                     });
                     scrollToBottom();
                 })
-                .catch(err => console.error("Lỗi khi tải tin nhắn:", err));
+                .catch(err => console.error("Error loading messages:", err));
         }
 
         async function sendMessage() {
@@ -331,7 +331,7 @@
                 messageInput.value = '';
                 scrollToBottom();
             } catch (error) {
-                alert('Gửi tin nhắn thất bại: ' + error.message);
+                alert('Failed to send message: ' + error.message);
             }
         }
 
