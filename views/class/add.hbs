@@ -118,7 +118,7 @@
 
         {{#if students}}
         <!-- Tạo lớp với danh sách học sinh đã lọc -->
-        <div class="form-section">
+        <div id="create-class-form class="form-section">
             <h2>Class Info</h2>
             <form action="/class/create" method="POST">
                 <input type="hidden" name="subject" value="{{subject}}">
@@ -168,7 +168,7 @@
 
             {{#if classes.length}}
             <h5>Add student to existed class:</h5>
-            <form action="/class/assign-student" method="POST" class="mb-4">
+            <form id = "assign-student-form" class="mb-4">
                 <input type="hidden" name="studentId" value="{{studentResult._id}}">
                 <label for="classId">Choose class:</label>
                 <select name="classId" id="classId" class="form-select mb-2">
