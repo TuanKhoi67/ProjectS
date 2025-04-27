@@ -13,9 +13,7 @@
 
     .blog-card {
         border-radius: 15px;
-        /* Rounded corners */
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        /* Subtle shadow for depth */
         transition: transform 0.3s ease-in-out;
     }
 
@@ -37,7 +35,6 @@
         width: 100%;
     }
 
-    /* Popup */
     .popup-btn {
         background-color: #f0f2f5;
         border: none;
@@ -91,13 +88,15 @@
 <body>
     <div class="container mt-4">
         <h1 class="text-center" style="font-weight: 700;">Tutor User Page</h1>
-        <!-- Form đăng bài -->
+
+        <!-- Blog Post Form -->
         <h4 class="text-center mt-4">
             <img class="profile-img"
                 src="{{#if tutor.imageTutor}}{{absolutePath tutor.imageTutor}}{{else}}https://placehold.co/50x50{{/if}}"
                 alt="User profile picture">
             <button id="openPopup" class="popup-btn">What’s Your Blog Inspiration Today, {{user.fullname}}?</button>
         </h4>
+
         <!-- Popup Modal -->
         <div id="blogModal" class="modal" style="display: none;">
             <div class="modal-content shadow p-4 bg-white rounded">
@@ -113,22 +112,22 @@
                         <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label>Ảnh bài viết</label>
+                        <label>Blog Image</label>
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="imageSource" id="uploadRadio"
                                     value="upload" checked>
-                                <label class="form-check-label" for="uploadRadio">Tải ảnh lên</label>
+                                <label class="form-check-label" for="uploadRadio">Upload Image</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="imageSource" id="urlRadio"
                                     value="url">
-                                <label class="form-check-label" for="urlRadio">Dùng link ảnh</label>
+                                <label class="form-check-label" for="urlRadio">Use Image URL</label>
                             </div>
                         </div>
                         <div id="uploadSection">
                             <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
-                            <small class="text-muted">Chấp nhận ảnh JPEG, PNG (tối đa 5MB)</small>
+                            <small class="text-muted">Accepts JPEG, PNG images (max 5MB)</small>
                         </div>
                         <div id="urlSection" style="display: none;">
                             <input type="url" class="form-control" id="imageUrl" name="imageUrl"
@@ -137,7 +136,7 @@
                         <img id="imagePreview" class="image-preview mt-2" style="max-width: 300px; display: none;">
                     </div>
                     <input type="hidden" name="role" value="tutor">
-                    <button type="submit" class="btn btn-primary w-100">Đăng bài</button>
+                    <button type="submit" class="btn btn-primary w-100">Post Blog</button>
                 </form>
             </div>
         </div>
@@ -147,14 +146,14 @@
             <a href="/profile" class="btn">Your Profile</a>
         </div>
 
-        <!-- Hiển thị danh sách blog -->
+        <!-- Blog List -->
         <h2 class="text-center mt-5">Tutor Blogs</h2>
         <div class="row mt-4">
             {{#each blogs}}
             <div class="col-md-4 mb-4">
                 <div class="blog-card shadow-sm">
                     <div class="content">
-                        <!-- Ảnh bài viết -->
+                        <!-- Blog Image -->
                         {{#if this.image}}
                         <img src="{{{absolutePath this.image}}}" class="card-img-top" alt="{{this.title}}">
                         {{else}}
@@ -171,13 +170,13 @@
                         <a href="#" class="title">{{this.title}}</a>
                         <p class="card-text">{{this.content}}</p>
 
-                        <!-- Thông tin tương tác -->
+                        <!-- Interaction Info -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <i class="fa-solid fa-heart"> {{this.likes}}</i>
                             <i class="fa-solid fa-comment-dots"> {{this.comments.length}}</i>
                         </div>
 
-                        <!-- Nút chỉnh sửa/xóa -->
+                        <!-- Edit/Delete Buttons -->
                         <a href="/blog/edit/{{this._id}}" class="btn"><i class="fa-regular fa-pen-to-square"></i>
                             Edit</a>
                         <form action="/blog/delete/{{this._id}}" method="post"
@@ -195,7 +194,7 @@
     </div>
 
     <script>
-        // Xử lý chuyển đổi giữa upload và URL
+        // Handle switch between upload and URL
         document.querySelectorAll('input[name="imageSource"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 const isUpload = document.getElementById('uploadRadio').checked;
@@ -204,7 +203,7 @@
             });
         });
 
-        // Xem trước ảnh khi chọn file
+        // Preview image when selecting file
         document.getElementById('imageFile').addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
@@ -217,7 +216,7 @@
             }
         });
 
-        // Xem trước ảnh khi nhập URL
+        // Preview image when entering URL
         document.getElementById('imageUrl').addEventListener('input', function (e) {
             const url = e.target.value;
             if (url) {
