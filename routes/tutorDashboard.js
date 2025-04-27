@@ -17,9 +17,23 @@ router.get('/tutor_dashboard', ensureAuthenticated, async (req, res) => {
     const tutor = await Tutor.findOne({ user: tutorId }).lean();
 
     if (!tutor) {
+      // Render an error page or display a message if the tutor profile is not found
       return res.render('dashboard/tutorDashboard', {
-        error: 'Tutor profile not found.',
-        documents: []
+        error: 'Tutor profile not found. Please update your profile to access the dashboard.',
+        tutorName: req.user.fullname, // Pass the user's name for context
+        documents: [],
+        blogs: [],
+        messages: [],
+        tutorClasses: [],
+        meetings: [],
+        summary: {
+          totalTutees: 0,
+          messagesThisWeek: 0,
+          meetingsHeld: 0,
+          documentsShared: 0
+        },
+        tutees: [],
+        exceptions: { inactive7: 0, inactive28: 0 }
       });
     }
 
