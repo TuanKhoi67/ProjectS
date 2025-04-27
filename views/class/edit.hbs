@@ -1,34 +1,146 @@
+<head>
+    <title>Edit Class</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2a2a91;
+            margin-bottom: 30px;
+        }
+
+        form {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2a2a91;
+            font-weight: bold;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group label {
+            background: #e6e6f9;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            accent-color: #2a2a91;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a91;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1f1f70;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Edit Class Information</h1>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <span class="sidebar-title">Dashboard</span>
+    </div>
+    <hr>
+
+    <ul>
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
+        <li><a href="/admin/dashboard/student">Student Dashboard</a></li>
+        <li><a href="/userpage/admin">User Management</a></li>
+        <li><a href="/blog">Blog Management</a></li>
+        <li><a href="/document">Document Management</a></li>
+        <li><a href="/api/meeting">Meeting</a></li>
+        <li><a href="/class">Class</a></li>
+        <li><a href="/schedule/schedule-view">Schedule</a></li>
+        <li><a href="/attendance/all">View Attendance</a></li>
+    </ul>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('hidden');
+    }
+</script>
+
 <form action="/class/edit/{{classData._id}}" method="POST">
     <div>
-        <label for="classname">Tên lớp:</label>
-        <input type="text" name="classname" value="{{classData.classname}}" required />
+        <label for="classname">Class Name:</label>
+        <input type="text" name="classname" id="classname" value="{{classData.classname}}" required />
     </div>
     
     <div>
-    <label for="student">Chọn sinh viên:</label>
-    <div>
-        {{#each students}}
-            <label>
-                <input type="checkbox" name="student" value="{{this._id}}" 
-                    {{#if (contains classData.student this._id)}}checked{{/if}}>
-                {{this.name}}
-            </label>
-        {{/each}}
-    </div>
+        <label for="student">Select Students:</label>
+        <div class="checkbox-group">
+            {{#each students}}
+                <label>
+                    <input type="checkbox" name="student" value="{{this._id}}"
+                        {{#if (contains ../classData.student this._id)}}checked{{/if}}>
+                    {{this.name}}
+                </label>
+            {{/each}}
+        </div>
     </div>
 
     <div>
-        <label for="tutor">Chọn giáo viên:</label>
-        <select name="tutor">
+        <label for="tutor">Select Tutor:</label>
+        <select name="tutor" id="tutor">
             {{#each tutors}}
                 <option value="{{this._id}}" 
-                    {{#if (equals classData.tutor this._id)}}selected{{/if}}>{{this.name}}</option>
+                    {{#if (equals ../classData.tutor this._id)}}selected{{/if}}>
+                    {{this.name}}
+                </option>
             {{/each}}
         </select>
     </div>
     
     <div>
-        <button type="submit">Cập nhật</button>
+        <button type="submit">Update Class</button>
     </div>
 </form>
 
+</body>
