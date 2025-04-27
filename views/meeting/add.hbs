@@ -111,14 +111,14 @@ document.getElementById('createMeetingForm').addEventListener('submit', async fu
     const result = await response.json();
 
     if (response.ok) {
-      alert(result.message + "\nLink họp: " + result.meetLink);
+      alert(result.message + "\nMeeting URL: " + result.meetLink);
       form.reset(); // Reset form nếu muốn
     } else {
-      alert("Tạo lịch họp thất bại: " + (result.error || "Có lỗi xảy ra"));
+      alert("Creating meeting failed: " + (result.error || "Something went wrong"));
     }
 
   } catch (error) {
-    alert("Lỗi kết nối đến máy chủ: " + error.message);
+    alert("Connected failed: " + error.message);
   }
 });
 </script>
