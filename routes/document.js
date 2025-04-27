@@ -7,47 +7,48 @@ const Student = require('../models/Student');
 const multer = require('multer');
 const path = require('path');
 const { ensureAuthenticated, checkAdmin, checkStudent, checkTutor } = require('../middleware/auth');
-// Cấu hình Multer để lưu file
+
+// Configure Multer to store files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './public/uploads/'); // Chỉ định thư mục lưu trữ file tải lên
+    cb(null, './public/uploads/'); // Specify the folder to store uploaded files
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Đặt tên file là thời gian hiện tại
+    cb(null, Date.now() + path.extname(file.originalname)); // Name the file with the current timestamp
   }
 });
 
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const filetypes = /pdf|doc|docx/; // Hạn chế chỉ cho phép file PDF và Word
+    const filetypes = /pdf|doc|docx/; // Restrict to PDF and Word files only
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
     if (mimetype && extname) {
       return cb(null, true);
     }
-    cb(new Error('Chỉ chấp nhận các file PDF, DOC, DOCX'));
+    cb(new Error('Only PDF, DOC, and DOCX files are accepted'));
   }
 });
 
-// Hiển thị trang quản lý tài liệu
+// Display the document management page
 router.get('/', checkAdmin, async (req, res) => {
   try {
     const documents = await Document.find().populate('author', 'fullname');
-    res.render('document/index', { documents }); // Trả về trang quản lý tài liệu với dữ liệu tài liệu
+    res.render('document/index', { documents }); // Return the document management page with data
   } catch (err) {
     console.error(err);
-    res.status(500).send('Lỗi server khi lấy danh sách tài liệu');
+    res.status(500).send('Server error while fetching document list');
   }
 });
 
-// Hiển thị trang thêm tài liệu
+// Display the add document page
 router.get('/add', (req, res) => {
   res.render('document/add');
 });
 
-// Xử lý thêm tài liệu
+// Handle adding a document
 router.post('/add', upload.single('documentFile'), async (req, res) => {
   const { title, author, content } = req.body;
   const documentFile = req.file ? '/uploads/' + req.file.filename : '';
@@ -56,15 +57,15 @@ router.post('/add', upload.single('documentFile'), async (req, res) => {
     title,
     author: req.user._id,
     content,
-    imageUrl: req.body.imageUrl, // nếu có ảnh
-    documentFile // Thêm file tải lên
+    imageUrl: req.body.imageUrl, // If there is an image
+    documentFile // Add the uploaded file
   });
 
   await newDocument.save();
   res.redirect('/document/mainDocument');
 });
 
-// Xử lý tìm kiếm tài liệu
+// Handle document search
 router.get('/search', async (req, res) => {
   const query = req.query.query || '';
   try {
@@ -94,6 +95,7 @@ router.get('/edit/:id', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
 // Update document route
 router.post('/update/:id', upload.single('documentFile'), async (req, res) => {
   try {
@@ -124,33 +126,32 @@ router.post('/update/:id', upload.single('documentFile'), async (req, res) => {
   }
 });
 
-// Xử lý xóa tài liệu với phương thức POST
+// Handle deleting a document with POST method
 router.delete('/delete/:id', async (req, res) => {
   try {
     await Document.findByIdAndDelete(req.params.id);
     res.redirect('/document');
   } catch (error) {
-    console.error('Lỗi khi xóa tài liệu:', error);
-    res.status(500).send('Lỗi máy chủ nội bộ');
+    console.error('Error deleting document:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
-
-// Hiển thị trang danh sách tài liệu với bình luận
+// Display the document list page with comments
 router.get('/mainDocument', async (req, res) => {
   try {
     const documents = await Document.find()
       .populate({
         path: 'author',
-        select: 'fullname role', // cần role để xác định là tutor/student
+        select: 'fullname role', // Need role to determine if tutor/student
       })
       .populate({
         path: 'comments.user',
         select: 'fullname role',
       })
-      .lean(); // Dễ xử lý dữ liệu thêm
+      .lean(); // Easier to process additional data
 
-    // Lặp qua documents để gắn avatar từ student/tutor
+    // Loop through documents to attach avatar from student/tutor
     for (let doc of documents) {
       doc.avatar = await getUserAvatar(doc.author);
 
@@ -159,7 +160,7 @@ router.get('/mainDocument', async (req, res) => {
       }
     }
 
-    // Gắn avatar cho người dùng hiện tại nếu đã đăng nhập
+    // Attach avatar for the current user if logged in
     let currentUserAvatar = null;
     if (req.user) {
       currentUserAvatar = await getUserAvatar(req.user);
@@ -171,12 +172,12 @@ router.get('/mainDocument', async (req, res) => {
       userAvatar: currentUserAvatar,
     });
   } catch (error) {
-    console.error('Lỗi lấy dữ liệu:', error);
-    res.status(500).send('Lỗi máy chủ');
+    console.error('Error fetching data:', error);
+    res.status(500).send('Server error');
   }
 });
 
-// Thêm bình luận vào tài liệu (chỉ người đăng nhập mới có thể bình luận)
+// Add a comment to a document (only logged-in users can comment)
 router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
   try {
     const documentId = req.params.id;
@@ -195,10 +196,10 @@ router.post('/comment/:id', ensureAuthenticated, async (req, res) => {
     document.comments.push(comment);
     await document.save();
 
-    res.redirect('/document/mainDocument'); // Reload lại trang 
+    res.redirect('/document/mainDocument'); // Reload the page
   } catch (error) {
-    console.error('Lỗi khi bình luận:', error);
-    res.status(500).send('Lỗi máy chủ ');
+    console.error('Error adding comment:', error);
+    res.status(500).send('Server error');
   }
 });
 
@@ -216,7 +217,7 @@ async function getUserAvatar(user) {
       return 'https://placehold.co/45x45';
     }
   } catch (err) {
-    console.error('Lỗi lấy avatar:', err);
+    console.error('Error fetching avatar:', err);
     return 'https://placehold.co/45x45';
   }
 }
