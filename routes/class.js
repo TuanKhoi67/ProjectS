@@ -26,7 +26,7 @@ router.get('/create',ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         res.render('class/add'); // Giao diện để chọn môn học
     } catch (error) {
-        res.status(500).send('Lỗi khi tải trang tạo lớp học');
+        res.status(500).send('Error loading class creation page');
     }
 });
 
@@ -42,7 +42,7 @@ router.post('/filter', ensureAuthenticated, checkAdmin, async (req, res) => {
 
         res.render('class/add', { students, tutors, subject });
     } catch (error) {
-        res.status(500).send('Lỗi khi lọc sinh viên và giáo viên');
+        res.status(500).send('Error filtering students and teachers');
     }
 });
 
@@ -62,12 +62,12 @@ router.post('/create', ensureAuthenticated, checkAdmin, async (req, res) => {
         // Kiểm tra tên lớp đã tồn tại chưa
         const existingClass = await ClassModel.findOne({ classname });
         if (existingClass) {
-            return res.status(400).json({success: false, message:"Tên lớp đã tồn tại. Vui lòng chọn tên khác."});
+            return res.status(400).json({success: false, message:"Class name already exists. Please choose another name."});
         }
 
         // Kiểm tra số lượng sinh viên không vượt quá 10
         if (studentIds.length > 10) {
-            return res.status(400).json({success: false, message:"Một lớp không được có quá 10 sinh viên."});
+            return res.status(400).json({success: false, message:"A class should not have more than 10 students."});
         }
 
         const newClass = new ClassModel({
@@ -79,10 +79,10 @@ router.post('/create', ensureAuthenticated, checkAdmin, async (req, res) => {
         await newClass.save();
 
         //res.redirect('/class'); // Điều hướng sau khi tạo lớp thành công
-        res.status(200).json({success: false, message: "Tạo lớp thành công!" }); // bỏ res.redirect
+        res.status(200).json({success: false, message: "Class created successfully!" }); // bỏ res.redirect
     } catch (error) {
-        console.error("Lỗi khi tạo lớp học:", error);  // In lỗi chi tiết
-        res.status(500).json(`Lỗi khi tạo lớp học: ${error.message}`);
+        console.error("Error creating class:", error);  // In lỗi chi tiết
+        res.status(500).json(`Error creating class: ${error.message}`);
     }
 });
 
@@ -92,13 +92,13 @@ router.get('/search-student', async (req, res) => {
         const { email } = req.query;
 
         if (!email) {
-            return res.render('class/add', { error: "Vui lòng nhập email sinh viên!", studentResult: null, classes: [] });
+            return res.render('class/add', { error: "Please enter student email!", studentResult: null, classes: [] });
         }
 
         const student = await StudentModel.findOne({ email });
 
         if (!student) {
-            return res.render('class/add', { error: "Không tìm thấy sinh viên!", studentResult: null, classes: [] });
+            return res.render('class/add', { error: "No students found!", studentResult: null, classes: [] });
         }
 
         // Lấy danh sách giáo viên có department trùng với subject của sinh viên
@@ -110,8 +110,8 @@ router.get('/search-student', async (req, res) => {
 
         res.render('class/add', { studentResult: student, classes: availableClasses, tutors, error: null });
     } catch (error) {
-        console.error("Lỗi khi tìm kiếm sinh viên:", error);
-        res.render('class/add', { error: 'Lỗi khi tìm kiếm sinh viên', studentResult: null, classes: [] });
+        console.error("Error while searching for students:", error);
+        res.render('class/add', { error: 'Error while searching for students', studentResult: null, classes: [] });
     }
 });
 
@@ -127,17 +127,17 @@ router.post('/assign-student', ensureAuthenticated, async (req, res) => {
         );
 
         if (isAlreadyInClass) {
-            return res.json({ success: false, message: "Sinh viên đã có trong lớp." });
+            return res.json({ success: false, message: "Students are already in class." });
         }
 
         await ClassModel.findByIdAndUpdate(classId, { $push: { student: studentId } });
 
         //res.redirect('/class');
         // Trả về thông báo thành công để frontend redirect
-        res.json({ success: true, message: "Thêm sinh viên thành công!" });
+        res.json({ success: true, message: "More students successfully!" });
     } catch (error) {
-        console.error("Lỗi khi thêm sinh viên vào lớp:", error);
-        res.status(500).json('Lỗi khi thêm sinh viên vào lớp');
+        console.error("Error adding student to class:", error);
+        res.status(500).json('Error adding student to class');
     }
 });
 
@@ -146,7 +146,7 @@ router.post('/create-class', ensureAuthenticated, checkAdmin, async (req, res) =
         const { classname, studentId, tutorId } = req.body;
 
         if (!classname || !studentId || !tutorId) {
-            return res.status(400).json("Thiếu dữ liệu đầu vào");
+            return res.status(400).json("Missing input data");
         }
 
         const newClass = new ClassModel({
@@ -159,8 +159,8 @@ router.post('/create-class', ensureAuthenticated, checkAdmin, async (req, res) =
 
         res.redirect('/class'); 
     } catch (error) {
-        console.error("Lỗi khi tạo lớp học:", error);
-        res.status(500).send('Lỗi khi tạo lớp học');
+        console.error("Error creating class:", error);
+        res.status(500).send('Error creating class');
     }
 });
 
@@ -182,7 +182,7 @@ router.get('/edit/:classId', async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Có lỗi xảy ra!');
+        res.status(500).send('Error!');
     }
 });
 
@@ -199,7 +199,7 @@ router.post('/edit/:classId', async (req, res) => {
         res.redirect("/class");
     } catch (error) {
         console.error(error);
-        res.status(500).send('Có lỗi xảy ra!');
+        res.status(500).send('Error!!!');
     }
 });
 
@@ -210,7 +210,7 @@ router.get('/delete/:id', async (req, res) => {
         res.redirect('/class'); // hoặc route hiển thị danh sách lớp học
     } catch (err) {
         console.error(err);
-        res.status(500).send("Lỗi khi xóa lớp học.");
+        res.status(500).send("Error!!!");
     }
 });
 
