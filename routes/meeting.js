@@ -131,3 +131,5 @@ router.get('/delete/:id', async (req, res) => {
       res.status(500).send('Error deleting meeting');
   }
  });
+
+module.exports = router;
