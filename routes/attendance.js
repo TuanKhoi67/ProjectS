@@ -23,7 +23,7 @@ router.get('/all', ensureAuthenticated, checkAdmin, async (req, res) => {
       const studentId = att.student_id?._id?.toString();
 
       if (!studentId) {
-        att.className = 'Không xác định';
+        att.className = 'Not define';
         continue;
       }
 
@@ -32,14 +32,14 @@ router.get('/all', ensureAuthenticated, checkAdmin, async (req, res) => {
         c.student.some(s => s.toString() === studentId)
       );
 
-      att.className = foundClass ? foundClass.classname : 'Không xác định';
+      att.className = foundClass ? foundClass.classname : 'Not define';
     }
 
     res.render('attendance/index', { attendances });
 
   } catch (err) {
-    console.error('Lỗi khi truy vấn dữ liệu điểm danh:', err);
-    res.status(500).send('Lỗi khi truy vấn dữ liệu điểm danh.');
+    console.error('Error when querying attendance data:', err);
+    res.status(500).send('Error querying attendance data.');
   }
 });
 
@@ -48,7 +48,7 @@ router.get('/take-attendance/:scheduleId', ensureAuthenticated, async (req, res)
       const scheduleId = req.params.scheduleId;
   
       if (!mongoose.Types.ObjectId.isValid(scheduleId)) {
-        return res.status(400).send('ID lịch học không hợp lệ.');
+        return res.status(400).send('Invalid class schedule ID.');
       }
   
       const schedule = await ScheduleModel.findById(scheduleId)
@@ -60,11 +60,11 @@ router.get('/take-attendance/:scheduleId', ensureAuthenticated, async (req, res)
         console.log('Schedule:', schedule);
   
       if (!schedule) {
-        return res.status(404).send('Lịch học không tồn tại.');
+        return res.status(404).send('Class schedule does not exist.');
       }
   
       if (!schedule.class) {
-        return res.status(404).send('Lịch học chưa có lớp học.');
+        return res.status(404).send('The schedule has no classes yet.');
       }
 
       console.log('Students:', schedule.class.student);
@@ -75,8 +75,8 @@ router.get('/take-attendance/:scheduleId', ensureAuthenticated, async (req, res)
       });
 
     } catch (error) {
-      console.error('Lỗi khi lấy danh sách sinh viên:', error); 
-      res.status(500).send('Lỗi khi lấy danh sách sinh viên.');
+      console.error('Error when getting student list:', error); 
+      res.status(500).send('Error getting student list.');
     }
   });
 
@@ -96,8 +96,8 @@ router.post('/take-attendance/:scheduleId', ensureAuthenticated,  async (req, re
     res.redirect(`/attendance/take-attendance/${req.params.scheduleId}`);
 
   } catch (error) {
-    console.error('Lỗi khi lưu điểm danh:', error); // Log chi tiết lỗi
-    res.status(500).send('Lỗi khi lưu điểm danh.');
+    console.error('Error saving attendance:', error); // Log chi tiết lỗi
+    res.status(500).send('Error saving attendance.');
   }
 });
 
