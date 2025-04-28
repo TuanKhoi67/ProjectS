@@ -4,7 +4,7 @@ const router = express.Router();
 const StudentModel = require("../models/Student"); // Model Student
 const TutorModel = require("../models/Tutor"); // Model Tutor
 const MeetingModel = require("../models/Meeting"); // Model Meeting
-//const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
+const { createGoogleMeet, sendEmail } = require("../services/googleMeet");
 
 
 router.get('/', async (req, res) => {
@@ -107,33 +107,27 @@ router.post("/create", async (req, res) => {
       console.log("Meeting created:", meeting);
   
       // Soạn nội dung email
-      const emailMessage = `Your meeting has been scheduled.\nJoin to: ${meeting.hangoutLink}`;
+      const emailMessage = `Bạn được mời tham gia một cuộc hop. Vào lúc ${startTime}.\nTham gia tại: ${meeting.hangoutLink}`;
   
       // Gửi email
-      sendEmail(emailRecipients, "Google Meet Schedule", emailMessage);
+      sendEmail(emailRecipients, "Lịch Họp Google Meet", emailMessage);
   
       // Trả về phản hồi thành công
-      res.json({ message: "Meeting has been created!", meetLink: meeting.hangoutLink });
+      res.json({ message: "Lịch họp đã được tạo!", meetLink: meeting.hangoutLink });
     } catch (error) {
         console.error("Error from Google Meet API:", error.response?.data?.details || error.message);
-        res.status(500).json({ error: "Error creating meeting", details: error.message });
+        res.status(500).json({ error: "Lỗi khi tạo lịch họp", details: error.message });
     }
   });
 
-  router.get('/delete/:id', async (req, res) => {
-    await MeetingModel.findByIdAndDelete(req.params.id);
-  res.redirect('/api/meeting');
-  });
+router.get('/delete/:id', async (req, res) => {
+  const id = req.params.id;
 
-  router.post('/delete/:id', async (req, res) => {
-      try {
-          await MeetingModel.findByIdAndDelete(req.params.id);
-          res.redirect('api/meeting'); 
-      } catch (err) {
-          console.error(err);
-          res.status(500).send("Deleting error.");
-      }
-  });
-
-
-module.exports = router;
+  try {
+      await MeetingModel.findByIdAndDelete(id);
+      res.redirect('/api/meeting');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error deleting meeting');
+  }
+ });
