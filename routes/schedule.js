@@ -16,7 +16,7 @@ router.get('/tutor-attendance', ensureAuthenticated,  async (req, res) => {
         const tutor = await TutorModel.findOne({ email: user.email });
   
         if (!tutor) {
-          req.flash('error', 'Không tìm thấy giáo viên tương ứng!');
+          req.flash('error', 'No matching teacher found!');
           return res.redirect('/auth/login');
         }
   
@@ -46,7 +46,7 @@ router.get('/tutor-attendance', ensureAuthenticated,  async (req, res) => {
   
     } catch (error) {
       console.error(error);
-      req.flash('error', 'Lỗi khi hiển thị dashboard');
+      req.flash('error', 'Error displaying dashboard');
       res.redirect('/auth/login');
     }
   });
@@ -78,12 +78,12 @@ router.get('/add', checkAdmin, async (req, res) => {
     try {
         const classes = await ClassModel.find(); // Lấy danh sách tất cả lớp học
         res.render('schedule/add', { 
-            title: 'Thêm Lịch Học',
+            title: 'Add Class Schedule',
             classes // Truyền danh sách lớp học vào giao diện
         });
     } catch (err) {
         console.error(err);
-        res.status(500).send("Lỗi server");
+        res.status(500).send("Server error!!!");
     }
 });
 
@@ -93,7 +93,7 @@ router.post('/add', async (req, res) => {
         const classObj = await ClassModel.findById(classId);
 
         if (!classObj) {
-            return res.status(400).send("Lớp học không tồn tại.");
+            return res.status(400).send("The class does not exist.");
         }
 
         // Kiểm tra lịch học đã tồn tại chưa (cùng ngày, cùng ca, cùng lớp)
@@ -127,14 +127,14 @@ router.post('/add', async (req, res) => {
         await newSchedule.save();
 
         // Gửi email thông báo
-        const subject = "Thông báo lịch học mới";
-        const message = `Đã có lịch học mới vào Ngày: ${day} - Ca học: ${time}\n Các bạn chú ý kiểm tra lịch học mới`;
+        const subject = "New class schedule announcement";
+        const message = `New class schedule available on Date: ${day} - Class: ${time}\n Please pay attention to check the new schedule.`;
         await sendEmail(emailList, subject, message);
         
         res.redirect('/schedule/schedule-view/');
     } catch (err) {
         console.error(err);
-        res.status(500).send("Lỗi khi thêm lịch học.");
+        res.status(500).send("Error!!!");
     }
 });
 
@@ -147,7 +147,7 @@ router.get('/edit/:id', async (req, res) => {
         console.log("Schedule:", schedule);
 
         if (!schedule) {
-            return res.status(404).send("Lịch học không tồn tại.");
+            return res.status(404).send("Class schedule does not exist.");
         }
 
         const classes = await ClassModel.find().lean(); // Lấy danh sách lớp học
@@ -165,7 +165,7 @@ router.get('/edit/:id', async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send("Lỗi khi tải trang chỉnh sửa.");
+        res.status(500).send("Error loading edit page.");
     }
 });
 
@@ -177,13 +177,13 @@ router.post('/edit/:id', checkAdmin,async (req, res) => {
         // Tìm lớp học theo ID
         const classObj = await ClassModel.findById(classId).lean(); // Thêm .lean()
         if (!classObj) {
-            return res.status(400).send("Lớp học không tồn tại.");
+            return res.status(400).send("The class does not exist.");
         }
 
         // Tìm lịch học cũ
         const oldSchedule = await ScheduleModel.findById(req.params.id);
         if (!oldSchedule) {
-            return res.status(404).send("Lịch học không tồn tại.");
+            return res.status(404).send("Class schedule does not exist.");
         }
 
         // Kiểm tra lịch học đã tồn tại chưa (cùng ngày, cùng ca, cùng lớp)
@@ -210,8 +210,8 @@ router.post('/edit/:id', checkAdmin,async (req, res) => {
 
         // Gửi email thông báo cập nhật lịch học
         const emails = [...students.map(s => s.email), ...tutors.map(t => t.email)];
-        const subject = "Đã có sự thay đổi lịch học";
-        const message = `Lịch học mới của lớp ${classObj.name} vào ngày ${day}, ca ${time}.`;
+        const subject = "There has been a change in the school schedule.";
+        const message = `New class schedule ${classObj.name} on the day ${day}, slot ${time}.`;
 
         await sendEmail(emails, subject, message);
 
