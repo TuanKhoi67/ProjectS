@@ -28,8 +28,8 @@ router.get("/create", async (req, res) => {
       const tutors = await TutorModel.find().lean();
       res.render("meeting/add", { students, tutors });
   } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu:", error);
-      res.status(500).send("Lỗi server");
+      console.error("Error while retrieving data:", error);
+      res.status(500).send("Server error");
   }
 });
 
@@ -40,15 +40,15 @@ router.post("/create", async (req, res) => {
   
       // Kiểm tra xem students và tutors có phải là mảng không
       if (!Array.isArray(students)) {
-        return res.status(400).json({ error: "'students' phải là một mảng" });
+        return res.status(400).json({ error: "'students' must be an array" });
       }
       if (!Array.isArray(tutors)) {
-        return res.status(400).json({ error: "'tutors' phải là một mảng" });
+        return res.status(400).json({ error: "'tutors' must be an array" });
       }
   
       // Kiểm tra thời gian bắt đầu và kết thúc có hợp lệ
       if (!startTime || !endTime) {
-        return res.status(400).json({ error: "Cả startTime và endTime phải có giá trị" });
+        return res.status(400).json({ error: "startTime and endTime must have value" });
       }
   
       // Chuyển startTime và endTime thành chuỗi ISO 8601 (hoặc bạn có thể định dạng theo kiểu khác nếu cần)
@@ -57,7 +57,7 @@ router.post("/create", async (req, res) => {
   
       // Kiểm tra xem thời gian kết thúc có sau thời gian bắt đầu không
       if (new Date(startDateTime) >= new Date(endDateTime)) {
-        return res.status(400).json({ error: "Thời gian kết thúc phải sau thời gian bắt đầu" });
+        return res.status(400).json({ error: "The end time must be after the start time." });
       }
   
      // Tạo Meeting
@@ -80,7 +80,7 @@ router.post("/create", async (req, res) => {
       // Tạo danh sách người tham dự
       const attendees = [...students, ...tutors];
       if (attendees.length === 0) {
-        return res.status(400).json({ error: "Không có người tham dự nào được định nghĩa" });
+        return res.status(400).json({ error: "No attendees defined" });
       }
   
       // Kiểm tra xem các ObjectId có hợp lệ và tồn tại trong cơ sở dữ liệu không
@@ -99,7 +99,7 @@ router.post("/create", async (req, res) => {
 
       // Kiểm tra xem có email hợp lệ không
       if (attendeeEmails.length === 0) {
-        return res.status(400).json({ error: "Không thể lấy email của người tham dự" });
+        return res.status(400).json({ error: "Unable to get attendee email" });
       }
   
       // Tạo Google Meet thông qua API
@@ -107,16 +107,16 @@ router.post("/create", async (req, res) => {
       console.log("Meeting created:", meeting);
   
       // Soạn nội dung email
-      const emailMessage = `Bạn được mời tham gia một cuộc hop. Vào lúc ${startTime}.\nTham gia tại: ${meeting.hangoutLink}`;
+      const emailMessage = `You are invited to a meeting. At ${startTime}.\nJoin at: ${meeting.hangoutLink}`;
   
       // Gửi email
-      sendEmail(emailRecipients, "Lịch Họp Google Meet", emailMessage);
+      sendEmail(emailRecipients, "Google Meet", emailMessage);
   
       // Trả về phản hồi thành công
-      res.json({ message: "Lịch họp đã được tạo!", meetLink: meeting.hangoutLink });
+      res.json({ message: "Meeting schedule created!", meetLink: meeting.hangoutLink });
     } catch (error) {
         console.error("Error from Google Meet API:", error.response?.data?.details || error.message);
-        res.status(500).json({ error: "Lỗi khi tạo lịch họp", details: error.message });
+        res.status(500).json({ error: "Error", details: error.message });
     }
   });
 
