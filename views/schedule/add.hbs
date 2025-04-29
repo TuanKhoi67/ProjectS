@@ -1,9 +1,9 @@
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-  <span class="sidebar-title">Dashboard</span>
-</div>
-<hr>
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <span class="sidebar-title">Dashboard</span>
+    </div>
+    <hr>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
@@ -25,9 +25,8 @@
     }
 </script>
 
-<h1>Add Schedules</h1>
-
 <div class="container">
+    <h1>Add Schedules</h1>
     <form action="/schedule/add" method="POST">
         <label for="day">Day:</label>
         <select class="form-select" name="day" id="day">
