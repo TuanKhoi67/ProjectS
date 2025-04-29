@@ -40,33 +40,6 @@
             <h1 class="text-center">Account Management</h1>
             <a href="/auth/register" class="btn btn-primary">Create new account</a>
             <div class="row mt-4 align-items-start">
-                <div class="col-md-6">
-                    <h2 class="text-primary">Tutor List</h2>
-                    <table class="table table-hover table-bordered mt-3">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each tutors}}
-                            <tr>
-                                <td>{{this.fullname}}</td>
-                                <td>{{this.email}}</td>
-                                <td>
-                                    <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
-                                    <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
-                                        <button type="submit" class="btn"
-                                            onclick="return confirm('Are you sure to delete?');">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
-                </div>
                 <!-- Admin List -->
                 <div class="row mt-4 align-items-start">
                     <div class="col-md-12">
@@ -96,6 +69,33 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-primary">Tutor List</h2>
+                    <table class="table table-hover table-bordered mt-3">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each tutors}}
+                            <tr>
+                                <td>{{this.fullname}}</td>
+                                <td>{{this.email}}</td>
+                                <td>
+                                    <a href="/userpage/edit/{{this._id}}" class="btn">Edit</a>
+                                    <form action="/userpage/delete/{{this._id}}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn"
+                                            onclick="return confirm('Are you sure to delete?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-md-6">
                     <h2 class="text-primary">Student List</h2>
