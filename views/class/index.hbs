@@ -1,9 +1,13 @@
+<head>
+    <title>Classes</title>
+</head>
+
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-  <span class="sidebar-title">Dashboard</span>
-</div>
-<hr>
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <span class="sidebar-title">Dashboard</span>
+    </div>
+    <hr>
     <ul>
         <li><a href="/admin/dashboard">Admin Dashboard</a></li>
         <li><a href="/admin/dashboard/tutor">Tutor Dashboard</a></li>
@@ -19,45 +23,45 @@
 </div>
 
 <div class="content">
-<h1>Show All Classes</h1> 
-<div class="center" style="text-align: center;">
-<a href="/class/create" class="btn">Create to Class</a>
-</div>
+    <div class="center" style="text-align: center;">
+        <h1>Show All Classes</h1>
+        <a href="/class/create" class="btn">Create to Class</a>
+    </div>
 
-<div class="table-container">
-    <table class="table table-bordered"> 
-        <thead>
-            <tr>
-                <th>Class Name</th>
-                <th>Student Name</th>
-                <th>Teacher Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each classes}}
-            <tr>
-                <td><a>{{classname}}</a></td>
-                <td>
-                    {{#each student}}
-                        {{this.name}}<br>  
-                    {{/each}}
-                </td>
-                <td>
-                    {{#each tutor}}
-                        {{this.name}}<br>  
-                    {{/each}}
-                </td>
-                <td>
-                    <a class="btn btn-primary" href="/class/edit/{{ _id }}">Edit</a>
-                    <a class="btn btn-primary" href="/class/delete/{{ _id }}"
-                        onclick="return confirm('Are you sure to delete this class ?');">Delete</a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
+    <div class="table-container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Class Name</th>
+                    <th>Student Name</th>
+                    <th>Teacher Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each classes}}
+                <tr>
+                    <td><a>{{classname}}</a></td>
+                    <td>
+                        {{#each student}}
+                        {{this.name}}<br>
+                        {{/each}}
+                    </td>
+                    <td>
+                        {{#each tutor}}
+                        {{this.name}}<br>
+                        {{/each}}
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" href="/class/edit/{{ _id }}">Edit</a>
+                        <a class="btn btn-primary" href="/class/delete/{{ _id }}"
+                            onclick="return confirm('Are you sure to delete this class ?');">Delete</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <style>
@@ -69,8 +73,6 @@
         height: 100vh;
         margin: 0;
     }
-
-    
 </style>
 
 <script>
